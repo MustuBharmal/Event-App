@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/controller/data_controller.dart';
+import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/model/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +17,7 @@ class EventPageView extends StatelessWidget {
 
   EventPageView(this.eventData, this.user, {super.key});
 
-  DataController dataController = Get.find<DataController>();
+  HomeController dataController = Get.find<HomeController>();
 
   List eventSavedByUsers = [];
 

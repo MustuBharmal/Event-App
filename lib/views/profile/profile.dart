@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/controller/data_controller.dart';
+import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   bool isNotEditable = true;
 
-  DataController? dataController;
+  HomeController? dataController;
 
   int? followers = 0, following = 0;
   String image = '';
@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   initState() {
     super.initState();
-    dataController = Get.find<DataController>();
+    dataController = Get.find<HomeController>();
 
     firstNameController.text = dataController!.myDocument!.get('first');
     lastNameController.text = dataController!.myDocument!.get('last');

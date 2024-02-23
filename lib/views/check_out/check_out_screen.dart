@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 import '../../utils/app_color.dart';
 import '../../widgets/my_widgets.dart';
-import '../bottom_nav_bar/bottom_bar_view.dart';
+import '../home/bottom_bar_view.dart';
 
 class CheckOutView extends StatefulWidget {
   final EventModel eventDoc;

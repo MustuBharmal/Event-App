@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/controller/data_controller.dart';
+import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +15,7 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen> {
   TextEditingController searchController = TextEditingController();
 
-  DataController dataController = Get.find<DataController>();
+  HomeController dataController = Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {

@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../views/bottom_nav_bar/bottom_bar_view.dart';
+import '../../views/home/bottom_bar_view.dart';
 
 Map<String, dynamic>? paymentIntentData;
 

@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/controller/data_controller.dart';
+import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/model/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../model/ticket_model.dart';
 import '../utils/app_color.dart';
@@ -23,11 +20,10 @@ List<String> imageList = [
   'assets/#3.png',
   'assets/#1.png',
 ];
-DataController dataController = Get.find<DataController>();
 
 Widget eventsFeed() {
   return Obx(
-    () => dataController.isEventsLoading.value
+    () => HomeController.instance.isEventsLoading.value
         ? const Center(
             child: CircularProgressIndicator(),
           )
@@ -35,9 +31,9 @@ Widget eventsFeed() {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (ctx, i) {
-              return eventItem(dataController.allEvents[i]);
+              return eventItem(HomeController.instance.allEvents[i]);
             },
-            itemCount: dataController.allEvents.length,
+            itemCount: HomeController.instance.allEvents.length,
           ),
   );
 }
@@ -104,7 +100,7 @@ Widget buildCard(
             ),
 
             width: double.infinity,
-            height: Get.height  * 0.6,
+            height: Get.height * 0.6,
             //color: Colors.red,
           ),
         ),
@@ -188,7 +184,7 @@ Widget buildCard(
                 height: 50,
                 child: ListView.builder(
                   itemBuilder: (ctx, index) {
-                    DocumentSnapshot user = dataController.allUsers
+                    DocumentSnapshot user = HomeController.instance.allUsers
                         .firstWhere((e) => e.id == joinedUsers[index]);
 
                     String image = '';
@@ -296,7 +292,7 @@ Widget buildCard(
 
 eventItem(EventModel event) {
   DocumentSnapshot user =
-      dataController.allUsers.firstWhere((e) => event.uid == e.id);
+      HomeController.instance.allUsers.firstWhere((e) => event.uid == e.id);
   String image = '';
 
   try {
@@ -351,7 +347,7 @@ eventItem(EventModel event) {
 }
 
 eventsIJoined() {
-  DocumentSnapshot myUser = dataController.allUsers
+  DocumentSnapshot myUser = HomeController.instance.allUsers
       .firstWhere((e) => e.id == FirebaseAuth.instance.currentUser!.uid);
 
   String userImage = '';
@@ -434,25 +430,28 @@ eventsIJoined() {
               color: const Color(0xff918F8F).withOpacity(0.2),
             ),
             Obx(
-              () => dataController.isEventsLoading.value
+              () => HomeController.instance.isEventsLoading.value
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
                   : ListView.builder(
-                      itemCount: dataController.joinedEvents.length,
+                      itemCount: HomeController.instance.joinedEvents.length,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, i) {
-                        String name = dataController.joinedEvents[i].eventName;
+                        String name =
+                            HomeController.instance.joinedEvents[i].eventName;
 
-                        String date = dataController.joinedEvents[i].eventDay;
+                        String date =
+                            HomeController.instance.joinedEvents[i].eventDay;
 
                         date = date.split('/')[0] + '-' + date.split('/')[1];
 
                         List joinedUsers = [];
 
                         try {
-                          joinedUsers = dataController.joinedEvents[i].joined;
+                          joinedUsers =
+                              HomeController.instance.joinedEvents[i].joined;
                         } catch (e) {
                           joinedUsers = [];
                         }
@@ -501,8 +500,9 @@ eventsIJoined() {
                                 height: 50,
                                 child: ListView.builder(
                                   itemBuilder: (ctx, index) {
-                                    DocumentSnapshot user =
-                                        dataController.allUsers.firstWhere(
+                                    DocumentSnapshot user = HomeController
+                                        .instance.allUsers
+                                        .firstWhere(
                                             (e) => e.id == joinedUsers[index]);
 
                                     String image = '';

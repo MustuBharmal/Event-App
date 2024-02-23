@@ -1,18 +1,20 @@
-import 'package:ems/views/bottom_nav_bar/bottom_bar_view.dart';
+import 'package:ems/utils/routes.dart';
+import 'package:ems/views/auth/bindings/login_binding.dart';
+import 'package:ems/views/home/bottom_bar_view.dart';
 import 'package:ems/views/onboarding_screen.dart';
+import 'package:ems/views/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'firebase_options.dart';
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+/*Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print(message.data.toString());
   print(message.notification!.toString());
-}
+}*/
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,9 +39,9 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      home: FirebaseAuth.instance.currentUser == null
-          ? const OnBoardingScreen()
-          : const BottomBarView(),
+      getPages: AppRoutes.pages,
+      initialBinding: LoginBinding(),
+      home: const SplashScreen(),
     );
   }
 }

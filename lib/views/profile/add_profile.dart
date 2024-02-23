@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:ems/controller/auth_controller.dart';
+import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:ems/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

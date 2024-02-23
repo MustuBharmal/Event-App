@@ -1,4 +1,4 @@
-import 'package:ems/controller/auth_controller.dart';
+import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:ems/views/profile/add_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,38 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../utils/app_color.dart';
 import '../../widgets/my_widgets.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({Key? key}) : super(key: key);
-
-  @override
-  State<LoginView> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends State<LoginView> {
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
-  int selectedRadio = 0;
-  TextEditingController forgetEmailController = TextEditingController();
-
-  void setSelectedRadio(int val) {
-    setState(() {
-      selectedRadio = val;
-    });
-  }
-
-  bool isSignUp = false;
-
-  late AuthController authController;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    authController = Get.put(AuthController());
-  }
+class LoginView extends GetView<AuthController> {
+  LoginView({Key? key}) : super(key: key);
+  static const String routeName = '/login-view';
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +25,7 @@ class _LoginViewState extends State<LoginView> {
                 SizedBox(
                   height: Get.height * 0.08,
                 ),
-                isSignUp
+                controller.isSignUp.value
                     ? myText(
                         text: 'Sign Up',
                         style: const TextStyle(
@@ -71,7 +43,7 @@ class _LoginViewState extends State<LoginView> {
                 SizedBox(
                   height: Get.height * 0.03,
                 ),
-                isSignUp
+                controller.isSignUp.value
                     ? Container(
                         child: myText(
                           text:
@@ -107,9 +79,7 @@ class _LoginViewState extends State<LoginView> {
                     labelColor: Colors.black,
                     indicatorColor: Colors.black,
                     onTap: (v) {
-                      setState(() {
-                        isSignUp = !isSignUp;
-                      });
+                      controller.isSignUp.value = !controller.isSignUp.value;
                     },
                     tabs: [
                       myText(
@@ -181,7 +151,7 @@ class _LoginViewState extends State<LoginView> {
                       return '';
                     }
                   },
-                  controller: emailController),
+                  controller: controller.emailController),
               SizedBox(
                 height: Get.height * 0.02,
               ),
@@ -205,7 +175,7 @@ class _LoginViewState extends State<LoginView> {
                       return '';
                     }
                   },
-                  controller: passwordController),
+                  controller: controller.passwordController),
               InkWell(
                 onTap: () {
                   Get.defaultDialog(
@@ -218,15 +188,16 @@ class _LoginViewState extends State<LoginView> {
                                 obscure: false,
                                 icon: 'assets/lock.png',
                                 text: 'enter your email...',
-                                controller: forgetEmailController),
+                                controller: controller.forgetEmailController),
                             const SizedBox(
                               height: 10,
                             ),
                             MaterialButton(
                               color: Colors.blue,
                               onPressed: () {
-                                authController.forgetPassword(
-                                    forgetEmailController.text.trim());
+                                controller.forgetPassword(controller
+                                    .forgetEmailController.text
+                                    .trim());
                               },
                               child: const Text("Sent"),
                               minWidth: double.infinity,
@@ -250,7 +221,7 @@ class _LoginViewState extends State<LoginView> {
               ),
             ],
           ),
-          Obx(() => authController.isLoading.value
+          Obx(() => controller.isLoading.value
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
@@ -265,9 +236,10 @@ class _LoginViewState extends State<LoginView> {
                         return;
                       }
 
-                      authController.login(
-                          email: emailController.text.trim(),
-                          password: passwordController.text.trim());
+                      controller.login(
+                        email: controller.emailController.text.trim(),
+                        password: controller.passwordController.text.trim(),
+                      );
                     },
                   ),
                 )),
@@ -296,7 +268,7 @@ class _LoginViewState extends State<LoginView> {
               socialAppsIcons(
                   text: 'assets/google.png',
                   onPressed: () {
-                    authController.signInWithGoogle();
+                    controller.signInWithGoogle();
                   }),
             ],
           )
@@ -326,7 +298,7 @@ class _LoginViewState extends State<LoginView> {
                 return '';
               }
             },
-            controller: emailController),
+            controller: controller.emailController),
         SizedBox(
           height: Get.height * 0.02,
         ),
@@ -347,7 +319,7 @@ class _LoginViewState extends State<LoginView> {
                 return '';
               }
             },
-            controller: passwordController),
+            controller: controller.passwordController),
         SizedBox(
           height: Get.height * 0.02,
         ),
@@ -356,15 +328,15 @@ class _LoginViewState extends State<LoginView> {
             icon: 'assets/lock.png',
             text: 'Re-enter password',
             validator: (input) {
-              if (input != passwordController.text.trim()) {
+              if (input != controller.passwordController.text.trim()) {
                 Get.snackbar(
                     'Warning', 'Confirm Password is not same as password.',
                     colorText: Colors.white, backgroundColor: Colors.blue);
                 return '';
               }
             },
-            controller: confirmPasswordController),
-        Obx(() => authController.isLoading.value
+            controller: controller.confirmPasswordController),
+        Obx(() => controller.isLoading.value
             ? const Center(
                 child: CircularProgressIndicator(),
               )
@@ -381,9 +353,9 @@ class _LoginViewState extends State<LoginView> {
                       return;
                     }
 
-                    authController.signUp(
-                        email: emailController.text.trim(),
-                        password: passwordController.text.trim());
+                    controller.signUp(
+                        email: controller.emailController.text.trim(),
+                        password: controller.passwordController.text.trim());
                   },
                 ),
               )),

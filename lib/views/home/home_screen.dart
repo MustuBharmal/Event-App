@@ -1,4 +1,4 @@
-import 'package:ems/controller/data_controller.dart';
+import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,15 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/events_feed_widget.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
 
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  DataController dataController = Get.find<DataController>();
+  static const String routeName = '/home-screen';
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: Get.height * 0.02,
                 ),
                 eventsFeed(),
-                Obx(() => dataController.isUsersLoading.value
+                Obx(() => controller.isUsersLoading.value
                     ? const Center(
                         child: CircularProgressIndicator(),
                       )
