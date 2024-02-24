@@ -1,6 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:ems/views/create_event/controller/create_event_controller.dart';
-import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/model/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -85,16 +84,16 @@ class CreateEventView extends GetView<CreateEventController> {
                                   color: Colors.black.withOpacity(0.6),
                                   width: 0.6))),
                       child: Obx(
-                            () => DropdownButton(
+                        () => DropdownButton(
                           isExpanded: true,
                           underline: Container(
-                            // decoration: BoxDecoration(
-                            //   border: Border.all(
-                            //     width: 0,
-                            //     color: Colors.white,
-                            //   ),
-                            // ),
-                          ),
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(
+                              //     width: 0,
+                              //     color: Colors.white,
+                              //   ),
+                              // ),
+                              ),
 
                           // borderRadius: BorderRadius.circular(10),
                           icon: Image.asset('assets/arrowDown.png'),
@@ -413,13 +412,13 @@ class CreateEventView extends GetView<CreateEventController> {
                     width: double.infinity,
                     controller: controller.tagsController,
                     type: TextInputType.text,
-                    onPress: () {},
                     validator: (String input) {
                       if (input.isEmpty) {
-                        Get.snackbar('Opps', "Entries is required.",
+                        Get.snackbar('Opps', "Tags is required.",
                             colorText: Colors.white,
                             backgroundColor: Colors.blue);
-                        return '';
+
+                        return;
                       }
                       return null;
                     }),
@@ -881,32 +880,20 @@ class CreateEventView extends GetView<CreateEventController> {
                                 return;
                               }
 
-                              if (controller.tagsController.text.isEmpty) {
-                                Get.snackbar('Opps', "Tags is required.",
-                                    colorText: Colors.white,
-                                    backgroundColor: Colors.blue);
-
-                                return;
-                              }
-
-                              controller.isCreatingEvent(true);
-
-                              HomeController dataController = Get.find();
-
                               if (controller.media.isNotEmpty) {
                                 for (int i = 0;
                                     i < controller.media.length;
                                     i++) {
                                   if (controller.media[i].isVideo!) {
-                                    /// if video then first upload video file and then upload thumbnail and
-                                    /// store it in the map
+                                    // / if video then first upload video file and then upload thumbnail and
+                                    // / store it in the map
 
-                                    String thumbnailUrl = await dataController
+                                    String thumbnailUrl = await controller
                                         .uploadThumbnailToFirebase(
                                             controller.media[i].thumbnail!);
 
-                                    String videoUrl = await dataController
-                                        .uploadImageToFirebase(
+                                    String videoUrl =
+                                        await controller.uploadImageToFirebase(
                                             controller.media[i].video!);
 
                                     controller.mediaUrls.add({
@@ -917,13 +904,11 @@ class CreateEventView extends GetView<CreateEventController> {
                                   } else {
                                     /// just upload image
 
-                                    String imageUrl = await HomeController
-                                        .instance
-                                        .uploadImageToFirebase(
+                                    String imageUrl =
+                                        await controller.uploadImageToFirebase(
                                             controller.media[i].image!);
-                                    HomeController.instance
-                                        .uploadImageToFirebase(
-                                            controller.media[i].image!);
+                                    controller.uploadImageToFirebase(
+                                        controller.media[i].image!);
                                     controller.mediaUrls.add(
                                         {'url': imageUrl, 'isImage': true});
                                   }
@@ -962,7 +947,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                 saves: [],
                               );
 
-                              await dataController
+                              await controller
                                   .createEvent(currEvent.toJson())
                                   .then((value) {
                                 controller.isCreatingEvent(false);

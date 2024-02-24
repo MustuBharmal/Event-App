@@ -45,28 +45,46 @@ class EventModel {
     required this.saves,
   });
 
-  fromJson(Map<String, dynamic> json) {
+  factory EventModel.fromJson(Map<String, dynamic> json) {
+    String event = json['event'];
+    String eventName = json['event_name'];
+    String location = json['location'];
+    String eventDay = json['date'];
+    String rgStDate = json['startDate'];
+    String rgEdDate = json['endDate'];
+    String startTime = json['start_time'];
+    String endTime = json['end_time'];
+    int? maxEntries = json['max_entries'];
+    String? frequencyOfEvent = json['frequency_of_event'];
+    String? description = json['description'];
+    String? whoCanInvite = json['who_can_invite'];
+    final List<String> joined = json['joined'].cast<String>();
+    final List<dynamic> media = json['media'];
+    String uid = json['uid'];
+    final List<String> tags = json['tags'].cast<String>();
+    final List<String> inviter = json['inviter'].cast<String>();
+    final List<String> likes = json['likes'].cast<String>();
+    final List<String> saves = json['saves'].cast<String>();
     return EventModel(
-      event: json['event'],
-      eventName: json['event_name'],
-      location: json['location'],
-      eventDay: json['date'],
-      rgStDate: json['startDate'],
-      rgEdDate: json['endDate'],
-      startTime: json['start_time'],
-      endTime: json['end_time'],
-      maxEntries: json['max_entries'],
-      frequencyOfEvent: json['frequency_of_event'],
-      description: json['description'],
-      whoCanInvite: json['who_can_invite'],
-      joined: json['joined'].cast<String>(),
-      media: json['media'],
-      uid: json['uid'],
-      tags: json['tags'].cast<String>(),
-      inviter: json['inviter'].cast<String>(),
-      likes: json['likes'].cast<String>(),
-      saves: json['saves'].cast<String>(),
-    );
+        event: event,
+        eventName: eventName,
+        location: location,
+        eventDay: eventDay,
+        rgStDate: rgStDate,
+        rgEdDate: rgEdDate,
+        startTime: startTime,
+        endTime: endTime,
+        maxEntries: maxEntries,
+        frequencyOfEvent: frequencyOfEvent,
+        description: description,
+        whoCanInvite: whoCanInvite,
+        joined: joined,
+        media: media,
+        uid: uid,
+        tags: tags,
+        inviter: inviter,
+        likes: likes,
+        saves: saves);
   }
 
   factory EventModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> json) {

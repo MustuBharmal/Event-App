@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path/path.dart' as path;
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,6 +37,9 @@ class CreateEventController extends GetxController {
   List<String> participantTypeList = ['All', 'Faculty', 'Student'];
   List<String> eventTypeList = ['Individual', 'Group'];
   List<String> closeList = ['Closed', 'Open'];
+  DateTime? date = DateTime.now();
+
+  RxBool isCreatingEvent = RxBool(false);
 
   @override
   void onInit() {
@@ -42,6 +47,35 @@ class CreateEventController extends GetxController {
 
     timeController.text = '${date!.hour}:${date!.minute}:${date!.second}';
     super.onInit();
+  }
+
+  Future<bool> createEvent(Map<String, dynamic> eventData) async {
+    bool isCompleted = false;
+
+    await FirebaseFirestore.instance
+        .collection('events')
+        .add(eventData)
+        .then((value) {
+      isCompleted = true;
+      Get.snackbar('Event Uploaded', 'Event is uploaded successfully.',
+          colorText: Colors.white, backgroundColor: Colors.blue);
+    }).catchError((e) {
+      isCompleted = false;
+    });
+
+    return isCompleted;
+  }
+
+  Future<String> uploadImageToFirebase(File file) async {
+    String fileUrl = '';
+    String fileName = path.basename(file.path);
+    var reference = FirebaseStorage.instance.ref().child('myfiles/$fileName');
+    UploadTask uploadTask = reference.putFile(file);
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+    await taskSnapshot.ref.getDownloadURL().then((value) {
+      fileUrl = value;
+    });
+    return fileUrl;
   }
 
   void resetControllers() {
@@ -59,12 +93,7 @@ class CreateEventController extends GetxController {
     frequencyEventController.clear();
     startTime = const TimeOfDay(hour: 0, minute: 0);
     endTime = const TimeOfDay(hour: 0, minute: 0);
-
   }
-
-  DateTime? date = DateTime.now();
-
-  RxBool isCreatingEvent = RxBool(false);
 
   selectDate(BuildContext context, dateController) async {
     final DateTime? picked = await showDatePicker(
@@ -79,6 +108,20 @@ class CreateEventController extends GetxController {
           date!.minute, date!.second);
       dateController.text = '${date!.day}/${date!.month}/${date!.year}';
     }
+  }
+
+  Future<String> uploadThumbnailToFirebase(Uint8List file) async {
+    String fileUrl = '';
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    var reference =
+        FirebaseStorage.instance.ref().child('myfiles/$fileName.jpg');
+    UploadTask uploadTask = reference.putData(file);
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+    await taskSnapshot.ref.getDownloadURL().then((value) {
+      fileUrl = value;
+    });
+
+    return fileUrl;
   }
 
   startTimeMethod(BuildContext context) async {
@@ -208,3 +251,5 @@ class CreateEventController extends GetxController {
         context: context);
   }
 }
+
+// controller.isCreatingEvent(true);
