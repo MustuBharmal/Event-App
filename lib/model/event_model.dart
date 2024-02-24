@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventModel {
   String? id;
-  final String event;
+  final String participantType;
+  final String eventType;
   final String eventName;
   final String? location;
   final String eventDay;
@@ -13,7 +14,6 @@ class EventModel {
   final int? maxEntries;
   final String? frequencyOfEvent;
   final String? description;
-  final String? whoCanInvite;
   final List<String> joined;
   final List<dynamic> media;
   String uid;
@@ -24,7 +24,8 @@ class EventModel {
 
   EventModel({
     this.id,
-    required this.event,
+    required this.participantType,
+    required this.eventType,
     required this.eventName,
     required this.location,
     required this.eventDay,
@@ -35,7 +36,6 @@ class EventModel {
     required this.maxEntries,
     required this.frequencyOfEvent,
     required this.description,
-    required this.whoCanInvite,
     required this.joined,
     required this.media,
     required this.uid,
@@ -46,7 +46,8 @@ class EventModel {
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
-    String event = json['event'];
+    String participantType = json['event'];
+    String eventType = json['event_type'];
     String eventName = json['event_name'];
     String location = json['location'];
     String eventDay = json['date'];
@@ -57,7 +58,6 @@ class EventModel {
     int? maxEntries = json['max_entries'];
     String? frequencyOfEvent = json['frequency_of_event'];
     String? description = json['description'];
-    String? whoCanInvite = json['who_can_invite'];
     final List<String> joined = json['joined'].cast<String>();
     final List<dynamic> media = json['media'];
     String uid = json['uid'];
@@ -66,7 +66,8 @@ class EventModel {
     final List<String> likes = json['likes'].cast<String>();
     final List<String> saves = json['saves'].cast<String>();
     return EventModel(
-        event: event,
+        participantType: participantType,
+        eventType: eventType,
         eventName: eventName,
         location: location,
         eventDay: eventDay,
@@ -77,7 +78,6 @@ class EventModel {
         maxEntries: maxEntries,
         frequencyOfEvent: frequencyOfEvent,
         description: description,
-        whoCanInvite: whoCanInvite,
         joined: joined,
         media: media,
         uid: uid,
@@ -91,7 +91,8 @@ class EventModel {
     final data = json.data()!;
     return EventModel(
       id: json.id,
-      event: data['event'],
+      participantType: data['event'],
+      eventType: data['event_type'],
       eventName: data['event_name'],
       location: data['location'],
       eventDay: data['date'],
@@ -102,7 +103,6 @@ class EventModel {
       maxEntries: data['max_entries'],
       frequencyOfEvent: data['frequency_of_event'],
       description: data['description'],
-      whoCanInvite: data['who_can_invite'],
       joined: data['joined'].cast<String>(),
       media: data['media'],
       uid: data['uid'],
@@ -115,7 +115,8 @@ class EventModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['event'] = event;
+    data['event'] = participantType;
+    data['event_type'] = eventType;
     data['event_name'] = eventName;
     data['location'] = location;
     data['date'] = eventDay;
@@ -126,7 +127,6 @@ class EventModel {
     data['max_entries'] = maxEntries;
     data['frequency_of_event'] = frequencyOfEvent;
     data['description'] = description;
-    data['who_can_invite'] = whoCanInvite;
     data['joined'] = joined;
     data['media'] = media;
     data['uid'] = uid;

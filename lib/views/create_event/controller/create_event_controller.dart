@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path/path.dart' as path;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -9,13 +10,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../model/event_media_model.dart';
+import '../../../model/event_model.dart';
 
 class CreateEventController extends GetxController {
-  TextEditingController eventDate = TextEditingController();
-  TextEditingController rgStDate = TextEditingController();
-  TextEditingController rgEdDate = TextEditingController();
+  TextEditingController eventDateController = TextEditingController();
+  TextEditingController rgStDateController = TextEditingController();
+  TextEditingController rgEdDateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
-  TextEditingController titleController = TextEditingController();
+  TextEditingController eventNameController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController tagsController = TextEditingController();
@@ -49,8 +51,61 @@ class CreateEventController extends GetxController {
     super.onInit();
   }
 
-  Future<bool> createEvent(Map<String, dynamic> eventData) async {
-    bool isCompleted = false;
+  Future<void> createEvent() async {
+    if (media.isNotEmpty) {
+      for (int i = 0; i < media.length; i++) {
+        if (media[i].isVideo!) {
+          // / if video then first upload video file and then upload thumbnail and
+          // / store it in the map
+
+          String thumbnailUrl =
+              await uploadThumbnailToFirebase(media[i].thumbnail!);
+
+          String videoUrl = await uploadImageToFirebase(media[i].video!);
+
+          mediaUrls.add(
+              {'url': videoUrl, 'thumbnail': thumbnailUrl, 'isImage': false});
+        } else {
+          /// just upload image
+
+          String imageUrl = await uploadImageToFirebase(media[i].image!);
+          uploadImageToFirebase(media[i].image!);
+          mediaUrls.add({'url': imageUrl, 'isImage': true});
+        }
+      }
+    }
+
+    List<String> tags = tagsController.text.split(',');
+    EventModel currEvent = EventModel(
+      participantType: participantType.value,
+      eventType: eventType.value,
+      media: mediaUrls,
+      eventName: eventNameController.text,
+      location: locationController.text,
+      rgStDate: rgStDateController.text,
+      rgEdDate: rgEdDateController.text,
+      eventDay:
+          '${date!.day}/${date!.month}/${date!.year}',
+      maxEntries: int.parse(maxEntries.text),
+      tags: tags,
+      frequencyOfEvent: frequencyEventController.text,
+      startTime: startTimeController.text,
+      endTime: endTimeController.text,
+      description: descriptionController.text,
+      joined: [
+        FirebaseAuth.instance.currentUser!.uid,
+      ],
+      uid: FirebaseAuth.instance.currentUser!.uid,
+      inviter: [FirebaseAuth.instance.currentUser!.uid],
+      likes: [],
+      saves: [],
+    );
+
+    /*await createEvent(currEvent.toJson()).then((value) {
+      isCreatingEvent(false);
+      resetControllers();
+    });*/
+    /*bool isCompleted = false;
 
     await FirebaseFirestore.instance
         .collection('events')
@@ -63,7 +118,7 @@ class CreateEventController extends GetxController {
       isCompleted = false;
     });
 
-    return isCompleted;
+    return isCompleted;*/
   }
 
   Future<String> uploadImageToFirebase(File file) async {
@@ -79,11 +134,11 @@ class CreateEventController extends GetxController {
   }
 
   void resetControllers() {
-    eventDate.clear();
-    rgStDate.clear();
-    rgEdDate.clear();
+    eventDateController.clear();
+    rgStDateController.clear();
+    rgEdDateController.clear();
     timeController.clear();
-    titleController.clear();
+    eventNameController.clear();
     locationController.clear();
     descriptionController.clear();
     tagsController.clear();

@@ -147,7 +147,7 @@ class EventPageView extends StatelessWidget {
                     child: Row(
                       children: [
                         Text(
-                          eventData.event,
+                          eventData.participantType,
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

@@ -276,7 +276,7 @@ class CreateEventView extends GetView<CreateEventController> {
                     obscure: false,
                     icon: 'assets/4DotIcon.png',
                     text: 'Event Name',
-                    controller: controller.titleController,
+                    controller: controller.eventNameController,
                     validator: (String input) {
                       if (input.isEmpty) {
                         Get.snackbar('Opps', "Event name is required.",
@@ -328,7 +328,7 @@ class CreateEventView extends GetView<CreateEventController> {
                       isReadOnly: true,
                       path: 'assets/Frame1.png',
                       text: 'Reg start date',
-                      controller: controller.rgStDate,
+                      controller: controller.rgStDateController,
                       validator: (input) {
                         if (controller.date == null) {
                           Get.snackbar('Opps', "Date is required.",
@@ -339,14 +339,15 @@ class CreateEventView extends GetView<CreateEventController> {
                         return null;
                       },
                       onPress: () {
-                        controller.selectDate(context, controller.rgStDate);
+                        controller.selectDate(
+                            context, controller.rgStDateController);
                       },
                     ),
                     iconTitleContainer(
                       isReadOnly: true,
                       path: 'assets/Frame1.png',
                       text: 'Reg end date',
-                      controller: controller.rgEdDate,
+                      controller: controller.rgEdDateController,
                       validator: (input) {
                         if (controller.date == null) {
                           Get.snackbar('Opps', "Date is required.",
@@ -357,7 +358,8 @@ class CreateEventView extends GetView<CreateEventController> {
                         return null;
                       },
                       onPress: () {
-                        controller.selectDate(context, controller.rgEdDate);
+                        controller.selectDate(
+                            context, controller.rgEdDateController);
                       },
                     ),
                   ],
@@ -372,7 +374,7 @@ class CreateEventView extends GetView<CreateEventController> {
                       isReadOnly: true,
                       path: 'assets/Frame1.png',
                       text: 'Event Day',
-                      controller: controller.eventDate,
+                      controller: controller.eventDateController,
                       validator: (input) {
                         if (controller.date == null) {
                           Get.snackbar('Opps', "Date is required.",
@@ -383,7 +385,8 @@ class CreateEventView extends GetView<CreateEventController> {
                         return null;
                       },
                       onPress: () {
-                        controller.selectDate(context, controller.eventDate);
+                        controller.selectDate(
+                            context, controller.eventDateController);
                       },
                     ),
                     iconTitleContainer(
@@ -790,75 +793,6 @@ class CreateEventView extends GetView<CreateEventController> {
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  child: myText(
-                    text: 'Who can invite?',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: Get.height * 0.005,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      width: 150,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                            width: 1, color: AppColors.genderTextColor),
-                      ),
-                      // decoration: BoxDecoration(
-                      //
-                      //   // borderRadius: BorderRadius.circular(8),
-                      //    border: Border(
-                      //         bottom: BorderSide(color: Colors.black.withOpacity(0.8),width: 0.6)
-                      //     )
-                      //
-                      // ),
-                      child: DropdownButton(
-                        isExpanded: true,
-                        underline: Container(),
-                        //borderRadius: BorderRadius.circular(10),
-                        icon: Image.asset('assets/arrowDown.png'),
-                        elevation: 16,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.black,
-                        ),
-                        value: controller.accessModifier.value,
-                        onChanged: (String? newValue) {
-                          // accessModifier = newValue!;
-                        },
-                        items: controller.closeList
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem(
-                            value: value,
-                            child: Text(
-                              value,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xffA6A6A6),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: Get.height * 0.03,
-                ),
                 Obx(() => controller.isCreatingEvent.value
                     ? const Center(
                         child: CircularProgressIndicator(),
@@ -879,80 +813,8 @@ class CreateEventView extends GetView<CreateEventController> {
 
                                 return;
                               }
+                              controller.createEvent();
 
-                              if (controller.media.isNotEmpty) {
-                                for (int i = 0;
-                                    i < controller.media.length;
-                                    i++) {
-                                  if (controller.media[i].isVideo!) {
-                                    // / if video then first upload video file and then upload thumbnail and
-                                    // / store it in the map
-
-                                    String thumbnailUrl = await controller
-                                        .uploadThumbnailToFirebase(
-                                            controller.media[i].thumbnail!);
-
-                                    String videoUrl =
-                                        await controller.uploadImageToFirebase(
-                                            controller.media[i].video!);
-
-                                    controller.mediaUrls.add({
-                                      'url': videoUrl,
-                                      'thumbnail': thumbnailUrl,
-                                      'isImage': false
-                                    });
-                                  } else {
-                                    /// just upload image
-
-                                    String imageUrl =
-                                        await controller.uploadImageToFirebase(
-                                            controller.media[i].image!);
-                                    controller.uploadImageToFirebase(
-                                        controller.media[i].image!);
-                                    controller.mediaUrls.add(
-                                        {'url': imageUrl, 'isImage': true});
-                                  }
-                                }
-                              }
-
-                              List<String> tags =
-                                  controller.tagsController.text.split(',');
-                              EventModel currEvent = EventModel(
-                                event: controller.participantType.value,
-                                eventName: controller.titleController.text,
-                                location: controller.locationController.text,
-                                eventDay:
-                                    '${controller.date!.day}/${controller.date!.month}/${controller.date!.year}',
-                                rgStDate: controller.rgStDate.text,
-                                rgEdDate: controller.rgEdDate.text,
-                                startTime: controller.startTimeController.text,
-                                endTime: controller.endTimeController.text,
-                                maxEntries:
-                                    int.parse(controller.maxEntries.text),
-                                frequencyOfEvent:
-                                    controller.frequencyEventController.text,
-                                description:
-                                    controller.descriptionController.text,
-                                whoCanInvite: controller.accessModifier.value,
-                                joined: [
-                                  FirebaseAuth.instance.currentUser!.uid,
-                                ],
-                                media: controller.mediaUrls,
-                                uid: FirebaseAuth.instance.currentUser!.uid,
-                                tags: tags,
-                                inviter: [
-                                  FirebaseAuth.instance.currentUser!.uid
-                                ],
-                                likes: [],
-                                saves: [],
-                              );
-
-                              await controller
-                                  .createEvent(currEvent.toJson())
-                                  .then((value) {
-                                controller.isCreatingEvent(false);
-                                controller.resetControllers();
-                              });
                             },
                             text: 'Create Event'),
                       )),
