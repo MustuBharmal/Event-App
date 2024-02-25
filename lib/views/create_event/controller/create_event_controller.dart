@@ -17,6 +17,7 @@ class CreateEventController extends GetxController {
   TextEditingController rgStDateController = TextEditingController();
   TextEditingController rgEdDateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+  TextEditingController noOfParticipantController = TextEditingController();
   TextEditingController eventNameController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -52,6 +53,7 @@ class CreateEventController extends GetxController {
   }
 
   Future<void> createEvent() async {
+    isCreatingEvent(true);
     if (media.isNotEmpty) {
       for (int i = 0; i < media.length; i++) {
         if (media[i].isVideo!) {
@@ -80,12 +82,14 @@ class CreateEventController extends GetxController {
       participantType: participantType.value,
       eventType: eventType.value,
       media: mediaUrls,
+      noOfParticipant: int.parse(noOfParticipantController.text == ''
+          ? '1'
+          : noOfParticipantController.text),
       eventName: eventNameController.text,
       location: locationController.text,
       rgStDate: rgStDateController.text,
       rgEdDate: rgEdDateController.text,
-      eventDay:
-          '${date!.day}/${date!.month}/${date!.year}',
+      eventDay: '${date!.day}/${date!.month}/${date!.year}',
       maxEntries: int.parse(maxEntries.text),
       tags: tags,
       frequencyOfEvent: frequencyEventController.text,
@@ -105,20 +109,20 @@ class CreateEventController extends GetxController {
       isCreatingEvent(false);
       resetControllers();
     });*/
-    /*bool isCompleted = false;
-
+    print(currEvent.toJson());
     await FirebaseFirestore.instance
         .collection('events')
-        .add(eventData)
+        .add(currEvent.toJson())
         .then((value) {
-      isCompleted = true;
+      isCreatingEvent(false);
+      resetControllers();
       Get.snackbar('Event Uploaded', 'Event is uploaded successfully.',
           colorText: Colors.white, backgroundColor: Colors.blue);
     }).catchError((e) {
-      isCompleted = false;
+      isCreatingEvent(false);
+      Get.snackbar('Warning', 'Event upload failed',
+          colorText: Colors.white, backgroundColor: Colors.blue);
     });
-
-    return isCompleted;*/
   }
 
   Future<String> uploadImageToFirebase(File file) async {
@@ -134,9 +138,11 @@ class CreateEventController extends GetxController {
   }
 
   void resetControllers() {
+    media.value = [];
     eventDateController.clear();
     rgStDateController.clear();
     rgEdDateController.clear();
+    noOfParticipantController.clear();
     timeController.clear();
     eventNameController.clear();
     locationController.clear();
@@ -187,7 +193,7 @@ class CreateEventController extends GetxController {
     if (picked != null) {
       startTime = picked;
       startTimeController.text =
-          '${startTime.hourOfPeriod > 9 ? "" : '0'}${startTime.hour > 12 ? '${startTime.hour - 12}' : startTime.hour}:${startTime.minute > 9 ? startTime.minute : '0${startTime.minute}'} ${startTime.hour > 12 ? 'PM' : 'AM'}';
+          '${startTime.hourOfPeriod > 9 ? "" : '0'}${startTime.hour > 12 ? '${startTime.hour - 12}' : startTime.hour}:${startTime.minute > 9 ? startTime.minute : '0${startTime.minute}'} ${startTime.hour >= 12 ? 'PM' : 'AM'}';
     }
   }
 
@@ -197,9 +203,10 @@ class CreateEventController extends GetxController {
       initialTime: TimeOfDay.now(),
     );
     if (picked != null) {
+      print(endTime.hourOfPeriod);
       endTime = picked;
       endTimeController.text =
-          '${endTime.hourOfPeriod > 9 ? "" : "0"}${endTime.hour > 9 ? "" : "0"}${endTime.hour > 12 ? '${endTime.hour - 12}' : endTime.hour}:${endTime.minute > 9 ? endTime.minute : '0${endTime.minute}'} ${endTime.hour > 12 ? 'PM' : 'AM'}';
+          '${endTime.hourOfPeriod > 9 ? "" : "0"}${endTime.hour > 9 ? "" : "0"}${endTime.hour > 12 ? '${endTime.hour - 12}' : endTime.hour}:${endTime.minute > 9 ? endTime.minute : '0${endTime.minute}'} ${endTime.hour >= 12 ? 'PM' : 'AM'}';
     }
   }
 

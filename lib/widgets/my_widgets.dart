@@ -238,9 +238,7 @@ Widget iconTitleContainer({
       controller: controller,
       keyboardType: type,
       readOnly: isReadOnly,
-      onTap: () {
-        onPress!();
-      },
+      onTap: ()=> onPress!(),
       // style: TextStyle(
       //   fontSize: 16,
       //   fontWeight: FontWeight.w400,
