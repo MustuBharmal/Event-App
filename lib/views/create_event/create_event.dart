@@ -179,7 +179,7 @@ class CreateEventView extends GetView<CreateEventController> {
                           ),
                           elevatedButton(
                               onPress: () async {
-                                controller.mediaDialog(context);
+                                controller.imageDialog(context);
                               },
                               text: 'Upload')
                         ],

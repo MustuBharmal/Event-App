@@ -253,34 +253,28 @@ class CreateEventController extends GetxController {
     Get.back();
   }
 
-  void mediaDialog(BuildContext context) {
-    showDialog(
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Select Media Type"),
-            content: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      imageDialog(context, true);
-                    },
-                    icon: const Icon(Icons.image)),
-                IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      imageDialog(context, false);
-                    },
-                    icon: const Icon(Icons.slow_motion_video_outlined)),
-              ],
-            ),
-          );
-        },
-        context: context);
-  }
+  // void mediaDialog(BuildContext context) {
+  //   showDialog(
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: const Text("Select Media Type"),
+  //           content: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //             children: [
+  //               IconButton(
+  //                   onPressed: () {
+  //                     Navigator.pop(context);
+  //                     imageDialog(context, true);
+  //                   },
+  //                   icon: const Icon(Icons.image)),
+  //             ],
+  //           ),
+  //         );
+  //       },
+  //       context: context);
+  // }
 
-  void imageDialog(BuildContext context, bool image) {
+  void imageDialog(BuildContext context) {
     showDialog(
         builder: (BuildContext context) {
           return AlertDialog(
@@ -290,20 +284,12 @@ class CreateEventController extends GetxController {
               children: [
                 IconButton(
                     onPressed: () {
-                      if (image) {
-                        getImageDialog(ImageSource.gallery);
-                      } else {
-                        getVideoDialog(ImageSource.gallery);
-                      }
+                      getImageDialog(ImageSource.gallery);
                     },
                     icon: const Icon(Icons.image)),
                 IconButton(
                     onPressed: () {
-                      if (image) {
-                        getImageDialog(ImageSource.camera);
-                      } else {
-                        getVideoDialog(ImageSource.camera);
-                      }
+                      getImageDialog(ImageSource.camera);
                     },
                     icon: const Icon(Icons.camera_alt)),
               ],
