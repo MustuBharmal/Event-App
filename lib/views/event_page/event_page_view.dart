@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems/model/user_model.dart';
 import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/model/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,24 +12,16 @@ import '../invite_guest/invite_guest_screen.dart';
 import 'package:intl/intl.dart';
 
 class EventPageView extends StatelessWidget {
-  final DocumentSnapshot user;
+  final UserModel user;
   final EventModel eventData;
 
   EventPageView(this.eventData, this.user, {super.key});
-
-  HomeController dataController = Get.find<HomeController>();
 
   List eventSavedByUsers = [];
 
   @override
   Widget build(BuildContext context) {
-    String image = '';
-    dataController.toCheckUserIsEnrolled(eventData.joined);
-    try {
-      image = user.get('image');
-    } catch (e) {
-      image = '';
-    }
+    HomeController.instance.toCheckUserIsEnrolled(eventData.joined);
 
     String eventImage = '';
     try {
@@ -109,7 +101,7 @@ class EventPageView extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     backgroundImage: NetworkImage(
-                      image,
+                      user.image!,
                     ),
                     radius: 20,
                   ),
@@ -120,7 +112,7 @@ class EventPageView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${user.get('first')} ${user.get('last')}',
+                        '${user.first} ${user.last}',
                         style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w500),
                       ),
@@ -249,13 +241,13 @@ class EventPageView extends StatelessWidget {
                     height: Get.height * 0.058,
                     child: ListView.builder(
                       itemBuilder: (ctx, index) {
-                        DocumentSnapshot user = dataController.allUsers
-                            .firstWhere((e) => e.id == joinedUsers[index]);
+                        final user = HomeController.instance.listOfUser
+                            .firstWhere((e) => e.uid == joinedUsers[index]);
 
                         String image = '';
 
                         try {
-                          image = user.get('image');
+                          image = user.image!;
                         } catch (e) {
                           image = '';
                         }
@@ -393,7 +385,7 @@ class EventPageView extends StatelessWidget {
                     ),
                   ),
                   Visibility(
-                    visible: !dataController.isJoinedUser.value &&
+                    visible: !HomeController.instance.isJoinedUser.value &&
                         !regEndDate.isBefore(nowTime),
                     child: Expanded(
                       child: InkWell(
@@ -430,7 +422,7 @@ class EventPageView extends StatelessWidget {
                     ),
                   ),
                   Visibility(
-                    visible: dataController.isJoinedUser.value &&
+                    visible: HomeController.instance.isJoinedUser.value &&
                         !regEndDate.isBefore(nowTime),
                     child: Expanded(
                       child: Container(

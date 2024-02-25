@@ -1,7 +1,4 @@
-import 'package:ems/views/auth/controller/auth_controller.dart';
-import 'package:ems/model/user_model.dart';
 import 'package:ems/views/profile/controller/profile_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,8 +6,8 @@ import '../../utils/app_color.dart';
 import '../../widgets/my_widgets.dart';
 
 class AddProfileScreen extends GetView<ProfileController> {
-
   static const String routeName = '/add-profile-screen';
+
   AddProfileScreen({super.key});
 
   final formKey = GlobalKey<FormState>();
@@ -211,26 +208,27 @@ class AddProfileScreen extends GetView<ProfileController> {
                         margin: EdgeInsets.only(top: Get.height * 0.02),
                         width: Get.width,
                         child: elevatedButton(
-                          text: 'Save',
-                          onPress: () async {
-                            if (controller.dob.text.isEmpty) {
-                              Get.snackbar(
-                                  'Warning', "Date of birth is required.",
-                                  colorText: Colors.white,
-                                  backgroundColor: Colors.blue);
-                              return '';
-                            }
+                            text: 'Save',
+                            onPress: () async {
+                              if (controller.dob.text.isEmpty) {
+                                Get.snackbar(
+                                    'Warning', "Date of birth is required.",
+                                    colorText: Colors.white,
+                                    backgroundColor: Colors.blue);
+                                return '';
+                              }
 
-                            if (!formKey.currentState!.validate()) {
-                              return null;
-                            }
-                            if (controller.profileImage == null) {
-                              Get.snackbar('Warning', "Image is required.",
-                                  colorText: Colors.white, backgroundColor: Colors.blue);
-                              return '';
-                            }
-                            controller.addProfile();
-                          }),
+                              if (!formKey.currentState!.validate()) {
+                                return null;
+                              }
+                              if (controller.profileImage == null) {
+                                Get.snackbar('Warning', "Image is required.",
+                                    colorText: Colors.white,
+                                    backgroundColor: Colors.blue);
+                                return '';
+                              }
+                              controller.addProfile();
+                            }),
                       )),
                 SizedBox(
                   height: Get.height * 0.03,

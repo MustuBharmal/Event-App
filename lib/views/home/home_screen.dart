@@ -34,7 +34,7 @@ class HomeScreen extends GetView<HomeController> {
                   height: Get.height * 0.02,
                 ),
                 eventsFeed(),
-                Obx(() => controller.isUsersLoading.value
+                Obx(() => controller.isLoading.value
                     ? const Center(
                         child: CircularProgressIndicator(),
                       )

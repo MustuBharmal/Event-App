@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,47 +26,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   bool isNotEditable = true;
 
-  HomeController? dataController;
-
   int? followers = 0, following = 0;
   String image = '';
 
   @override
   initState() {
     super.initState();
-    dataController = Get.find<HomeController>();
 
-    firstNameController.text = dataController!.myDocument!.get('first');
-    lastNameController.text = dataController!.myDocument!.get('last');
-
-    try {
-      descriptionController.text = dataController!.myDocument!.get('desc');
-    } catch (e) {
-      descriptionController.text = '';
-    }
+    firstNameController.text = HomeController.instance.user.value!.first!;
+    lastNameController.text = HomeController.instance.user.value!.last!;
 
     try {
-      image = dataController!.myDocument!.get('image');
+      image = HomeController.instance.user.value!.image!;
     } catch (e) {
       image = '';
-    }
-
-    try {
-      locationController.text = dataController!.myDocument!.get('location');
-    } catch (e) {
-      locationController.text = '';
-    }
-
-    try {
-      followers = dataController!.myDocument!.get('followers').length;
-    } catch (e) {
-      followers = 0;
-    }
-
-    try {
-      following = dataController!.myDocument!.get('following').length;
-    } catch (e) {
-      following = 0;
     }
   }
 
@@ -215,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                           ),
-                   const SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     Container(

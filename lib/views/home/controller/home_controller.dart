@@ -1,36 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../model/event_model.dart';
 import '../../create_event/create_event.dart';
-import '../../community/community.dart';
 import '../../profile/profile.dart';
 import '../home_screen.dart';
 
 class HomeController extends GetxController {
-  FirebaseAuth auth = FirebaseAuth.instance;
   RxInt currentIndex = RxInt(0);
 
   static HomeController get instance => Get.find<HomeController>();
-  DocumentSnapshot? myDocument;
+
   RxList<EventModel> allEvents = <EventModel>[].obs;
-  var allUsers = <DocumentSnapshot>[].obs;
   var filteredUsers = <DocumentSnapshot>[].obs;
   RxList<EventModel> filteredEvents = <EventModel>[].obs;
   RxList<EventModel> joinedEvents = <EventModel>[].obs;
-
-  var isEventsLoading = false.obs;
-
-  var isMessageSending = false.obs;
+  Rx<UserModel?> user = Rx(null);
+  var isLoading = false.obs;
+  RxList<UserModel> listOfUser = RxList.empty();
   var isUser = false;
   var isJoinedUser = false.obs;
 
-  List<Widget> widgetOption = [
+  List<Widget> facultyWidgetOption = [
     const HomeScreen(),
-    const CommunityScreen(),
+    // const CommunityScreen(),
     CreateEventView(),
+    const ProfileScreen()
+  ];
+  List<Widget> studentWidgetOption = [
+    const HomeScreen(),
+    // const CommunityScreen(),
+    // CreateEventView(),
     const ProfileScreen()
   ];
 
@@ -43,7 +46,7 @@ class HomeController extends GetxController {
     currentIndex.value = index;
   }
 
-  sendMessageToFirebase({
+  /*sendMessageToFirebase({
     Map<String, dynamic>? data,
     String? lastMessage,
     String? groupId,
@@ -62,7 +65,7 @@ class HomeController extends GetxController {
     }, SetOptions(merge: true));
 
     isMessageSending(false);
-  }
+  }*/
 
   createNotification(String recUid) {
     FirebaseFirestore.instance
@@ -71,19 +74,19 @@ class HomeController extends GetxController {
         .collection('myNotifications')
         .add({
       'message': "Send you a message.",
-      'image': myDocument!.get('image'),
-      'name': myDocument!.get('first') + " " + myDocument!.get('last'),
+      'image': user.value!.image,
+      'name': user.value!.first! + " " + user.value!.last!,
       'time': DateTime.now()
     });
   }
 
-  getMyDocument() {
+  getCurrUsr() {
     FirebaseFirestore.instance
         .collection('users')
-        .doc(auth.currentUser!.uid)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .snapshots()
-        .listen((event) {
-      myDocument = event;
+        .listen((currUsr) {
+      user.value = UserModel.fromSnapshot(currUsr);
     });
   }
 
@@ -91,24 +94,26 @@ class HomeController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    getMyDocument();
+    isLoading(true);
+    getCurrUsr();
     getUsers();
     getEvents();
+    isLoading(false);
   }
 
-  var isUsersLoading = false.obs;
-
   getUsers() {
-    isUsersLoading(true);
+    listOfUser.clear();
+    List<UserModel> result = [];
     FirebaseFirestore.instance.collection('users').snapshots().listen((event) {
-      allUsers.value = event.docs;
-      filteredUsers.value.assignAll(allUsers);
-      isUsersLoading(false);
+      for (var userDoc in event.docs) {
+        result.add(UserModel.fromSnapshot(userDoc));
+      }
+      listOfUser.value = result;
     });
   }
 
   getEvents() async {
-    isEventsLoading(true);
+    isLoading(true);
 
     FirebaseFirestore.instance
         .collection('events')
@@ -125,6 +130,6 @@ class HomeController extends GetxController {
       }
     });
 
-    isEventsLoading(false);
+    isLoading(false);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems/model/user_model.dart';
 import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/model/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,7 +24,7 @@ List<String> imageList = [
 
 Widget eventsFeed() {
   return Obx(
-    () => HomeController.instance.isEventsLoading.value
+    () => HomeController.instance.isLoading.value
         ? const Center(
             child: CircularProgressIndicator(),
           )
@@ -184,22 +185,14 @@ Widget buildCard(
                 height: 50,
                 child: ListView.builder(
                   itemBuilder: (ctx, index) {
-                    DocumentSnapshot user = HomeController.instance.allUsers
-                        .firstWhere((e) => e.id == joinedUsers[index]);
-
-                    String image = '';
-
-                    try {
-                      image = user.get('image');
-                    } catch (e) {
-                      image = '';
-                    }
+                    final user = HomeController.instance.listOfUser
+                        .firstWhere((user) => user.uid == joinedUsers[index]);
 
                     return Container(
                       margin: const EdgeInsets.only(left: 10),
                       child: CircleAvatar(
                         minRadius: 13,
-                        backgroundImage: NetworkImage(image),
+                        backgroundImage: NetworkImage(user.image!),
                       ),
                     );
                   },
@@ -291,16 +284,8 @@ Widget buildCard(
 }
 
 eventItem(EventModel event) {
-  DocumentSnapshot user =
-      HomeController.instance.allUsers.firstWhere((e) => event.uid == e.id);
-  String image = '';
-
-  try {
-    image = user.get('image');
-  } catch (e) {
-    image = '';
-  }
-
+  UserModel user = HomeController.instance.listOfUser
+      .firstWhere((user) => user.uid == event.uid);
   String eventImage = '';
   try {
     List media = event.media;
@@ -347,23 +332,8 @@ eventItem(EventModel event) {
 }
 
 eventsIJoined() {
-  DocumentSnapshot myUser = HomeController.instance.allUsers
-      .firstWhere((e) => e.id == FirebaseAuth.instance.currentUser!.uid);
-
-  String userImage = '';
-  String userName = '';
-
-  try {
-    userImage = myUser.get('image');
-  } catch (e) {
-    userImage = '';
-  }
-
-  try {
-    userName = '${myUser.get('first')} ${myUser.get('last')}';
-  } catch (e) {
-    userName = '';
-  }
+  UserModel myUser = HomeController.instance.listOfUser.firstWhere(
+      (user) => user.uid == HomeController.instance.user.value!.uid);
 
   return Column(
     children: [
@@ -411,14 +381,14 @@ eventsIJoined() {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundImage: NetworkImage(userImage),
+                  backgroundImage: NetworkImage(myUser.image!),
                   radius: 20,
                 ),
                 const SizedBox(
                   width: 10,
                 ),
                 Text(
-                  userName,
+                  '${myUser.first} ${myUser.last}',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
@@ -430,7 +400,7 @@ eventsIJoined() {
               color: const Color(0xff918F8F).withOpacity(0.2),
             ),
             Obx(
-              () => HomeController.instance.isEventsLoading.value
+              () => HomeController.instance.isLoading.value
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
@@ -500,24 +470,20 @@ eventsIJoined() {
                                 height: 50,
                                 child: ListView.builder(
                                   itemBuilder: (ctx, index) {
-                                    DocumentSnapshot user = HomeController
-                                        .instance.allUsers
-                                        .firstWhere(
-                                            (e) => e.id == joinedUsers[index]);
-
-                                    String image = '';
-
-                                    try {
-                                      image = user.get('image');
-                                    } catch (e) {
-                                      image = '';
+                                    if (joinedUsers.isEmpty) {
+                                      return Container();
                                     }
+                                    final user = HomeController
+                                        .instance.listOfUser
+                                        .firstWhere((user) =>
+                                            user.uid == joinedUsers[index]);
 
                                     return Container(
                                       margin: const EdgeInsets.only(left: 10),
                                       child: CircleAvatar(
                                         minRadius: 13,
-                                        backgroundImage: NetworkImage(image),
+                                        backgroundImage:
+                                            NetworkImage(user.image!),
                                       ),
                                     );
                                   },

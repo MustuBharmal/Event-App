@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   String? uid;
   String? image;
@@ -8,21 +10,48 @@ class UserModel {
   String? userType;
   String? mobileNumber;
   String? email;
-  List<String>? joinedEvents;
-  List<String>? organizedEvents;
+  List<dynamic>? joinedEvents;
+  List<dynamic>? organizedEvents;
 
   UserModel(
-      {required this.uid,
-      required this.image,
-      required this.first,
-      required this.last,
-      required this.dob,
-      required this.gender,
-      required this.userType,
-      required this.mobileNumber,
-      required this.email,
-      required this.joinedEvents,
-      required this.organizedEvents});
+      {this.uid,
+      this.image,
+      this.first,
+      this.last,
+      this.dob,
+      this.gender,
+      this.userType,
+      this.mobileNumber,
+      this.email,
+      this.joinedEvents,
+      this.organizedEvents});
+
+  factory UserModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> data) {
+    final json = data.data()!;
+    String uid = json['uid'] ?? "";
+    String image = json['image'] ?? '';
+    String first = json['first'] ?? '';
+    String last = json['last'] ?? '';
+    String dob = json['dob'] ?? '';
+    String gender = json['gender'] ?? '';
+    String userType = json['user_type'] ?? '';
+    String mobileNumber = json['mobileNumber'] ?? '';
+    String email = json['email'] ?? '';
+    List<dynamic> joinedEvents = json['joinedEvents'] ?? [];
+    List<dynamic> organizedEvents = json['organizedEvents'] ?? [];
+    return UserModel(
+        uid: uid,
+        image: image,
+        first: first,
+        last: last,
+        dob: dob,
+        gender: gender,
+        userType: userType,
+        mobileNumber: mobileNumber,
+        email: email,
+        joinedEvents: joinedEvents,
+        organizedEvents: organizedEvents);
+  }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     String? uid = json['uid'];

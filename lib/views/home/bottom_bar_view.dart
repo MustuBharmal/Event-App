@@ -20,65 +20,61 @@ class BottomBarView extends GetView<HomeController> {
   }*/
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        bottomNavigationBar: Obx(
-          () => BottomNavigationBar(
-            onTap: controller.onItemTapped,
-            selectedItemColor: Colors.black,
-            currentIndex: controller.currentIndex.value,
-            type: BottomNavigationBarType.fixed,
-            items: [
-              BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Image.asset(
-                      controller.currentIndex.value == 0
-                          ? 'assets/Group 43 (1).png'
-                          : 'assets/Group 43.png',
-                      width: 22,
-                      height: 22,
-                    ),
-                  ),
-                  label: ''),
-              BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Image.asset(
-                      controller.currentIndex.value == 1
-                          ? 'assets/Group 18340 (1).png'
-                          : 'assets/Group 18340.png',
-                      width: 22,
-                      height: 22,
-                    ),
-                  ),
-                  label: ''),
-              BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Image.asset(
-                        controller.currentIndex.value == 2
-                            ? 'assets/Group 18528 (1).png'
-                            : 'assets/Group 18528.png',
-                        width: 22,
-                        height: 22),
-                  ),
-                  label: ''),
-              BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Image.asset(
-                      controller.currentIndex.value == 4
-                          ? 'assets/Group 18341 (1).png'
-                          : 'assets/Group 18341.png',
-                      width: 22,
-                      height: 22,
-                    ),
-                  ),
-                  label: ''),
-            ],
-          ),
-        ),
-        body:
-            Obx(() => controller.widgetOption[controller.currentIndex.value]));
+    return controller.isLoading.value
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            bottomNavigationBar: Obx(
+              () => BottomNavigationBar(
+                onTap: controller.onItemTapped,
+                selectedItemColor: Colors.black,
+                currentIndex: controller.currentIndex.value,
+                type: BottomNavigationBarType.fixed,
+                items: [
+                  BottomNavigationBarItem(
+                      icon: Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Image.asset(
+                          controller.currentIndex.value == 0
+                              ? 'assets/Group 43 (1).png'
+                              : 'assets/Group 43.png',
+                          width: 22,
+                          height: 22,
+                        ),
+                      ),
+                      label: ''),
+                  if (controller.user.value?.userType == 'faculty')
+                    BottomNavigationBarItem(
+                        icon: Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Image.asset(
+                              controller.currentIndex.value == 2
+                                  ? 'assets/Group 18528 (1).png'
+                                  : 'assets/Group 18528.png',
+                              width: 22,
+                              height: 22),
+                        ),
+                        label: ''),
+                  BottomNavigationBarItem(
+                      icon: Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Image.asset(
+                          controller.currentIndex.value == 4
+                              ? 'assets/Group 18341 (1).png'
+                              : 'assets/Group 18341.png',
+                          width: 22,
+                          height: 22,
+                        ),
+                      ),
+                      label: ''),
+                ],
+              ),
+            ),
+            body: Obx(() => controller.user.value!.userType == 'faculty'
+                ? controller.facultyWidgetOption[controller.currentIndex.value]
+                : controller
+                    .studentWidgetOption[controller.currentIndex.value]),
+          );
   }
 }
