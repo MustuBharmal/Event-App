@@ -6,26 +6,28 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../utils/app_color.dart';
-import '../check_out/check_out_screen.dart';
-import '../check_out/view_end_event_details.dart';
 import '../invite_guest/invite_guest_screen.dart';
 import 'package:intl/intl.dart';
 
+import '../registration/register_event_view.dart';
+import '../registration/view_end_event_details.dart';
+
+
 class EventPageView extends StatelessWidget {
-  final UserModel user;
-  final EventModel eventData;
+  static const String routeName = '/event-page-view';
 
-  EventPageView(this.eventData, this.user, {super.key});
-
-  List eventSavedByUsers = [];
+  const EventPageView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    HomeController.instance.toCheckUserIsEnrolled(eventData.joined);
+    EventModel event = Get.arguments;
+    UserModel user = HomeController.instance.listOfUser
+        .firstWhere((user) => user.uid == event.uid);
+    HomeController.instance.toCheckUserIsEnrolled(event.joined);
 
     String eventImage = '';
     try {
-      List media = eventData.media;
+      List media = event.media;
       Map mediaItem =
           media.firstWhere((element) => element['isImage'] == true) as Map;
       eventImage = mediaItem['url'];
@@ -33,45 +35,18 @@ class EventPageView extends StatelessWidget {
       eventImage = '';
     }
 
-    List joinedUsers = [];
-
-    try {
-      joinedUsers = eventData.joined;
-    } catch (e) {
-      joinedUsers = [];
-    }
-
-    List tags = [];
-    try {
-      tags = eventData.tags;
-    } catch (e) {
-      tags = [];
-    }
-
     String tagsCollectively = '';
 
-    for (var e in tags) {
+    for (var e in event.tags) {
       tagsCollectively += '#$e ';
     }
 
-    int likes = 0;
-
-    try {
-      likes = eventData.likes.length;
-    } catch (e) {
-      likes = 0;
-    }
     DateFormat dFormat = DateFormat("dd/MM/yyyy");
     DateTime now = DateTime.now();
-    DateTime regEndDate = dFormat.parse(eventData.rgEdDate);
-    DateTime eventEndDate = dFormat.parse(eventData.eventDay);
+    DateTime regEndDate = dFormat.parse(event.rgEdDate);
+    DateTime eventEndDate = dFormat.parse(event.eventDay);
     String dFormat2 = dFormat.format(now);
     DateTime nowTime = dFormat.parse(dFormat2);
-    try {
-      eventSavedByUsers = eventData.saves;
-    } catch (e) {
-      eventSavedByUsers = [];
-    }
     // DateTime? d = DateTime.tryParse(widget.eventData.get('date'));
 
     // String formattedDate = formatDate(widget.eventData.get('date'));
@@ -139,7 +114,7 @@ class EventPageView extends StatelessWidget {
                     child: Row(
                       children: [
                         Text(
-                          eventData.participantType,
+                          event.participantType,
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -165,7 +140,7 @@ class EventPageView extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                     child: Text(
-                      '${eventData.startTime}',
+                      '${event.startTime}',
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
@@ -176,7 +151,7 @@ class EventPageView extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    eventData.eventName,
+                    event.eventName,
                     style: TextStyle(
                         fontSize: 18,
                         color: AppColors.black,
@@ -186,7 +161,7 @@ class EventPageView extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    eventData.eventDay,
+                    event.eventDay,
                     // formattedDate,
                     style: const TextStyle(
                       fontSize: 13,
@@ -208,7 +183,7 @@ class EventPageView extends StatelessWidget {
                     width: 5,
                   ),
                   Text(
-                    '${eventData.location}',
+                    '${event.location}',
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColors.black,
@@ -242,7 +217,7 @@ class EventPageView extends StatelessWidget {
                     child: ListView.builder(
                       itemBuilder: (ctx, index) {
                         final user = HomeController.instance.listOfUser
-                            .firstWhere((e) => e.uid == joinedUsers[index]);
+                            .firstWhere((e) => e.uid == event.joined[index]);
 
                         String image = '';
 
@@ -260,7 +235,7 @@ class EventPageView extends StatelessWidget {
                           ),
                         );
                       },
-                      itemCount: joinedUsers.length,
+                      itemCount: event.joined.length,
                       scrollDirection: Axis.horizontal,
                     ),
                   ),
@@ -271,7 +246,7 @@ class EventPageView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          "${eventData.maxEntries} spots left!",
+                          "${event.maxEntries} spots left!",
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
@@ -279,7 +254,7 @@ class EventPageView extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "Reg. ends at ${eventData.rgEdDate}",
+                          "Reg. ends at ${event.rgEdDate}",
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Colors.black,
@@ -299,7 +274,7 @@ class EventPageView extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: eventData.description,
+                      text: event.description,
                       style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 13,
@@ -353,7 +328,7 @@ class EventPageView extends StatelessWidget {
                     child: Expanded(
                       child: InkWell(
                         onTap: () {
-                          Get.to(() => ViewEndEventDetails(eventData));
+                          Get.to(() => ViewEndEventDetails(event));
                         },
                         child: Container(
                           height: Get.height * 0.058,
@@ -390,7 +365,10 @@ class EventPageView extends StatelessWidget {
                     child: Expanded(
                       child: InkWell(
                         onTap: () {
-                          Get.off(() => CheckOutView(eventData));
+                          Get.toNamed(
+                            RegisterEventView.routeName,
+                            arguments: event,
+                          );
                         },
                         child: Container(
                           height: Get.height * 0.058,
@@ -486,7 +464,7 @@ class EventPageView extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    likes.toString(),
+                    event.likes.length.toString(),
                     style: TextStyle(
                       fontSize: Get.width * 0.05,
                       fontWeight: FontWeight.w500,
@@ -507,7 +485,7 @@ class EventPageView extends StatelessWidget {
                     child: Image.asset(
                       'assets/boomMark.png',
                       fit: BoxFit.contain,
-                      color: eventSavedByUsers
+                      color: event.saves
                               .contains(FirebaseAuth.instance.currentUser!.uid)
                           ? Colors.red
                           : Colors.black,

@@ -284,8 +284,6 @@ Widget buildCard(
 }
 
 eventItem(EventModel event) {
-  UserModel user = HomeController.instance.listOfUser
-      .firstWhere((user) => user.uid == event.uid);
   String eventImage = '';
   try {
     List media = event.media;
@@ -322,7 +320,7 @@ eventItem(EventModel event) {
           image: eventImage,
           eventData: event,
           func: () {
-            Get.to(() => EventPageView(event, user));
+            Get.toNamed(EventPageView.routeName, arguments: event);
           }),
       const SizedBox(
         height: 15,

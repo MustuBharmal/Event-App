@@ -35,7 +35,7 @@ Widget textField({text,TextEditingController? controller,Function? validator,Tex
   );
 }
 
-Widget myTextField({text, String? icon, obscure, TextEditingController? controller,Function? validator}) {
+Widget myTextField({hintText, String? icon, obscure, TextEditingController? controller,Function? validator}) {
   return SizedBox(
     height: 45,
     child: TextFormField(
@@ -48,7 +48,7 @@ Widget myTextField({text, String? icon, obscure, TextEditingController? controll
         hintStyle: TextStyle(
           color: AppColors.genderTextColor,
         ),
-        hintText: text,
+        hintText: hintText,
         prefixIcon: Image.asset(
           icon!,
           cacheHeight: 20,

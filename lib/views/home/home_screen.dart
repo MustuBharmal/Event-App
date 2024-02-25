@@ -6,10 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/events_feed_widget.dart';
 
-class HomeScreen extends GetView<HomeController> {
-  const HomeScreen({super.key});
+class HomeView extends GetView<HomeController> {
+  const HomeView({super.key});
 
-  static const String routeName = '/home-screen';
+  static const String routeName = '/home-view';
 
   @override
   Widget build(BuildContext context) {

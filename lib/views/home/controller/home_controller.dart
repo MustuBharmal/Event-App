@@ -25,13 +25,13 @@ class HomeController extends GetxController {
   var isJoinedUser = false.obs;
 
   List<Widget> facultyWidgetOption = [
-    const HomeScreen(),
+    const HomeView(),
     // const CommunityScreen(),
     CreateEventView(),
     const ProfileScreen()
   ];
   List<Widget> studentWidgetOption = [
-    const HomeScreen(),
+    const HomeView(),
     // const CommunityScreen(),
     // CreateEventView(),
     const ProfileScreen()

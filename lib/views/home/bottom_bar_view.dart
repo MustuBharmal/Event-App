@@ -71,7 +71,7 @@ class BottomBarView extends GetView<HomeController> {
                 ],
               ),
             ),
-            body: Obx(() => controller.user.value!.userType == 'faculty'
+            body: Obx(() => controller.user.value?.userType == 'faculty'
                 ? controller.facultyWidgetOption[controller.currentIndex.value]
                 : controller
                     .studentWidgetOption[controller.currentIndex.value]),

@@ -135,7 +135,7 @@ class LoginView extends GetView<AuthController> {
               myTextField(
                   obscure: false,
                   icon: 'assets/mail.png',
-                  text: 'sarasmith12@gmail.com',
+                  hintText: 'sarasmith12@gmail.com',
                   validator: (String input) {
                     if (input.isEmpty) {
                       Get.snackbar('Warning', 'Email is required.',
@@ -158,7 +158,7 @@ class LoginView extends GetView<AuthController> {
               myTextField(
                   obscure: true,
                   icon: 'assets/lock.png',
-                  text: 'password',
+                  hintText: 'password',
                   validator: (String input) {
                     if (input.isEmpty) {
                       Get.snackbar('Warning', 'Password is required.',
@@ -187,7 +187,7 @@ class LoginView extends GetView<AuthController> {
                             myTextField(
                                 obscure: false,
                                 icon: 'assets/lock.png',
-                                text: 'enter your email...',
+                                hintText: 'enter your email...',
                                 controller: controller.forgetEmailController),
                             const SizedBox(
                               height: 10,
@@ -284,7 +284,7 @@ class LoginView extends GetView<AuthController> {
         myTextField(
             obscure: false,
             icon: 'assets/mail.png',
-            text: 'Email',
+            hintText: 'Email',
             validator: (String input) {
               if (input.isEmpty) {
                 Get.snackbar('Warning', 'Email is required.',
@@ -305,7 +305,7 @@ class LoginView extends GetView<AuthController> {
         myTextField(
             obscure: true,
             icon: 'assets/lock.png',
-            text: 'password',
+            hintText: 'password',
             validator: (String input) {
               if (input.isEmpty) {
                 Get.snackbar('Warning', 'Password is required.',
@@ -326,7 +326,7 @@ class LoginView extends GetView<AuthController> {
         myTextField(
             obscure: false,
             icon: 'assets/lock.png',
-            text: 'Re-enter password',
+            hintText: 'Re-enter password',
             validator: (input) {
               if (input != controller.passwordController.text.trim()) {
                 Get.snackbar(

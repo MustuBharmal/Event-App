@@ -126,7 +126,7 @@ class CreateEventView extends GetView<CreateEventController> {
                     child: myTextField(
                         obscure: false,
                         icon: 'assets/4DotIcon.png',
-                        text: 'No of Participants',
+                        hintText: 'No of Participants',
                         controller: controller.noOfParticipantController,
                         validator: (String input) {
                           if (input.isEmpty) {
@@ -247,7 +247,7 @@ class CreateEventView extends GetView<CreateEventController> {
                 myTextField(
                     obscure: false,
                     icon: 'assets/4DotIcon.png',
-                    text: 'Event Name',
+                    hintText: 'Event Name',
                     controller: controller.eventNameController,
                     validator: (String input) {
                       if (input.isEmpty) {
@@ -272,7 +272,7 @@ class CreateEventView extends GetView<CreateEventController> {
                 myTextField(
                     obscure: false,
                     icon: 'assets/location.png',
-                    text: 'Location',
+                    hintText: 'Location',
                     controller: controller.locationController,
                     validator: (String input) {
                       if (input.isEmpty) {
