@@ -1,8 +1,14 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../../model/user_model.dart';
+import '../../auth/controller/auth_controller.dart';
+import '../../home/bottom_bar_view.dart';
 
 class ProfileController extends GetxController {
   TextEditingController firstNameController = TextEditingController();
@@ -12,6 +18,7 @@ class ProfileController extends GetxController {
   TextEditingController dob = TextEditingController();
   File? profileImage;
   int selectedRadio = 0;
+  RxBool isLoading = RxBool(false);
 
   void setSelectedRadio(int val) {
     selectedRadio = val;
@@ -28,6 +35,40 @@ class ProfileController extends GetxController {
     if (picked != null) {
       dob.text = '${picked.day}-${picked.month}-${picked.year}';
     }
+  }
+
+  Future<void> addProfile() async {
+    isLoading(true);
+    try {
+      String imageUrl = await AuthController.instance
+          .uploadImageToFirebaseStorage(profileImage!);
+      UserModel userModel = UserModel(
+        uid: FirebaseAuth.instance.currentUser!.uid,
+        image: imageUrl,
+        first: firstNameController.text.trim(),
+        last: lastNameController.text.trim(),
+        dob: dob.text.trim(),
+        gender: selectedRadio == 0 ? "Male" : "Female",
+        userType: 'student',
+        mobileNumber: mobileNumberController.text.trim(),
+        joinedEvents: [],
+        organizedEvents: [],
+        email: emailController.text,
+      );
+      print(userModel.toJson());
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .set(userModel.toJson())
+          .then((value) {
+        Get.offAllNamed(BottomBarView.routeName);
+      });
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    }
+    isLoading(false);
   }
 
   imagePickDialog() {

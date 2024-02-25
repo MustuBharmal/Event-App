@@ -126,7 +126,7 @@ class AddProfileScreen extends GetView<ProfileController> {
                 textField(
                     text: 'Email',
                     inputType: TextInputType.emailAddress,
-                    controller: controller.mobileNumberController,
+                    controller: controller.emailController,
                     validator: (String input) {
                       if (controller.emailController.text.isEmpty) {
                         Get.snackbar('Warning', 'Email is required.',
@@ -202,8 +202,7 @@ class AddProfileScreen extends GetView<ProfileController> {
                     ),
                   ],
                 ),
-                Obx(() => AuthController
-                        .instance.isProfileInformationLoading.value
+                Obx(() => controller.isLoading.value
                     ? const Center(
                         child: CircularProgressIndicator(),
                       )
@@ -225,40 +224,13 @@ class AddProfileScreen extends GetView<ProfileController> {
                             if (!formKey.currentState!.validate()) {
                               return null;
                             }
-
                             if (controller.profileImage == null) {
                               Get.snackbar('Warning', "Image is required.",
-                                  colorText: Colors.white,
-                                  backgroundColor: Colors.blue);
-                              return null;
+                                  colorText: Colors.white, backgroundColor: Colors.blue);
+                              return '';
                             }
-
-                            AuthController.instance
-                                .isProfileInformationLoading(true);
-
-                            String imageUrl = await AuthController.instance
-                                .uploadImageToFirebaseStorage(
-                                    controller.profileImage!);
-                            UserModel userModel = UserModel(
-                              uid: FirebaseAuth.instance.currentUser!.uid,
-                              image: imageUrl,
-                              first: controller.firstNameController.text.trim(),
-                              last: controller.lastNameController.text.trim(),
-                              dob: controller.dob.text.trim(),
-                              gender: controller.selectedRadio == 0
-                                  ? "Male"
-                                  : "Female",
-                              userType: 'student',
-                              mobileNumber:
-                                  controller.mobileNumberController.text.trim(),
-                              joinedEvents: [],
-                              organizedEvents: [],
-                              email: controller.emailController.text,
-                            );
-                            AuthController.instance
-                                .uploadProfileData(userModel);
-                          },
-                        ),
+                            controller.addProfile();
+                          }),
                       )),
                 SizedBox(
                   height: Get.height * 0.03,

@@ -24,18 +24,30 @@ class UserModel {
       required this.joinedEvents,
       required this.organizedEvents});
 
-  UserModel.fromJson(Map<String, dynamic> json) {
-    uid = json['uid'];
-    image = json['image'];
-    first = json['first'];
-    last = json['last'];
-    dob = json['dob'];
-    gender = json['gender'];
-    userType = json['user_type'];
-    mobileNumber = json['mobileNumber'];
-    email = json['email'];
-    joinedEvents = json['joinedEvents'];
-    organizedEvents = json['organizedEvents'];
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    String? uid = json['uid'];
+    String? image = json['image'];
+    String? first = json['first'];
+    String? last = json['last'];
+    String? dob = json['dob'];
+    String? gender = json['gender'];
+    String? userType = json['user_type'];
+    String? mobileNumber = json['mobileNumber'];
+    String? email = json['email'];
+    List<String> joinedEvents = json['joinedEvents'];
+    List<String> organizedEvents = json['organizedEvents'];
+    return UserModel(
+        uid: uid,
+        image: image,
+        first: first,
+        last: last,
+        dob: dob,
+        gender: gender,
+        userType: userType,
+        mobileNumber: mobileNumber,
+        email: email,
+        joinedEvents: joinedEvents,
+        organizedEvents: organizedEvents);
   }
 
   Map<String, dynamic> toJson() {

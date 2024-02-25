@@ -1,8 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/model/user_model.dart';
 import 'package:ems/views/onboarding_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -140,16 +137,4 @@ class AuthController extends GetxController {
     return imageUrl;
   }
 
-  uploadProfileData(UserModel userModel) {
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .update(userModel.toJson())
-        .then((value) {
-      isProfileInformationLoading(false);
-      Get.offAll(() => const BottomBarView());
-    });
-  }
 }

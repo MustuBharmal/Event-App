@@ -224,33 +224,6 @@ class CreateEventController extends GetxController {
     Get.back();
   }
 
-  getVideoDialog(ImageSource source) async {
-    final ImagePicker _picker = ImagePicker();
-    // Pick an image
-    final XFile? video = await _picker.pickVideo(
-      source: source,
-    );
-
-    if (video != null) {
-      // media.add(File(image.path));
-
-      Uint8List? uInt8list = await VideoThumbnail.thumbnailData(
-        video: video.path,
-        imageFormat: ImageFormat.JPEG,
-        quality: 75,
-      );
-
-      media.add(EventMediaModel(
-          thumbnail: uInt8list!, video: File(video.path), isVideo: true));
-      // thumbnail.add(uint8list!);
-      //
-      // isImage.add(false);
-    }
-
-    // print(thumbnail.first.path);
-
-    Get.back();
-  }
 
   void imageDialog(BuildContext context) {
     showDialog(
