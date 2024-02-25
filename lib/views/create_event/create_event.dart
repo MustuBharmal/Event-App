@@ -1,7 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:ems/views/create_event/controller/create_event_controller.dart';
-import 'package:ems/model/event_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -121,6 +120,28 @@ class CreateEventView extends GetView<CreateEventController> {
                 SizedBox(
                   height: Get.height * 0.03,
                 ),
+                Obx(
+                  () => Visibility(
+                    visible: controller.eventType.value == 'Group',
+                    child: myTextField(
+                        obscure: false,
+                        icon: 'assets/4DotIcon.png',
+                        text: 'No of Participants',
+                        controller: controller.noOfParticipantController,
+                        validator: (String input) {
+                          if (input.isEmpty) {
+                            Get.snackbar('Opps', "No of Participants Required",
+                                colorText: Colors.white,
+                                backgroundColor: Colors.blue);
+                            return '';
+                          }
+                          return null;
+                        }),
+                  ),
+                ),
+                SizedBox(
+                  height: Get.height * 0.03,
+                ),
                 Container(
                   height: Get.width * 0.6,
                   width: Get.width * 0.9,
@@ -166,109 +187,60 @@ class CreateEventView extends GetView<CreateEventController> {
                     ),
                   ),
                 ),
-                controller.media.isEmpty
-                    ? Container()
-                    : const SizedBox(
-                        height: 20,
-                      ),
-                controller.media.isEmpty
-                    ? Container()
-                    : SizedBox(
-                        width: Get.width,
-                        height: Get.width * 0.3,
-                        child: ListView.builder(
-                            itemBuilder: (ctx, i) {
-                              return controller.media[i].isVideo!
-                                  //!isImage[i]
-                                  ? Container(
-                                      width: Get.width * 0.3,
-                                      height: Get.width * 0.3,
-                                      margin: const EdgeInsets.only(
-                                          right: 15, bottom: 10, top: 10),
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image: MemoryImage(
-                                                controller.media[i].thumbnail!),
-                                            fit: BoxFit.fill),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Stack(
-                                        children: [
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5),
-                                                child: CircleAvatar(
-                                                  child: IconButton(
-                                                    onPressed: () {
-                                                      controller.media
-                                                          .removeAt(i);
-                                                      // media.removeAt(i);
-                                                      // isImage.removeAt(i);
-                                                      // thumbnail.removeAt(i);
-                                                    },
-                                                    icon:
-                                                        const Icon(Icons.close),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
+                Obx(
+                  () => controller.media.isEmpty
+                      ? Container()
+                      : const SizedBox(
+                          height: 20,
+                        ),
+                ),
+                Obx(
+                  () => controller.media.isEmpty
+                      ? Container()
+                      : SizedBox(
+                          width: Get.width,
+                          height: Get.width * 0.3,
+                          child: ListView.builder(
+                              itemBuilder: (ctx, i) {
+                                return Container(
+                                  width: Get.width * 0.3,
+                                  height: Get.width * 0.3,
+                                  margin: const EdgeInsets.only(
+                                      right: 15, bottom: 10, top: 10),
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: FileImage(
+                                            controller.media[i].image!),
+                                        fit: BoxFit.fill),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(5),
+                                        child: CircleAvatar(
+                                          child: IconButton(
+                                            onPressed: () {
+                                              // obx
+                                              controller.media.removeAt(i);
+                                              // isImage.removeAt(i);
+                                              // thumbnail.removeAt(i);
+                                            },
+                                            icon: const Icon(Icons.close),
                                           ),
-                                          const Align(
-                                            alignment: Alignment.center,
-                                            child: Icon(
-                                              Icons.slow_motion_video_rounded,
-                                              color: Colors.white,
-                                              size: 40,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  : Container(
-                                      width: Get.width * 0.3,
-                                      height: Get.width * 0.3,
-                                      margin: const EdgeInsets.only(
-                                          right: 15, bottom: 10, top: 10),
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image: FileImage(
-                                                controller.media[i].image!),
-                                            fit: BoxFit.fill),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(5),
-                                            child: CircleAvatar(
-                                              child: IconButton(
-                                                onPressed: () {
-                                                  /*obx
-                                                  media.removeAt(i);*/
-                                                  // isImage.removeAt(i);
-                                                  // thumbnail.removeAt(i);
-                                                },
-                                                icon: const Icon(Icons.close),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                            },
-                            itemCount: controller.media.length,
-                            scrollDirection: Axis.horizontal),
-                      ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                              itemCount: controller.media.length,
+                              scrollDirection: Axis.horizontal),
+                        ),
+                ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -394,7 +366,9 @@ class CreateEventView extends GetView<CreateEventController> {
                         text: 'Max Entries',
                         controller: controller.maxEntries,
                         type: TextInputType.number,
-                        onPress: () {},
+                        onPress: () {
+                          print('max entries');
+                        },
                         validator: (String input) {
                           if (input.isEmpty) {
                             Get.snackbar('Opps', "Entries is required.",
@@ -414,6 +388,9 @@ class CreateEventView extends GetView<CreateEventController> {
                     text: 'Enter tags that will go with event.',
                     width: double.infinity,
                     controller: controller.tagsController,
+                    onPress: () {
+                      print('tags');
+                    },
                     type: TextInputType.text,
                     validator: (String input) {
                       if (input.isEmpty) {
@@ -800,23 +777,26 @@ class CreateEventView extends GetView<CreateEventController> {
                     : SizedBox(
                         height: 42,
                         width: double.infinity,
-                        child: elevatedButton(
-                            onPress: () async {
-                              if (!formKey.currentState!.validate()) {
-                                return;
-                              }
+                        child: controller.isCreatingEvent.value
+                            ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : elevatedButton(
+                                onPress: () async {
+                                  if (!formKey.currentState!.validate()) {
+                                    return;
+                                  }
 
-                              if (controller.media.isEmpty) {
-                                Get.snackbar('Opps', "Media is required.",
-                                    colorText: Colors.white,
-                                    backgroundColor: Colors.blue);
+                                  if (controller.media.isEmpty) {
+                                    Get.snackbar('Opps', "Media is required.",
+                                        colorText: Colors.white,
+                                        backgroundColor: Colors.blue);
 
-                                return;
-                              }
-                              controller.createEvent();
-
-                            },
-                            text: 'Create Event'),
+                                    return;
+                                  }
+                                  controller.createEvent();
+                                },
+                                text: 'Create Event'),
                       )),
                 SizedBox(
                   height: Get.height * 0.03,

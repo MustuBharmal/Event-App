@@ -21,11 +21,13 @@ class EventModel {
   final List<String>? inviter;
   final List<String> likes;
   final List<String> saves;
+  final int? noOfParticipant;
 
   EventModel({
     this.id,
     required this.participantType,
     required this.eventType,
+    required this.noOfParticipant,
     required this.eventName,
     required this.location,
     required this.eventDay,
@@ -48,6 +50,7 @@ class EventModel {
   factory EventModel.fromJson(Map<String, dynamic> json) {
     String participantType = json['event'];
     String eventType = json['event_type'];
+    int? noOfParticipant = json['noOfParticipant'];
     String eventName = json['event_name'];
     String location = json['location'];
     String eventDay = json['date'];
@@ -68,6 +71,7 @@ class EventModel {
     return EventModel(
         participantType: participantType,
         eventType: eventType,
+        noOfParticipant: noOfParticipant,
         eventName: eventName,
         location: location,
         eventDay: eventDay,
@@ -93,6 +97,7 @@ class EventModel {
       id: json.id,
       participantType: data['event'],
       eventType: data['event_type'],
+      noOfParticipant: data['noOfParticipant'],
       eventName: data['event_name'],
       location: data['location'],
       eventDay: data['date'],
@@ -117,6 +122,7 @@ class EventModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['event'] = participantType;
     data['event_type'] = eventType;
+    data['noOfParticipant'] = noOfParticipant;
     data['event_name'] = eventName;
     data['location'] = location;
     data['date'] = eventDay;
