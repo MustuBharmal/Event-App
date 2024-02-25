@@ -203,7 +203,6 @@ class CreateEventController extends GetxController {
       initialTime: TimeOfDay.now(),
     );
     if (picked != null) {
-      print(endTime.hourOfPeriod);
       endTime = picked;
       endTimeController.text =
           '${endTime.hourOfPeriod > 9 ? "" : "0"}${endTime.hour > 9 ? "" : "0"}${endTime.hour > 12 ? '${endTime.hour - 12}' : endTime.hour}:${endTime.minute > 9 ? endTime.minute : '0${endTime.minute}'} ${endTime.hour >= 12 ? 'PM' : 'AM'}';
@@ -253,27 +252,6 @@ class CreateEventController extends GetxController {
     Get.back();
   }
 
-  // void mediaDialog(BuildContext context) {
-  //   showDialog(
-  //       builder: (BuildContext context) {
-  //         return AlertDialog(
-  //           title: const Text("Select Media Type"),
-  //           content: Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //             children: [
-  //               IconButton(
-  //                   onPressed: () {
-  //                     Navigator.pop(context);
-  //                     imageDialog(context, true);
-  //                   },
-  //                   icon: const Icon(Icons.image)),
-  //             ],
-  //           ),
-  //         );
-  //       },
-  //       context: context);
-  // }
-
   void imageDialog(BuildContext context) {
     showDialog(
         builder: (BuildContext context) {
@@ -299,5 +277,3 @@ class CreateEventController extends GetxController {
         context: context);
   }
 }
-
-// controller.isCreatingEvent(true);

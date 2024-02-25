@@ -263,7 +263,7 @@ class LoginView extends GetView<AuthController> {
               socialAppsIcons(
                   text: 'assets/fb.png',
                   onPressed: () {
-                    Get.to(() => const AddProfileScreen());
+                    Get.to(() => AddProfileScreen());
                   }),
               socialAppsIcons(
                   text: 'assets/google.png',

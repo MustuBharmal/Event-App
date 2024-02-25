@@ -1,115 +1,19 @@
-import 'dart:io';
-
 import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:ems/model/user_model.dart';
+import 'package:ems/views/profile/controller/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../utils/app_color.dart';
 import '../../widgets/my_widgets.dart';
 
-class AddProfileScreen extends StatefulWidget {
-  const AddProfileScreen({super.key});
+class AddProfileScreen extends GetView<ProfileController> {
 
-  @override
-  _AddProfileScreenState createState() => _AddProfileScreenState();
-}
+  static const String routeName = '/add-profile-screen';
+  AddProfileScreen({super.key});
 
-class _AddProfileScreenState extends State<AddProfileScreen> {
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      initialDatePickerMode: DatePickerMode.day,
-      firstDate: DateTime(1950),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      dob.text = '${picked.day}-${picked.month}-${picked.year}';
-    }
-  }
-
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController mobileNumberController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController dob = TextEditingController();
-
-  imagePickDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Choose Image Source'),
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              InkWell(
-                onTap: () async {
-                  final ImagePicker _picker = ImagePicker();
-                  final XFile? image =
-                      await _picker.pickImage(source: ImageSource.camera);
-                  if (image != null) {
-                    profileImage = File(image.path);
-                    setState(() {});
-                    Navigator.pop(context);
-                  }
-                },
-                child: const Icon(
-                  Icons.camera_alt,
-                  size: 30,
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              InkWell(
-                onTap: () async {
-                  final ImagePicker _picker = ImagePicker();
-                  final XFile? image = await _picker.pickImage(
-                    source: ImageSource.gallery,
-                  );
-                  if (image != null) {
-                    profileImage = File(image.path);
-                    setState(() {});
-                    Navigator.pop(context);
-                  }
-                },
-                child: Image.asset(
-                  'assets/gallary.png',
-                  width: 25,
-                  height: 25,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  File? profileImage;
-
-  void setSelectedRadio(int val) {
-    setState(() {
-      selectedRadio = val;
-    });
-  }
-
-  int selectedRadio = 0;
-
-  AuthController? authController;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    authController = Get.find<AuthController>();
-  }
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +30,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                 ),
                 InkWell(
                   onTap: () {
-                    imagePickDialog();
+                    controller.imagePickDialog();
                   },
                   child: Container(
                     width: 120,
@@ -153,7 +57,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(70),
                           ),
-                          child: profileImage == null
+                          child: controller.profileImage == null
                               ? const CircleAvatar(
                                   radius: 56,
                                   backgroundColor: Colors.white,
@@ -167,7 +71,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                                   radius: 56,
                                   backgroundColor: Colors.white,
                                   backgroundImage: FileImage(
-                                    profileImage!,
+                                    controller.profileImage!,
                                   ),
                                 ),
                         ),
@@ -180,9 +84,9 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                 ),
                 textField(
                     text: 'First Name',
-                    controller: firstNameController,
+                    controller: controller.firstNameController,
                     validator: (String input) {
-                      if (firstNameController.text.isEmpty) {
+                      if (controller.firstNameController.text.isEmpty) {
                         Get.snackbar('Warning', 'First Name is required.',
                             colorText: Colors.white,
                             backgroundColor: Colors.blue);
@@ -191,9 +95,9 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                     }),
                 textField(
                     text: 'Last Name',
-                    controller: lastNameController,
+                    controller: controller.lastNameController,
                     validator: (String input) {
-                      if (lastNameController.text.isEmpty) {
+                      if (controller.lastNameController.text.isEmpty) {
                         Get.snackbar('Warning', 'Last Name is required.',
                             colorText: Colors.white,
                             backgroundColor: Colors.blue);
@@ -203,16 +107,16 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                 textField(
                     text: 'Mobile Number',
                     inputType: TextInputType.phone,
-                    controller: mobileNumberController,
+                    controller: controller.mobileNumberController,
                     validator: (String input) {
-                      if (mobileNumberController.text.isEmpty) {
+                      if (controller.mobileNumberController.text.isEmpty) {
                         Get.snackbar('Warning', 'First Name is required.',
                             colorText: Colors.white,
                             backgroundColor: Colors.blue);
                         return '';
                       }
 
-                      if (mobileNumberController.text.length < 10) {
+                      if (controller.mobileNumberController.text.length < 10) {
                         Get.snackbar('Warning', 'Enter valid phone number.',
                             colorText: Colors.white,
                             backgroundColor: Colors.blue);
@@ -222,16 +126,16 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                 textField(
                     text: 'Email',
                     inputType: TextInputType.emailAddress,
-                    controller: mobileNumberController,
+                    controller: controller.mobileNumberController,
                     validator: (String input) {
-                      if (emailController.text.isEmpty) {
+                      if (controller.emailController.text.isEmpty) {
                         Get.snackbar('Warning', 'Email is required.',
                             colorText: Colors.white,
                             backgroundColor: Colors.blue);
                         return '';
                       }
 
-                      if (emailController.text.length < 5) {
+                      if (controller.emailController.text.length < 5) {
                         Get.snackbar('Warning', 'Enter valid email address.',
                             colorText: Colors.white,
                             backgroundColor: Colors.blue);
@@ -241,12 +145,12 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                 SizedBox(
                   height: 48,
                   child: TextField(
-                    controller: dob,
+                    controller: controller.dob,
                     // enabled: false,
                     onTap: () {
                       FocusScope.of(context).requestFocus(FocusNode());
 
-                      _selectDate(context);
+                      controller.selectDate(context);
                     },
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.only(top: 10, left: 10),
@@ -274,9 +178,9 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                         ),
                       ),
                       value: 0,
-                      groupValue: selectedRadio,
+                      groupValue: controller.selectedRadio,
                       onChanged: (int? val) {
-                        setSelectedRadio(val!);
+                        controller.setSelectedRadio(val!);
                       },
                     )),
                     Expanded(
@@ -290,15 +194,16 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                           ),
                         ),
                         value: 1,
-                        groupValue: selectedRadio,
+                        groupValue: controller.selectedRadio,
                         onChanged: (int? val) {
-                          setSelectedRadio(val!);
+                          controller.setSelectedRadio(val!);
                         },
                       ),
                     ),
                   ],
                 ),
-                Obx(() => authController!.isProfileInformationLoading.value
+                Obx(() => AuthController
+                        .instance.isProfileInformationLoading.value
                     ? const Center(
                         child: CircularProgressIndicator(),
                       )
@@ -309,7 +214,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                         child: elevatedButton(
                           text: 'Save',
                           onPress: () async {
-                            if (dob.text.isEmpty) {
+                            if (controller.dob.text.isEmpty) {
                               Get.snackbar(
                                   'Warning', "Date of birth is required.",
                                   colorText: Colors.white,
@@ -321,31 +226,37 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                               return null;
                             }
 
-                            if (profileImage == null) {
+                            if (controller.profileImage == null) {
                               Get.snackbar('Warning', "Image is required.",
                                   colorText: Colors.white,
                                   backgroundColor: Colors.blue);
                               return null;
                             }
 
-                            authController!.isProfileInformationLoading(true);
+                            AuthController.instance
+                                .isProfileInformationLoading(true);
 
-                            String imageUrl = await authController!
-                                .uploadImageToFirebaseStorage(profileImage!);
+                            String imageUrl = await AuthController.instance
+                                .uploadImageToFirebaseStorage(
+                                    controller.profileImage!);
                             UserModel userModel = UserModel(
                               uid: FirebaseAuth.instance.currentUser!.uid,
                               image: imageUrl,
-                              first: firstNameController.text.trim(),
-                              last: lastNameController.text.trim(),
-                              dob: dob.text.trim(),
-                              gender: selectedRadio == 0 ? "Male" : "Female",
+                              first: controller.firstNameController.text.trim(),
+                              last: controller.lastNameController.text.trim(),
+                              dob: controller.dob.text.trim(),
+                              gender: controller.selectedRadio == 0
+                                  ? "Male"
+                                  : "Female",
                               userType: 'student',
-                              mobileNumber: mobileNumberController.text.trim(),
+                              mobileNumber:
+                                  controller.mobileNumberController.text.trim(),
                               joinedEvents: [],
                               organizedEvents: [],
-                              email: emailController.text,
+                              email: controller.emailController.text,
                             );
-                            authController!.uploadProfileData(userModel);
+                            AuthController.instance
+                                .uploadProfileData(userModel);
                           },
                         ),
                       )),
