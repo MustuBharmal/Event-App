@@ -1,3 +1,4 @@
+import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,12 +15,12 @@ Widget customAppBar(context) {
           width: Get.width * 0.30,
           height: Get.height * 0.025,
           child: myText(
-            text: 'Atmiya Uni...',
+            text: 'Atmiya University',
             style: TextStyle(
-              color: AppColors.blue,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+                color: AppColors.blue,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                overflow: TextOverflow.ellipsis),
           ),
         ),
         const Spacer(),
@@ -36,15 +37,20 @@ Widget customAppBar(context) {
         SizedBox(
           width: Get.width * 0.04,
         ),
-        InkWell(
-          onTap: () {},
-          child: SizedBox(
-            width: Get.width * 0.06,
-            height: Get.height * 0.02,
-            child: Image.asset(
-              'assets/menu.png',
-            ),
-          ),
+        Obx(
+          () => HomeController.instance.isLogoutLoading.value
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : InkWell(
+                  onTap: () {
+                    HomeController.instance.logout();
+                  },
+                  child: SizedBox(
+                      width: Get.width * 0.06,
+                      height: Get.height * 0.02,
+                      child: const Icon(Icons.logout)),
+                ),
         ),
       ],
     ),

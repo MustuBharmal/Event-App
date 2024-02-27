@@ -236,10 +236,7 @@ class LoginView extends GetView<AuthController> {
                         return;
                       }
 
-                      controller.login(
-                        email: controller.emailController.text.trim(),
-                        password: controller.passwordController.text.trim(),
-                      );
+                      controller.login();
                     },
                   ),
                 )),

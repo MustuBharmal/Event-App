@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/model/user_model.dart';
+import 'package:ems/views/auth/login_signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,14 +22,16 @@ class HomeController extends GetxController {
   Rx<UserModel?> user = Rx(null);
   var isLoading = false.obs;
   RxList<UserModel> listOfUser = RxList.empty();
-  var isUser = false;
+  RxBool isUser = RxBool(false);
   var isJoinedUser = false.obs;
+  RxBool isLogoutLoading = RxBool(false);
 
   List<Widget> facultyWidgetOption = [
     const HomeView(),
     // const CommunityScreen(),
-    CreateEventView(),
-    const ProfileScreen()
+
+    const ProfileScreen(),
+    CreateEventView()
   ];
   List<Widget> studentWidgetOption = [
     const HomeView(),
@@ -67,6 +70,18 @@ class HomeController extends GetxController {
     isMessageSending(false);
   }*/
 
+  logout() {
+    isLogoutLoading(true);
+    try {
+      FirebaseAuth.instance.signOut();
+      Get.offAllNamed(LoginView.routeName);
+      user.value = null;
+    } catch (e) {
+      Get.snackbar('Error', '$e');
+    }
+    isLogoutLoading(false);
+  }
+
   createNotification(String recUid) {
     FirebaseFirestore.instance
         .collection('notifications')
@@ -81,27 +96,32 @@ class HomeController extends GetxController {
   }
 
   getCurrUsr() {
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .snapshots()
-        .listen((currUsr) {
-      user.value = UserModel.fromSnapshot(currUsr);
-    });
+    isLoading(true);
+    try {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .snapshots()
+          .listen((currUsr) {
+        user.value = UserModel.fromSnapshot(currUsr);
+      });
+    } catch (e) {
+      print('$e');
+    }
+    isLoading(false);
   }
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    isLoading(true);
     getCurrUsr();
     getUsers();
     getEvents();
-    isLoading(false);
   }
 
   getUsers() {
+    isLoading(true);
     listOfUser.clear();
     List<UserModel> result = [];
     FirebaseFirestore.instance.collection('users').snapshots().listen((event) {
@@ -110,11 +130,11 @@ class HomeController extends GetxController {
       }
       listOfUser.value = result;
     });
+    isLoading(false);
   }
 
   getEvents() async {
     isLoading(true);
-
     FirebaseFirestore.instance
         .collection('events')
         .snapshots()
@@ -129,7 +149,6 @@ class HomeController extends GetxController {
         }).toList();
       }
     });
-
     isLoading(false);
   }
 }

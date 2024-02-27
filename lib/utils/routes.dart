@@ -2,7 +2,6 @@ import 'package:ems/views/create_event/bindings/create_event_binding.dart';
 import 'package:ems/views/event_page/event_page_view.dart';
 import 'package:ems/views/home/bottom_bar_view.dart';
 import 'package:ems/views/home/bindings/home_binding.dart';
-import 'package:ems/views/home/home_screen.dart';
 import 'package:ems/views/profile/add_profile.dart';
 import 'package:ems/views/profile/bindings/profile_binding.dart';
 import 'package:ems/views/registration/binding/registration_binding.dart';
@@ -23,20 +22,15 @@ class AppRoutes {
         page: () => const BottomBarView(),
         bindings: [HomeBinding(), CreateEventBinding()]),
     GetPage(
-      name: HomeView.routeName,
-      page: () => const HomeView(),
-    ),
-    GetPage(
-        name: AddProfileScreen.routeName,
-        page: () => AddProfileScreen(),
-        binding: ProfileBinding(),
+      name: AddProfileScreen.routeName,
+      page: () => AddProfileScreen(),
+      binding: ProfileBinding(),
     ),
     GetPage(name: EventPageView.routeName, page: () => const EventPageView()),
     GetPage(
-        name: RegisterEventView.routeName,
-        page: () => const RegisterEventView(),
-        binding: RegistrationBinding(),
+      name: RegisterEventView.routeName,
+      page: () => RegisterEventView(),
+      binding: RegistrationBinding(),
     ),
-
   ];
 }

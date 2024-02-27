@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/model/user_model.dart';
 import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/model/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,19 +22,13 @@ List<String> imageList = [
 ];
 
 Widget eventsFeed() {
-  return Obx(
-    () => HomeController.instance.isLoading.value
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (ctx, i) {
-              return eventItem(HomeController.instance.allEvents[i]);
-            },
-            itemCount: HomeController.instance.allEvents.length,
-          ),
+  return ListView.builder(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    itemBuilder: (ctx, i) {
+      return eventItem(HomeController.instance.allEvents[i]);
+    },
+    itemCount: HomeController.instance.allEvents.length,
   );
 }
 
@@ -330,175 +323,164 @@ eventItem(EventModel event) {
 }
 
 eventsIJoined() {
-  UserModel myUser = HomeController.instance.listOfUser.firstWhere(
-      (user) => user.uid == HomeController.instance.user.value!.uid);
-
-  return Column(
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            padding: const EdgeInsets.all(10),
-            child: Image.asset(
-              'assets/doneCircle.png',
-              fit: BoxFit.cover,
-              color: AppColors.blue,
-            ),
-          ),
-          const SizedBox(
-            width: 15,
-          ),
-          const Text(
-            'You\'re all caught up!',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-      SizedBox(
-        height: Get.height * 0.015,
-      ),
-      Container(
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 1), // changes position of shadow
-          ),
-        ], color: Colors.white, borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.all(10),
-        width: double.infinity,
-        child: Column(
+  return HomeController.instance.isLoading.value
+      ? const Center(
+          child: CircularProgressIndicator(),
+        )
+      : Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(myUser.image!),
-                  radius: 20,
+                Container(
+                  width: 50,
+                  height: 50,
+                  padding: const EdgeInsets.all(10),
+                  child: Image.asset(
+                    'assets/doneCircle.png',
+                    fit: BoxFit.cover,
+                    color: AppColors.blue,
+                  ),
                 ),
                 const SizedBox(
-                  width: 10,
+                  width: 15,
                 ),
-                Text(
-                  '${myUser.first} ${myUser.last}',
-                  style: const TextStyle(
+                const Text(
+                  'You\'re all caught up!',
+                  style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
-            Divider(
-              color: const Color(0xff918F8F).withOpacity(0.2),
+            SizedBox(
+              height: Get.height * 0.015,
             ),
-            Obx(
-              () => HomeController.instance.isLoading.value
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ListView.builder(
-                      itemCount: HomeController.instance.joinedEvents.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, i) {
-                        String name =
-                            HomeController.instance.joinedEvents[i].eventName;
-
-                        String date =
-                            HomeController.instance.joinedEvents[i].eventDay;
-
-                        date = date.split('/')[0] + '-' + date.split('/')[1];
-
-                        List joinedUsers = [];
-
-                        try {
-                          joinedUsers =
-                              HomeController.instance.joinedEvents[i].joined;
-                        } catch (e) {
-                          joinedUsers = [];
-                        }
-
-                        return Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 41,
-                                    height: 24,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(
-                                        color: const Color(0xffADD8E6),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      date,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.black,
-                                      ),
+            Container(
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 1,
+                  blurRadius: 10,
+                  offset: const Offset(0, 1), // changes position of shadow
+                ),
+              ], color: Colors.white, borderRadius: BorderRadius.circular(8)),
+              padding: const EdgeInsets.all(10),
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        foregroundImage: NetworkImage(
+                            HomeController.instance.user.value?.image ??
+                                'assets/account.png'),
+                        backgroundImage: const AssetImage('assets/account.png'),
+                        radius: 20,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        '${HomeController.instance.user.value?.first} ${HomeController.instance.user.value?.last}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(
+                    color: const Color(0xff918F8F).withOpacity(0.2),
+                  ),
+                  ListView.builder(
+                    itemCount: HomeController.instance.joinedEvents.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, i) {
+                      String date =
+                          HomeController.instance.joinedEvents[i].eventDay;
+                      date = date.split('/')[0] + '-' + date.split('/')[1];
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 41,
+                                  height: 24,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: const Color(0xffADD8E6),
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: Get.width * 0.06,
-                                  ),
-                                  Text(
-                                    name,
+                                  child: Text(
+                                    date,
                                     style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
                                       color: AppColors.black,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                                SizedBox(
+                                  width: Get.width * 0.06,
+                                ),
+                                Text(
+                                  HomeController
+                                      .instance.joinedEvents[i].eventName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: AppColors.black,
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(
-                                width: Get.width * 0.6,
-                                height: 50,
-                                child: ListView.builder(
-                                  itemBuilder: (ctx, index) {
-                                    if (joinedUsers.isEmpty) {
-                                      return Container();
-                                    }
-                                    final user = HomeController
-                                        .instance.listOfUser
-                                        .firstWhere((user) =>
-                                            user.uid == joinedUsers[index]);
+                          ),
+                          SizedBox(
+                              width: Get.width * 0.6,
+                              height: 50,
+                              child: ListView.builder(
+                                itemBuilder: (ctx, index) {
+                                  if (HomeController.instance.joinedEvents[i]
+                                      .joined.isEmpty) {
+                                    return Container();
+                                  }
+                                  final user = HomeController
+                                      .instance.listOfUser
+                                      .firstWhere((user) =>
+                                          user.uid ==
+                                          HomeController.instance
+                                              .joinedEvents[i].joined[index]);
 
-                                    return Container(
-                                      margin: const EdgeInsets.only(left: 10),
-                                      child: CircleAvatar(
-                                        minRadius: 13,
-                                        backgroundImage:
-                                            NetworkImage(user.image!),
-                                      ),
-                                    );
-                                  },
-                                  itemCount: joinedUsers.length,
-                                  scrollDirection: Axis.horizontal,
-                                )),
-                          ],
-                        );
-                      },
-                    ),
+                                  return Container(
+                                    margin: const EdgeInsets.only(left: 10),
+                                    child: CircleAvatar(
+                                      minRadius: 13,
+                                      backgroundImage:
+                                          NetworkImage(user.image!),
+                                    ),
+                                  );
+                                },
+                                itemCount: HomeController
+                                    .instance.joinedEvents[i].joined.length,
+                                scrollDirection: Axis.horizontal,
+                              )),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
           ],
-        ),
-      ),
-      const SizedBox(
-        height: 20,
-      ),
-    ],
-  );
+        );
 }

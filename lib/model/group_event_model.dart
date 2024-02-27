@@ -1,44 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems/model/group_member_model.dart';
 
 class GroupEventModel {
-  String? leaderUid;
-  List<String>? membersName;
-  List<String>? membersEmail;
-  List<String>? membersSem;
-  List<String>? membersDept;
+  String? teamName;
+  String? teamLeaderUid;
+  List<GroupMemberModel> groupOfMembers;
 
-  GroupEventModel({
-    this.leaderUid,
-    this.membersName,
-    this.membersEmail,
-    this.membersDept,
-    this.membersSem,
-  });
+  GroupEventModel(
+      {required this.teamName,
+      required this.teamLeaderUid,
+      required this.groupOfMembers});
 
   factory GroupEventModel.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final json = snapshot.data()!;
-    String? leaderUid = json['leaderUid'];
-    List<String>? membersName = json['membersName'];
-    List<String>? membersEmail = json['membersEmail'];
-    List<String>? membersSem = json['membersSem'];
-    List<String>? membersDept = json['membersDept'];
+    String? teamName = json['team_name'];
+    String? teamLeaderUid = json['team_leader_uid'];
+    List<GroupMemberModel> groupOfMembers = json['team_mem'] ?? [];
 
     return GroupEventModel(
-        leaderUid: leaderUid,
-        membersName: membersName,
-        membersEmail: membersEmail,
-        membersSem: membersSem,
-        membersDept: membersDept);
+      teamName: teamName,
+      teamLeaderUid: teamLeaderUid,
+      groupOfMembers: groupOfMembers,
+    );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> json = <String, dynamic>{};
-    json['leaderUid'] = leaderUid;
-    json['membersName'] = membersName;
-    json['membersEmail'] = membersEmail;
-    json['membersSem'] = membersSem;
-    json['membersDept'] = membersDept;
+    for (int i = 0; i < groupOfMembers.length; i++) {
+      json['member${i + 1}'] = groupOfMembers[i].toJson();
+    }
+    json['team_name'] = teamName;
+    json['team_leader_uid'] = teamLeaderUid;
     return json;
   }
 }

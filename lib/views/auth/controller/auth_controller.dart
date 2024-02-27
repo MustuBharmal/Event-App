@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:ems/views/onboarding_screen.dart';
+import 'package:ems/views/auth/login_signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,6 +24,14 @@ class AuthController extends GetxController {
   RxBool isLoading = RxBool(false);
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   void onInit() {
     // TODO: implement onInit
     checkLogin();
@@ -38,7 +46,7 @@ class AuthController extends GetxController {
     isLoading(true);
     await Future.delayed(const Duration(seconds: 2));
     if (FirebaseAuth.instance.currentUser == null) {
-      Get.off(const OnBoardingScreen());
+      Get.offNamed(LoginView.routeName);
       isLoading(false);
     } else {
       Get.offNamed(BottomBarView.routeName);
@@ -46,14 +54,14 @@ class AuthController extends GetxController {
     }
   }
 
-  void login({String? email, String? password}) {
+  void login() {
     isLoading(true);
 
     auth
-        .signInWithEmailAndPassword(email: email!, password: password!)
+        .signInWithEmailAndPassword(
+            email: emailController.text.trim(),
+            password: passwordController.text)
         .then((value) {
-      /// Login Success
-
       isLoading(false);
       Get.offAllNamed(BottomBarView.routeName);
     }).catchError((e) {
@@ -136,5 +144,4 @@ class AuthController extends GetxController {
 
     return imageUrl;
   }
-
 }
