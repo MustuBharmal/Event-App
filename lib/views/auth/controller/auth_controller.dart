@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/views/auth/login_signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../model/user_model.dart';
 import '../../home/bottom_bar_view.dart';
 import '../../profile/add_profile.dart';
 import 'package:path/path.dart' as path;
@@ -18,10 +20,11 @@ class AuthController extends GetxController {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   int selectedRadio = 0;
-
+  Rx<UserModel?> user = Rx(null);
   RxBool isSignUp = RxBool(false);
   TextEditingController forgetEmailController = TextEditingController();
   RxBool isLoading = RxBool(false);
+  RxBool isLogoutLoading = RxBool(false);
 
   @override
   void dispose() {
@@ -42,34 +45,60 @@ class AuthController extends GetxController {
     selectedRadio = val;
   }
 
+  logout() {
+    isLogoutLoading(true);
+    try {
+      FirebaseAuth.instance.signOut();
+      Get.offAllNamed(LoginView.routeName);
+      user.value = null;
+    } catch (e) {
+      Get.snackbar('Error', '$e');
+    }
+    isLogoutLoading(false);
+  }
+
   checkLogin() async {
-    isLoading(true);
     await Future.delayed(const Duration(seconds: 2));
     if (FirebaseAuth.instance.currentUser == null) {
       Get.offNamed(LoginView.routeName);
-      isLoading(false);
     } else {
-      Get.offNamed(BottomBarView.routeName);
-      isLoading(false);
+      print("hello in check login");
+      getCurrUsr();
     }
   }
 
-  void login() {
+  getCurrUsr() async {
+    try {
+      var currUsr = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      if (currUsr.exists) {
+        user.value = UserModel.fromSnapshot(currUsr);
+        Get.offNamed(BottomBarView.routeName);
+      } else {
+        Get.offNamed(AddProfileScreen.routeName);
+      }
+      isLoading(false);
+    } catch (e) {
+      print('$e');
+    }
+    isLoading(false);
+  }
+
+  void login() async {
     isLoading(true);
-
-    auth
-        .signInWithEmailAndPassword(
-            email: emailController.text.trim(),
-            password: passwordController.text)
-        .then((value) {
-      isLoading(false);
-      Get.offAllNamed(BottomBarView.routeName);
-    }).catchError((e) {
-      isLoading(false);
-      Get.snackbar('Error', "$e");
-
-      ///Error occurred
-    });
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+      getCurrUsr();
+    } on FirebaseAuthException catch (e) {
+      print(e.code);
+      if (e.code == 'invalid-credential') {
+        isLoading(false);
+        Get.snackbar("Error", "Invalid Credential");
+      }
+    }
   }
 
   void signUp({String? email, String? password}) {

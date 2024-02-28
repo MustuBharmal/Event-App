@@ -3,7 +3,6 @@ import 'package:ems/views/profile/add_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../utils/app_color.dart';
 import '../../widgets/my_widgets.dart';
 
@@ -221,25 +220,26 @@ class LoginView extends GetView<AuthController> {
               ),
             ],
           ),
-          Obx(() => controller.isLoading.value
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : Container(
-                  height: 50,
-                  margin: EdgeInsets.symmetric(vertical: Get.height * 0.04),
-                  width: Get.width,
-                  child: elevatedButton(
-                    text: 'Login',
-                    onPress: () {
-                      if (!formKey.currentState!.validate()) {
-                        return;
-                      }
+          Container(
+            margin: EdgeInsets.symmetric(vertical: Get.height * 0.04),
+            width: Get.width,
+            child: Obx(
+              () => controller.isLoading.value
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : elevatedButton(
+                      text: 'Login',
+                      onPress: () {
+                        if (!formKey.currentState!.validate()) {
+                          return;
+                        }
 
-                      controller.login();
-                    },
-                  ),
-                )),
+                        controller.login();
+                      },
+                    ),
+            ),
+          ),
           SizedBox(
             height: Get.height * 0.02,
           ),

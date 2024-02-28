@@ -1,17 +1,16 @@
 import 'package:ems/model/user_model.dart';
+import 'package:ems/views/event_page/event_participants_list_view.dart';
 import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/model/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../utils/app_color.dart';
 import '../invite_guest/invite_guest_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../registration/register_event_view.dart';
 import '../registration/view_end_event_details.dart';
-
 
 class EventPageView extends StatelessWidget {
   static const String routeName = '/event-page-view';
@@ -94,14 +93,6 @@ class EventPageView extends StatelessWidget {
                       const SizedBox(
                         height: 2,
                       ),
-                      // Text(
-                      //   "${user.get('location')}",
-                      //   style: const TextStyle(
-                      //     fontSize: 12,
-                      //     color: Colors.grey,
-                      //     fontWeight: FontWeight.w400,
-                      //   ),
-                      // ),
                     ],
                   ),
                   const Spacer(),
@@ -214,29 +205,27 @@ class EventPageView extends StatelessWidget {
                   SizedBox(
                     width: Get.width * 0.6,
                     height: Get.height * 0.058,
-                    child: ListView.builder(
-                      itemBuilder: (ctx, index) {
-                        final user = HomeController.instance.listOfUser
-                            .firstWhere((e) => e.uid == event.joined[index]);
-
-                        String image = '';
-
-                        try {
-                          image = user.image!;
-                        } catch (e) {
-                          image = '';
-                        }
-
-                        return Container(
-                          margin: const EdgeInsets.only(left: 10),
-                          child: CircleAvatar(
-                            minRadius: 13,
-                            backgroundImage: NetworkImage(image),
-                          ),
-                        );
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.toNamed(EventParticipantListView.routeName,
+                            arguments: event.joined);
                       },
-                      itemCount: event.joined.length,
-                      scrollDirection: Axis.horizontal,
+                      child: ListView.builder(
+                        itemBuilder: (ctx, index) {
+                          final user = HomeController.instance.listOfUser
+                              .firstWhere((e) => e.uid == event.joined[index]);
+
+                          return Container(
+                            margin: const EdgeInsets.only(left: 10),
+                            child: CircleAvatar(
+                              minRadius: 13,
+                              backgroundImage: NetworkImage(user.image!),
+                            ),
+                          );
+                        },
+                        itemCount: event.joined.length,
+                        scrollDirection: Axis.horizontal,
+                      ),
                     ),
                   ),
                   const Spacer(),

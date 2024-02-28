@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/model/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -374,7 +375,7 @@ eventsIJoined() {
                     children: [
                       CircleAvatar(
                         foregroundImage: NetworkImage(
-                            HomeController.instance.user.value?.image ??
+                            AuthController.instance.user.value?.image ??
                                 'assets/account.png'),
                         backgroundImage: const AssetImage('assets/account.png'),
                         radius: 20,
@@ -383,7 +384,7 @@ eventsIJoined() {
                         width: 10,
                       ),
                       Text(
-                        '${HomeController.instance.user.value?.first} ${HomeController.instance.user.value?.last}',
+                        '${AuthController.instance.user.value?.first} ${AuthController.instance.user.value?.last}',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,

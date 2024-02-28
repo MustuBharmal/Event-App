@@ -2,7 +2,6 @@ import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/events_feed_widget.dart';
 

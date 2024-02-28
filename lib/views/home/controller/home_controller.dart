@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/model/user_model.dart';
-import 'package:ems/views/auth/login_signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,12 +18,11 @@ class HomeController extends GetxController {
   var filteredUsers = <DocumentSnapshot>[].obs;
   RxList<EventModel> filteredEvents = <EventModel>[].obs;
   RxList<EventModel> joinedEvents = <EventModel>[].obs;
-  Rx<UserModel?> user = Rx(null);
+
   var isLoading = false.obs;
   RxList<UserModel> listOfUser = RxList.empty();
   RxBool isUser = RxBool(false);
   var isJoinedUser = false.obs;
-  RxBool isLogoutLoading = RxBool(false);
 
   List<Widget> facultyWidgetOption = [
     const HomeView(),
@@ -70,52 +68,25 @@ class HomeController extends GetxController {
     isMessageSending(false);
   }*/
 
-  logout() {
-    isLogoutLoading(true);
-    try {
-      FirebaseAuth.instance.signOut();
-      Get.offAllNamed(LoginView.routeName);
-      user.value = null;
-    } catch (e) {
-      Get.snackbar('Error', '$e');
-    }
-    isLogoutLoading(false);
-  }
 
-  createNotification(String recUid) {
-    FirebaseFirestore.instance
-        .collection('notifications')
-        .doc(recUid)
-        .collection('myNotifications')
-        .add({
-      'message': "Send you a message.",
-      'image': user.value!.image,
-      'name': user.value!.first! + " " + user.value!.last!,
-      'time': DateTime.now()
-    });
-  }
+  // createNotification(String recUid) {
+  //   FirebaseFirestore.instance
+  //       .collection('notifications')
+  //       .doc(recUid)
+  //       .collection('myNotifications')
+  //       .add({
+  //     'message': "Send you a message.",
+  //     'image': user.value!.image,
+  //     'name': user.value!.first! + " " + user.value!.last!,
+  //     'time': DateTime.now()
+  //   });
+  // }
 
-  getCurrUsr() {
-    isLoading(true);
-    try {
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .snapshots()
-          .listen((currUsr) {
-        user.value = UserModel.fromSnapshot(currUsr);
-      });
-    } catch (e) {
-      print('$e');
-    }
-    isLoading(false);
-  }
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    getCurrUsr();
     getUsers();
     getEvents();
   }

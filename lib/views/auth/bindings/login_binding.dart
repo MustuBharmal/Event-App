@@ -4,6 +4,6 @@ import 'package:get/get.dart';
 class LoginBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put(AuthController());
+    Get.put(AuthController(), permanent: true);
   }
 }

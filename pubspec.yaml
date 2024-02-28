@@ -31,6 +31,8 @@ dependencies:
   video_thumbnail: ^0.5.3
   dotted_border: ^2.1.0
   cupertino_icons: ^1.0.6
+  excel: ^4.0.2
+  path_provider: ^2.1.2
 
 
 

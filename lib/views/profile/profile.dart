@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems/views/home/controller/home_controller.dart';
+import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../model/ticket_model.dart';
 import '../../utils/app_color.dart';
 import '../../widgets/my_widgets.dart';
@@ -33,11 +32,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   initState() {
     super.initState();
 
-    firstNameController.text = HomeController.instance.user.value!.first!;
-    lastNameController.text = HomeController.instance.user.value!.last!;
+    firstNameController.text = AuthController.instance.user.value!.first!;
+    lastNameController.text = AuthController.instance.user.value!.last!;
 
     try {
-      image = HomeController.instance.user.value!.image!;
+      image = AuthController.instance.user.value!.image!;
     } catch (e) {
       image = '';
     }

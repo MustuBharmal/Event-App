@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-
 import '../../model/ticket_model.dart';
 import '../../utils/app_color.dart';
 import '../../widgets/check_box.dart';

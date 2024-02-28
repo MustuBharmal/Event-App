@@ -1,3 +1,4 @@
+import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -52,7 +53,7 @@ class BottomBarView extends GetView<HomeController> {
                   ),
                 ),
                 label: ''),
-            if (controller.user.value?.userType == 'faculty')
+            if (AuthController.instance.user.value?.userType == 'faculty')
               BottomNavigationBarItem(
                   icon: Padding(
                     padding: const EdgeInsets.only(top: 5),
@@ -69,7 +70,7 @@ class BottomBarView extends GetView<HomeController> {
         ),
       ),
       body: Obx(
-        () => controller.user.value?.userType == 'faculty'
+        () => AuthController.instance.user.value?.userType == 'faculty'
             ? controller.facultyWidgetOption[controller.currentIndex.value]
             : controller.studentWidgetOption[controller.currentIndex.value],
       ),
