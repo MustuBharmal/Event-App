@@ -96,9 +96,6 @@ class RegistrationController extends GetxController {
           .showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
-  createGroupExcelSheet(){
-    
-  }
   selectEventImage(){
     try {
       List media = event.media;
@@ -109,6 +106,61 @@ class RegistrationController extends GetxController {
       eventImage = RxString('');
     }
   }
+  // createGroupExcelSheet(){
+  //   fileName = event.eventName.toUpperCase();
+  //   Sheet sheet = excel[event.eventName];
+  //   List<GroupEventModel> listofGroupEventParticipants = [];
+  //
+  // }
+  // Future<void> generateExcelSheet(String eventId) async {
+  //   final CollectionReference<Map<String, dynamic>> groupEventsCollection =
+  //   FirebaseFirestore.instance.collection('your_collection_name');
+  //
+  //   DocumentSnapshot<Map<String, dynamic>> snapshot =
+  //   await groupEventsCollection.doc(eventId).get();
+  //
+  //   if (snapshot.exists) {
+  //     GroupEventModel groupEvent = GroupEventModel.fromSnapshot(snapshot);
+  //
+  //     final excel = Excel.createExcel();
+  //     final sheet = excel['Sheet1'];
+  //
+  //     // Add headers
+  //     sheet.appendRow([
+  //       'Member Name',
+  //       'Member Email',
+  //       'Member Semester',
+  //       'Member Department',
+  //       'Member Number'
+  //     ]);
+  //
+  //     // Add data for each member
+  //     for (int i = 0; i < groupEvent.groupOfMembers.length; i++) {
+  //       GroupMemberModel member = groupEvent.groupOfMembers[i];
+  //       sheet.appendRow([
+  //         member.membersName ?? '',
+  //         member.membersEmail ?? '',
+  //         member.membersSem ?? '',
+  //         member.membersDept ?? '',
+  //         member.membersNum ?? '',
+  //       ]);
+  //     }
+  //
+  //     // Save the Excel file
+  //     final List<int> excelBytes = excel.encode();
+  //     final Uint8List uint8List = Uint8List.fromList(excelBytes);
+  //
+  //     // Save the Excel file to device storage
+  //     final Directory directory = await getExternalStorageDirectory();
+  //     final String excelFilePath =
+  //         '${directory.path}/group_event_excel.xlsx';
+  //
+  //     File(excelFilePath).writeAsBytesSync(uint8List);
+  //   } else {
+  //     print('Group event not found.');
+  //   }
+  // }
+
   createIndividualExcelSheet(){
     fileName = event.eventName.toUpperCase();
     //create an excel sheet
