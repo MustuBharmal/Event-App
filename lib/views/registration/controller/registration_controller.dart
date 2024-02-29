@@ -11,16 +11,30 @@ import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
+import '../../../model/event_model.dart';
+import '../../../model/user_model.dart';
 import '../../auth/controller/auth_controller.dart';
+import '../../home/controller/home_controller.dart';
+String fileName = '';
 
 class RegistrationController extends GetxController {
+  var excel = Excel.createExcel();
+  EventModel event = Get.arguments;
   TextEditingController teamNameController = TextEditingController();
   RxInt noOfParticipant = RxInt(0);
   List<GroupMemberModel> listOfEvent = [];
   GroupEventModel? groupEventModel;
   RxBool isLoading = RxBool(false);
-
+  
+  @override
+  void onInit() {
+    selectEventImage();
+    super.onInit();
+  }
+  RxString eventImage = RxString('');
+  
   Future<void> exportFireStoreDataToExcel(String collectionName) async {
     final QuerySnapshot<Map<String, dynamic>> querySnapshot =
         await FirebaseFirestore.instance.collection(collectionName).get();
@@ -82,7 +96,66 @@ class RegistrationController extends GetxController {
           .showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
+  createGroupExcelSheet(){
+    
+  }
+  selectEventImage(){
+    try {
+      List media = event.media;
+      Map mediaItem =
+      media.firstWhere((element) => element['isImage'] == true) as Map;
+      eventImage = mediaItem['url'];
+    } catch (e) {
+      eventImage = RxString('');
+    }
+  }
+  createIndividualExcelSheet(){
+    fileName = event.eventName.toUpperCase();
+    //create an excel sheet
+    Sheet sheet = excel[event.eventName];
+    List<UserModel> listOfParticipatedUser = [];
 
+    for(var user in HomeController.instance.listOfUser){
+      var isCheck = event.joined.contains(user.uid);
+      if(isCheck){
+        listOfParticipatedUser.add(user);
+      }
+    }
+
+
+    sheet.appendRow([const TextCellValue('Serial No'), const TextCellValue('Name'), const TextCellValue('Number'), const TextCellValue('Email'), const TextCellValue('Gender')]);
+    for (int i = 0; i < event.joined.length; i++) {
+
+      var index = sheet.cell(CellIndex.indexByString('A${i+2}'));
+      var nameCell = sheet.cell(CellIndex.indexByString('B${i + 2}'));
+      var number = sheet.cell(CellIndex.indexByString('C${i + 2}'));
+      var email = sheet.cell(CellIndex.indexByString('D${i + 2}'));
+      var gender = sheet.cell(CellIndex.indexByString('E${i + 2}'));
+      index.value = TextCellValue("${i+1}");
+      nameCell.value = TextCellValue(
+          '${listOfParticipatedUser[i].first!} ${listOfParticipatedUser[i].last!}');
+      number.value = TextCellValue('${listOfParticipatedUser[i].mobileNumber}');
+      email.value = TextCellValue('${listOfParticipatedUser[i].email}');
+      gender.value = TextCellValue('${listOfParticipatedUser[i].gender}');
+    }
+  }
+  Future<File> writeCounter(Excel excel) async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      // If not we will ask for permission first
+      await Permission.storage.request();
+    }
+    final file = await _localFile;
+    return file.writeAsBytes(excel.encode()!);
+  }
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/$fileName.xlsx');
+  }
+  Future<String> get _localPath async {
+    final directory = Directory("/storage/emulated/0/Download");
+    return directory.path;
+  }
   Future<void> groupEventSubmit({String? eventId}) async {
     isLoading(true);
 

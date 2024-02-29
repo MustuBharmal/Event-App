@@ -1,56 +1,18 @@
-import 'dart:io';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:ems/model/event_model.dart';
-import 'package:ems/model/user_model.dart';
-import 'package:excel/excel.dart';
+import 'package:ems/views/registration/controller/registration_controller.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 import '../../utils/app_color.dart';
 import '../../widgets/my_widgets.dart';
-import '../home/controller/home_controller.dart';
 
-class ViewEndEventDetails extends StatelessWidget {
+class ViewEndEventDetails extends GetView<RegistrationController> {
   static const String routeName = '/view-end-event-details';
 
   const ViewEndEventDetails({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var excel = Excel.createExcel();
-    EventModel event = Get.arguments;
-    //create an excel sheet
-    Sheet sheet = excel[event.eventName];
-    List<UserModel> listOfParticipatedUser = [];
-
-    for(var user in HomeController.instance.listOfUser){
-      var isCheck = event.joined.contains(user.uid);
-      if(isCheck){
-        listOfParticipatedUser.add(user);
-      }
-    }
-    for (int i = 0; i < event.joined.length; i++) {
-      var nameCell = sheet.cell(CellIndex.indexByString('B${i + 2}'));
-      var number = sheet.cell(CellIndex.indexByString('C${i + 2}'));
-      var email = sheet.cell(CellIndex.indexByString('D${i + 2}'));
-      var gender = sheet.cell(CellIndex.indexByString('D${i + 2}'));
-      nameCell.value = TextCellValue(
-          '${listOfParticipatedUser[i].first!} ${listOfParticipatedUser[i].last!}');
-      number.value = TextCellValue('${listOfParticipatedUser[i].mobileNumber}');
-      email.value = TextCellValue('${listOfParticipatedUser[i].email}');
-      gender.value = TextCellValue('${listOfParticipatedUser[i].gender}');
-    }
-
-    String eventImage = '';
-    try {
-      List media = event.media;
-      Map mediaItem =
-          media.firstWhere((element) => element['isImage'] == true) as Map;
-      eventImage = mediaItem['url'];
-    } catch (e) {
-      eventImage = '';
-    }
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -128,7 +90,7 @@ class ViewEndEventDetails extends StatelessWidget {
                             ),
                             image: DecorationImage(
                               fit: BoxFit.fill,
-                              image: NetworkImage(eventImage),
+                              image: NetworkImage(controller.eventImage.value),
                             ),
                           ),
                         ),
@@ -138,7 +100,7 @@ class ViewEndEventDetails extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               myText(
-                                text: event.eventName.toUpperCase(),
+                                text: controller.event.eventName.toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w600,
@@ -159,7 +121,8 @@ class ViewEndEventDetails extends StatelessWidget {
                                     width: 5,
                                   ),
                                   myText(
-                                    text: event.location!.toUpperCase(),
+                                    text: controller.event.location!
+                                        .toUpperCase(),
                                     style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w300,
@@ -173,7 +136,7 @@ class ViewEndEventDetails extends StatelessWidget {
                               SizedBox(
                                 width: Get.width * 0.45,
                                 child: myText(
-                                    text: '${event.description}',
+                                    text: '${controller.event.description}',
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
@@ -185,7 +148,8 @@ class ViewEndEventDetails extends StatelessWidget {
                                 height: 16,
                               ),
                               myText(
-                                text: 'Event Date:- ${event.eventDay}',
+                                text:
+                                    'Event Date:- ${controller.event.eventDay}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -197,7 +161,7 @@ class ViewEndEventDetails extends StatelessWidget {
                               ),
                               myText(
                                 text:
-                                    'Total seats available:-  ${event.maxEntries! + event.joined.length}',
+                                    'Total seats available:-  ${controller.event.maxEntries! + controller.event.joined.length}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -208,7 +172,8 @@ class ViewEndEventDetails extends StatelessWidget {
                                 height: 3,
                               ),
                               myText(
-                                text: 'No. of Entries:-  ${event.joined.length}',
+                                text:
+                                    'No. of Entries:-  ${controller.event.joined.length}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -219,7 +184,7 @@ class ViewEndEventDetails extends StatelessWidget {
                                 height: 3,
                               ),
                               myText(
-                                text: 'Venue:-  ${event.location}',
+                                text: 'Venue:-  ${controller.event.location}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -235,31 +200,18 @@ class ViewEndEventDetails extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20,),
-            elevatedButton(text: "Download excel",onPress: (){
-              writeCounter(excel);
-            })
+            const SizedBox(
+              height: 20,
+            ),
+            elevatedButton(
+                text: "Download excel",
+                onPress: () {
+                  controller.createIndividualExcelSheet();
+                  controller.writeCounter(controller.excel);
+                })
           ],
         ),
       ),
     );
   }
-  Future<File> writeCounter(Excel excel) async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      // If not we will ask for permission first
-      await Permission.storage.request();
-    }
-    final file = await _localFile;
-    return file.writeAsBytes(excel.encode()!);
-  }
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/event_details.xlsx');
-  }
-  Future<String> get _localPath async {
-    final directory = Directory("/storage/emulated/0/Download");
-    return directory.path;
-  }
-
 }
