@@ -212,7 +212,7 @@ class EventPageView extends StatelessWidget {
                       },
                       child: ListView.builder(
                         itemBuilder: (ctx, index) {
-                          final user = HomeController.instance.listOfUser
+                          UserModel user = HomeController.instance.listOfUser
                               .firstWhere((e) => e.uid == event.joined[index]);
 
                           return Container(
@@ -317,7 +317,8 @@ class EventPageView extends StatelessWidget {
                     child: Expanded(
                       child: InkWell(
                         onTap: () {
-                          Get.to(() => ViewEndEventDetails(event));
+                          Get.toNamed(ViewEndEventDetails.routeName,
+                              arguments: event);
                         },
                         child: Container(
                           height: Get.height * 0.058,

@@ -6,6 +6,7 @@ import 'package:ems/views/home/bindings/home_binding.dart';
 import 'package:ems/views/profile/add_profile.dart';
 import 'package:ems/views/profile/bindings/profile_binding.dart';
 import 'package:ems/views/registration/binding/registration_binding.dart';
+import 'package:ems/views/registration/view_end_event_details.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
 import '../views/auth/bindings/login_binding.dart';
@@ -31,6 +32,8 @@ class AppRoutes {
     GetPage(
         name: EventParticipantListView.routeName,
         page: () => const EventParticipantListView()),
+    GetPage(
+        name: ViewEndEventDetails.routeName, page: () => const ViewEndEventDetails()),
     GetPage(
       name: RegisterEventView.routeName,
       page: () => RegisterEventView(),
