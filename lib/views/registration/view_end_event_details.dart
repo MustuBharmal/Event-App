@@ -203,12 +203,20 @@ class ViewEndEventDetails extends GetView<RegistrationController> {
             const SizedBox(
               height: 20,
             ),
-            elevatedButton(
-                text: "Download excel",
-                onPress: () {
-                  controller.createIndividualExcelSheet();
-                  controller.writeCounter(controller.excel);
-                })
+            Obx(
+              () => controller.isLoading.value
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : elevatedButton(
+                      text: "Download excel",
+                      onPress: () {
+                        controller.event.eventType == 'Individual'
+                            ? controller.createIndividualExcelSheet()
+                            : controller.groupEventExcelSheet();
+                        controller.writeCounter(controller.excel);
+                      }),
+            )
           ],
         ),
       ),

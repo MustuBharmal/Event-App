@@ -26,17 +26,10 @@ class HomeController extends GetxController {
 
   List<Widget> facultyWidgetOption = [
     const HomeView(),
-    // const CommunityScreen(),
-
-    const ProfileScreen(),
+    ProfileView(),
     CreateEventView()
   ];
-  List<Widget> studentWidgetOption = [
-    const HomeView(),
-    // const CommunityScreen(),
-    // CreateEventView(),
-    const ProfileScreen()
-  ];
+  List<Widget> studentWidgetOption = [const HomeView(), ProfileView()];
 
   toCheckUserIsEnrolled(List<String> joined) {
     isJoinedUser.value =
@@ -68,7 +61,6 @@ class HomeController extends GetxController {
     isMessageSending(false);
   }*/
 
-
   // createNotification(String recUid) {
   //   FirebaseFirestore.instance
   //       .collection('notifications')
@@ -81,7 +73,6 @@ class HomeController extends GetxController {
   //     'time': DateTime.now()
   //   });
   // }
-
 
   @override
   void onInit() {

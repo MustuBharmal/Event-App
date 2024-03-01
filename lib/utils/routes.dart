@@ -22,7 +22,7 @@ class AppRoutes {
     GetPage(
         name: BottomBarView.routeName,
         page: () => const BottomBarView(),
-        bindings: [HomeBinding(), CreateEventBinding()]),
+        bindings: [HomeBinding(), CreateEventBinding(), ProfileBinding()]),
     GetPage(
       name: AddProfileScreen.routeName,
       page: () => AddProfileScreen(),
@@ -33,7 +33,9 @@ class AppRoutes {
         name: EventParticipantListView.routeName,
         page: () => const EventParticipantListView()),
     GetPage(
-        name: ViewEndEventDetails.routeName, page: () => const ViewEndEventDetails(),binding: RegistrationBinding()),
+        name: ViewEndEventDetails.routeName,
+        page: () => const ViewEndEventDetails(),
+        binding: RegistrationBinding()),
     GetPage(
       name: RegisterEventView.routeName,
       page: () => RegisterEventView(),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
 class GroupMemberModel {
   String? membersName;
@@ -32,12 +33,27 @@ class GroupMemberModel {
     );
   }
 
+  factory GroupMemberModel.fromJson(Map<String, dynamic> json) {
+    String? membersName = json['members_name'];
+    String? membersEmail = json['members_email'];
+    String? membersSem = json['members_sem'];
+    String? membersDept = json['members_dept'];
+    String? membersNum = json['members_num'];
+    return GroupMemberModel(
+      membersName: membersName,
+      membersEmail: membersEmail,
+      membersSem: membersSem,
+      membersDept: membersDept,
+      membersNum: membersNum,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> json = <String, dynamic>{};
-    json['members_name'] = membersName;
+    json['members_name'] = membersName!.capitalizeFirst;
     json['members_email'] = membersEmail;
     json['members_sem'] = membersSem;
-    json['members_dept'] = membersDept;
+    json['members_dept'] = membersDept!.toLowerCase();
     json['members_num'] = membersNum;
     return json;
   }

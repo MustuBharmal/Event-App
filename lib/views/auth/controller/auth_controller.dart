@@ -62,7 +62,6 @@ class AuthController extends GetxController {
     if (FirebaseAuth.instance.currentUser == null) {
       Get.offNamed(LoginView.routeName);
     } else {
-      print("hello in check login");
       getCurrUsr();
     }
   }

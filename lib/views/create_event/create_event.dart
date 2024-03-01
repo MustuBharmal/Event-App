@@ -7,7 +7,7 @@ import '../../widgets/my_widgets.dart';
 
 class CreateEventView extends GetView<CreateEventController> {
   CreateEventView({Key? key}) : super(key: key);
-
+  static const String routeName = '/create-event-view';
   final formKey = GlobalKey<FormState>();
 
   @override

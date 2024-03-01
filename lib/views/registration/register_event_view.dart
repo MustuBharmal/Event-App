@@ -1,4 +1,3 @@
-import 'package:ems/model/event_model.dart';
 import 'package:ems/model/group_member_model.dart';
 import 'package:ems/views/registration/controller/registration_controller.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +16,9 @@ class RegisterEventView extends GetView<RegistrationController> {
 
   @override
   Widget build(BuildContext context) {
-    EventModel event = Get.arguments;
     String eventImage = '';
     try {
-      List media = event.media;
+      List media = controller.event.media;
       Map mediaItem =
           media.firstWhere((element) => element['isImage'] == true) as Map;
       eventImage = mediaItem['url'];
@@ -124,7 +122,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 Row(
                                   children: [
                                     myText(
-                                      text: event.eventName,
+                                      text: controller.event.eventName,
                                       style: TextStyle(
                                         fontSize: 17,
                                         fontWeight: FontWeight.w600,
@@ -153,7 +151,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                       width: 5,
                                     ),
                                     myText(
-                                      text: event.location,
+                                      text: controller.event.location,
                                       style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w300,
@@ -165,7 +163,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                   height: 7,
                                 ),
                                 myText(
-                                  text: event.eventDay,
+                                  text: controller.event.eventDay,
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
@@ -181,7 +179,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                     SizedBox(
                       height: Get.height * 0.04,
                     ),
-                    event.eventType == 'Individual'
+                    controller.event.eventType == 'Individual'
                         ? Column(
                             children: [
                               Center(
@@ -205,7 +203,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                     child: elevatedButton(
                                       onPress: () {
                                         controller.joinedEvent(
-                                            eventId: event.id);
+                                            eventId: controller.event.id);
                                       },
                                       text: 'YES',
                                     ),
@@ -257,6 +255,122 @@ class RegisterEventView extends GetView<RegistrationController> {
                                   height: Get.height * 0.02,
                                 ),
                                 textFormField(
+                                    onChanged: (String value) {
+                                      controller.leaderName.text = value;
+                                    },
+                                    hintText:
+                                    'Leader Name',
+                                    icon: ('assets/Header.png'),
+                                    obscure: false,
+                                    validator: (String input) {
+                                      if (input.isEmpty) {
+                                        Get.snackbar('Opps',
+                                            "Leader name Required",
+                                            colorText: Colors.white,
+                                            backgroundColor:
+                                            Colors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    }),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                textFormField(
+                                    onChanged: (String value) {
+                                      controller.leaderNum.text = value;
+                                    },
+                                    inputType: TextInputType.number,
+                                    hintText:
+                                    'Leader phone number',
+                                    icon: ('assets/Header.png'),
+                                    obscure: false,
+                                    maxLength: 10,
+                                    validator: (String input) {
+                                      if (input.isEmpty) {
+                                        Get.snackbar('Opps',
+                                            "Leader number required",
+                                            colorText: Colors.white,
+                                            backgroundColor:
+                                            Colors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    }),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                textFormField(
+                                    onChanged: (String value) {
+                                      controller.leaderEmail.text = value;
+                                    },
+                                    inputType:
+                                    TextInputType.emailAddress,
+                                    hintText:
+                                    'Leader email',
+                                    icon: ('assets/Header.png'),
+                                    obscure: false,
+                                    validator: (String input) {
+                                      if (input.isEmpty) {
+                                        Get.snackbar('Opps',
+                                            "Leader email required",
+                                            colorText: Colors.white,
+                                            backgroundColor:
+                                            Colors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    }),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                textFormField(
+                                    onChanged: (String value) {
+                                      controller.leaderDept.text = value;
+                                      RxString(value.toLowerCase());
+                                    },
+                                    hintText:
+                                    'Leader Dept',
+                                    icon: ('assets/Header.png'),
+                                    validator: (input) {
+                                      if (input.isEmpty) {
+                                        Get.snackbar('Opps',
+                                            "Leader department required",
+                                            colorText: Colors.white,
+                                            backgroundColor:
+                                            Colors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    }),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                textFormField(
+                                    onChanged: (String input) {
+                                      controller.leaderSem.text = input;
+                                    },
+                                    maxLength: 1,
+                                    inputType: TextInputType.number,
+                                    hintText:
+                                    'Leader Sem',
+                                    icon: ('assets/Header.png'),
+                                    obscure: false,
+                                    validator: (String input) {
+                                      if (input.isEmpty) {
+                                        Get.snackbar('Opps',
+                                            "Leader semester required",
+                                            colorText: Colors.white,
+                                            backgroundColor:
+                                            Colors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    }),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                textFormField(
                                   inputType: TextInputType.number,
                                   icon: ('assets/Header.png'),
                                   hintText:
@@ -268,7 +382,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                           backgroundColor: Colors.blue);
                                       return '';
                                     }
-                                    if (event.noOfParticipant! <
+                                    if (controller.event.noOfParticipant! <
                                         (controller.noOfParticipant.value -
                                             1)) {
                                       Get.snackbar('Opps',
@@ -280,7 +394,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                     return null;
                                   },
                                   onChanged: (String num) {
-                                    if (event.noOfParticipant! <=
+                                    if (controller.event.noOfParticipant! <=
                                         (int.parse(num))) {
                                       Get.snackbar('Opps',
                                           "You have exceeds no of participants",
@@ -446,7 +560,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                               return;
                                             }
                                             controller.groupEventSubmit(
-                                                eventId: event.id);
+                                                eventId: controller.event.id);
                                           },
                                           text: 'Submit',
                                         ),

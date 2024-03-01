@@ -317,8 +317,10 @@ class EventPageView extends StatelessWidget {
                     child: Expanded(
                       child: InkWell(
                         onTap: () {
-                          Get.toNamed(ViewEndEventDetails.routeName,
-                              arguments: event);
+                          Get.toNamed(
+                            ViewEndEventDetails.routeName,
+                            arguments: event,
+                          );
                         },
                         child: Container(
                           height: Get.height * 0.058,
