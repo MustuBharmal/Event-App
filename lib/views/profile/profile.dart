@@ -1,659 +1,619 @@
-import 'package:ems/model/ticket_model.dart';
+import 'package:ems/views/auth/controller/auth_controller.dart';
+import 'package:ems/views/event_page/event_page_view.dart';
+import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/views/profile/controller/profile_controller.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../utils/app_color.dart';
-import '../../widgets/my_widgets.dart';
 
 class ProfileView extends GetView<ProfileController> {
   static const String routeName = '/profile-view';
 
-  ProfileView({super.key});
-
-  bool isNotEditable = true;
-
-  List<Ticketdetail> ticket = [];
-
-  int? followers = 0, following = 0;
-
-  String image = '';
+  const ProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Stack(
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  width: 100,
-                  margin: EdgeInsets.only(
-                      left: Get.width * 0.75, top: 20, right: 20),
-                  alignment: Alignment.topRight,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        onTap: () {},
-                        child: const Image(
-                          image: AssetImage('assets/sms.png'),
-                          width: 28,
-                          height: 25,
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                child: Obx(
+                  () => AuthController.instance.isLogoutLoading.value
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : InkWell(
+                          onTap: () {
+                            AuthController.instance.logout();
+                          },
+                          child: SizedBox(
+                              width: Get.width * 0.06,
+                              child: const Icon(Icons.logout)),
                         ),
-                      ),
-                      const Image(
-                        image: AssetImage('assets/menu.png'),
-                        width: 23.33,
-                        height: 19,
-                      ),
-                    ],
-                  ),
                 ),
               ),
-              Align(
-                child: Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 90, horizontal: 20),
-                  width: Get.width,
-                  height: isNotEditable ? 240 : 310,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.15),
-                        spreadRadius: 2,
-                        blurRadius: 3,
-                        offset:
-                            const Offset(0, 0), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Column(
-                  children: [
-                    InkWell(
-                      onTap: () {},
+              Stack(
+                children: [
+                  Obx(
+                    () => Align(
                       child: Container(
-                        width: 120,
-                        height: 120,
-                        margin: const EdgeInsets.only(top: 35),
-                        padding: const EdgeInsets.all(2),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 90, horizontal: 20),
+                        width: Get.width,
+                        height: controller.isNotEditable.value
+                            ? Get.height * 0.283
+                            : Get.height * 0.37,
                         decoration: BoxDecoration(
-                          color: AppColors.blue,
-                          borderRadius: BorderRadius.circular(70),
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xff7DDCFB),
-                              Color(0xffBC67F2),
-                              Color(0xffACF6AF),
-                              Color(0xffF95549),
-                            ],
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(70),
-                              ),
-                              child: image.isEmpty
-                                  ? const CircleAvatar(
-                                      radius: 56,
-                                      backgroundColor: Colors.white,
-                                      backgroundImage: AssetImage(
-                                        'assets/profile.png',
-                                      ))
-                                  : CircleAvatar(
-                                      radius: 56,
-                                      backgroundColor: Colors.white,
-                                      backgroundImage: NetworkImage(
-                                        image,
-                                      ),
-                                    ),
+                          borderRadius: BorderRadius.circular(15),
+                          color: AppColors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.15),
+                              spreadRadius: 2,
+                              blurRadius: 3,
+                              offset: const Offset(
+                                  0, 0), // changes position of shadow
                             ),
                           ],
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    isNotEditable
-                        ? Text(
-                            "${controller.firstNameController.text} ${controller.lastNameController.text}",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: AppColors.black,
-                              fontWeight: FontWeight.w700,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: Get.width * 0.31,
+                          height: Get.height * 0.147,
+                          margin: const EdgeInsets.only(top: 35),
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: AppColors.blue,
+                            borderRadius: BorderRadius.circular(70),
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xff7DDCFB),
+                                Color(0xffBC67F2),
+                                Color(0xffACF6AF),
+                                Color(0xffF95549),
+                              ],
                             ),
-                          )
-                        : SizedBox(
-                            width: Get.width * 0.6,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    controller: controller.firstNameController,
-                                    textAlign: TextAlign.center,
-                                    decoration: const InputDecoration(
-                                      hintText: 'First Name',
-                                    ),
+                          ),
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  controller.imagePickDialog();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.white,
+                                    borderRadius: BorderRadius.circular(70),
+                                  ),
+                                  child: controller.image.isEmpty
+                                      ? CircleAvatar(
+                                          radius: Get.width * 0.145,
+                                          backgroundColor: AppColors.white,
+                                          backgroundImage: const AssetImage(
+                                            'assets/profile.png',
+                                          ),
+                                        )
+                                      : CircleAvatar(
+                                          radius: Get.width * 0.145,
+                                          backgroundColor: AppColors.white,
+                                          backgroundImage: NetworkImage(
+                                            controller.image,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.018,
+                        ),
+                        Obx(
+                          () => controller.isNotEditable.value
+                              ? Text(
+                                  "${controller.firstNameController.text} ${controller.lastNameController.text}",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: AppColors.black,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                )
+                              : SizedBox(
+                                  width: Get.width * 0.6,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextField(
+                                          controller:
+                                              controller.firstNameController,
+                                          textAlign: TextAlign.center,
+                                          decoration: const InputDecoration(
+                                            hintText: 'First Name',
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Expanded(
+                                        child: TextField(
+                                          controller:
+                                              controller.lastNameController,
+                                          textAlign: TextAlign.center,
+                                          decoration: const InputDecoration(
+                                            hintText: 'Last Name',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: TextField(
-                                    controller: controller.lastNameController,
-                                    textAlign: TextAlign.center,
-                                    decoration: const InputDecoration(
-                                      hintText: 'Last Name',
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.018,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                children: [
+                                  Text(
+                                    HomeController
+                                        .instance.filteredEvents.length
+                                        .toString(),
+                                    style: TextStyle(
+                                      fontSize: 19,
+                                      color: AppColors.black,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: -0.3,
                                     ),
+                                  ),
+                                  Text(
+                                    "Saved Events",
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      letterSpacing: -0.3,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                width: 1,
+                                height: 60,
+                                color: const Color(0xff918F8F).withOpacity(0.5),
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    HomeController.instance.joinedEvents.length
+                                        .toString(),
+                                    style: TextStyle(
+                                        fontSize: 19,
+                                        color: AppColors.black,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: -0.3),
+                                  ),
+                                  Text(
+                                    AuthController.instance.user.value!
+                                                .userType! ==
+                                            'student'
+                                        ? "Joined Events"
+                                        : "Created Events",
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      letterSpacing: -0.3,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.024,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          child: DefaultTabController(
+                            length: 2,
+                            initialIndex: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.black,
+                                        width: 0.01,
+                                      ),
+                                    ),
+                                  ),
+                                  child: TabBar(
+                                    indicatorColor: Colors.black,
+                                    labelPadding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0,
+                                      vertical: 10,
+                                    ),
+                                    unselectedLabelColor: Colors.black,
+                                    tabs: [
+                                      Tab(
+                                        icon:
+                                            Image.asset("assets/bookMark.png"),
+                                        height: 20,
+                                      ),
+                                      Tab(
+                                        icon: Image.asset(
+                                            "assets/Group 18600.png"),
+                                        height: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  height: Get.height * 0.46,
+                                  //height of TabBarView
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                        color: AppColors.white,
+                                        width: 0.5,
+                                      ),
+                                    ),
+                                  ),
+                                  child: TabBarView(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    children: <Widget>[
+                                      Obx(
+                                        () => ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            scrollDirection: Axis.vertical,
+                                            itemCount: HomeController
+                                                .instance.filteredEvents.length,
+                                            itemBuilder: (context, index) {
+                                              String image = '';
+                                              image =
+                                                  controller.selectEventImage(
+                                                      HomeController
+                                                          .instance
+                                                          .filteredEvents[index]
+                                                          .media);
+
+                                              return GestureDetector(
+                                                onTap: () => Get.toNamed(
+                                                    EventPageView.routeName,
+                                                    arguments: HomeController
+                                                        .instance
+                                                        .filteredEvents[index]),
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 20),
+                                                  width: Get.width,
+                                                  height: Get.height * 0.14,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    color: AppColors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.15),
+                                                        spreadRadius: 2,
+                                                        blurRadius: 3,
+                                                        offset: const Offset(0,
+                                                            0), // changes position of shadow
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            top: 10, left: 10),
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        CircleAvatar(
+                                                          foregroundImage:
+                                                              NetworkImage(
+                                                                  image),
+                                                          backgroundImage:
+                                                              const AssetImage(
+                                                                  'assets/time.png'),
+                                                          radius: 20,
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    HomeController
+                                                                        .instance
+                                                                        .filteredEvents[
+                                                                            index]
+                                                                        .eventName
+                                                                        .capitalize!,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          20,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        right:
+                                                                            16.0),
+                                                                    child: Text(
+                                                                      HomeController
+                                                                          .instance
+                                                                          .filteredEvents[
+                                                                              index]
+                                                                          .eventDay,
+                                                                      style: const TextStyle(
+                                                                          color: Colors
+                                                                              .grey,
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 15,
+                                                              ),
+                                                              Text(
+                                                                '${HomeController.instance.filteredEvents[index].description}',
+                                                                maxLines: 2,
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontSize:
+                                                                        13,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis),
+                                                                softWrap: true,
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                      ),
+                                      Obx(
+                                        () => ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            scrollDirection: Axis.vertical,
+                                            itemCount: HomeController
+                                                .instance.joinedEvents.length,
+                                            itemBuilder: (context, index) {
+                                              String image = '';
+                                              image =
+                                                  controller.selectEventImage(
+                                                      HomeController
+                                                          .instance
+                                                          .joinedEvents[index]
+                                                          .media);
+
+                                              return GestureDetector(
+                                                onTap: () => Get.toNamed(
+                                                    EventPageView.routeName,
+                                                    arguments: HomeController
+                                                        .instance
+                                                        .joinedEvents[index]),
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 20),
+                                                  width: Get.width,
+                                                  height: Get.height * 0.14,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    color: AppColors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.15),
+                                                        spreadRadius: 2,
+                                                        blurRadius: 3,
+                                                        offset: const Offset(0,
+                                                            0), // changes position of shadow
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            top: 10, left: 10),
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        CircleAvatar(
+                                                          foregroundImage:
+                                                              NetworkImage(
+                                                                  image),
+                                                          backgroundImage:
+                                                              const AssetImage(
+                                                                  'assets/time.png'),
+                                                          radius: 20,
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    HomeController
+                                                                        .instance
+                                                                        .joinedEvents[
+                                                                            index]
+                                                                        .eventName
+                                                                        .capitalize!,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          20,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        right:
+                                                                            16.0),
+                                                                    child: Text(
+                                                                      HomeController
+                                                                          .instance
+                                                                          .joinedEvents[
+                                                                              index]
+                                                                          .eventDay,
+                                                                      style: const TextStyle(
+                                                                          color: Colors
+                                                                              .grey,
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 15,
+                                                              ),
+                                                              Text(
+                                                                '${HomeController.instance.joinedEvents[index].description}',
+                                                                maxLines: 2,
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontSize:
+                                                                        13,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis),
+                                                                softWrap: true,
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                    const SizedBox(
-                      height: 15,
+                        ),
+                      ],
                     ),
-                    Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Column(
-                            children: [
-                              Text(
-                                "$followers",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppColors.black,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: -0.3,
+                  ),
+                  Obx(
+                    () => Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 105, right: 35),
+                        child: InkWell(
+                          onTap: () {
+                            if (controller.isNotEditable.value == false) {
+                              controller.onSaveDetails();
+                            }
+                            controller.isNotEditable.value =
+                                !controller.isNotEditable.value;
+                          },
+                          child: controller.isNotEditable.value
+                              ? Image(
+                                  image: const AssetImage('assets/edit.png'),
+                                  width: Get.width * 0.06,
+                                )
+                              : Icon(
+                                  Icons.check,
+                                  color: Colors.black,
+                                  size: Get.width * 0.07,
                                 ),
-                              ),
-                              Text(
-                                "Followers",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  letterSpacing: -0.3,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            width: 1,
-                            height: 35,
-                            color: Color(0xff918F8F).withOpacity(0.5),
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                "${following}",
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: AppColors.black,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: -0.3),
-                              ),
-                              Text(
-                                "Following",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  letterSpacing: -0.3,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            height: 40,
-                            width: Get.width * 0.25,
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(15),
-                                    ),
-                                  ),
-                                  backgroundColor: AppColors.blue),
-                              onPressed: () {},
-                              child: Text(
-                                'Follow',
-                                style: TextStyle(
-                                  color: AppColors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Container(
-                    //   margin: EdgeInsets.only(top: 10),
-                    //   width: Get.width * 0.6,
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //     children: [
-                    //       Container(
-                    //         width: 34,
-                    //         height: 34,
-                    //         decoration: BoxDecoration(
-                    //           borderRadius: BorderRadius.circular(36),
-                    //           color: Color(0xffE2E2E2),
-                    //         ),
-                    //         child: Padding(
-                    //           padding: const EdgeInsets.all(5),
-                    //           child: Icon(
-                    //             Icons.add,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //       Container(
-                    //         width: 34,
-                    //         height: 34,
-                    //         decoration: BoxDecoration(
-                    //           borderRadius: BorderRadius.circular(36),
-                    //           color: AppColors.blue,
-                    //         ),
-                    //         child: Image(
-                    //           image: AssetImage('assets/#1.png'),
-                    //         ),
-                    //       ),
-                    //       Container(
-                    //         width: 34,
-                    //         height: 34,
-                    //         decoration: BoxDecoration(
-                    //           borderRadius: BorderRadius.circular(36),
-                    //           color: AppColors.blue,
-                    //         ),
-                    //         child: Image(
-                    //           image: AssetImage('assets/#3.png'),
-                    //         ),
-                    //       ),
-                    //       Container(
-                    //         width: 34,
-                    //         height: 34,
-                    //         decoration: BoxDecoration(
-                    //           borderRadius: BorderRadius.circular(36),
-                    //           color: AppColors.blue,
-                    //         ),
-                    //         child: Image(
-                    //           image: AssetImage('assets/#2.png'),
-                    //         ),
-                    //       ),
-                    //       Container(
-                    //         width: 34,
-                    //         height: 34,
-                    //         decoration: BoxDecoration(
-                    //           borderRadius: BorderRadius.circular(36),
-                    //           color: AppColors.blue,
-                    //         ),
-                    //         child: Image(
-                    //           image: AssetImage('assets/#3.png'),
-                    //         ),
-                    //       ),
-                    //       Container(
-                    //         width: 34,
-                    //         height: 34,
-                    //         decoration: BoxDecoration(
-                    //           borderRadius: BorderRadius.circular(36),
-                    //           color: AppColors.blue,
-                    //         ),
-                    //         child: Image(
-                    //           image: AssetImage('assets/#1.png'),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      child: DefaultTabController(
-                        length: 2,
-                        initialIndex: 0,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.black,
-                                    width: 0.01,
-                                  ),
-                                ),
-                              ),
-                              child: TabBar(
-                                indicatorColor: Colors.black,
-                                labelPadding: EdgeInsets.symmetric(
-                                  horizontal: 20.0,
-                                  vertical: 10,
-                                ),
-                                unselectedLabelColor: Colors.black,
-                                tabs: [
-                                  Tab(
-                                    icon: Image.asset("assets/ticket.png"),
-                                    height: 20,
-                                  ),
-                                  Tab(
-                                    icon: Image.asset("assets/Group 18600.png"),
-                                    height: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: Get.height * 0.46,
-                              //height of TabBarView
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  top: BorderSide(
-                                    color: Colors.white,
-                                    width: 0.5,
-                                  ),
-                                ),
-                              ),
-                              child: TabBarView(
-                                physics: NeverScrollableScrollPhysics(),
-                                children: <Widget>[
-                                  ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      scrollDirection: Axis.vertical,
-                                      itemCount: ticket.length,
-                                      itemBuilder: (context, index) {
-                                        return
-                                            // InkWell(onTap: (){
-                                            // Get.to(()=>Detailproduct(record: popular[index],));
-                                            // },
-                                            Container(
-                                          margin: EdgeInsets.only(top: 20),
-                                          width: 388,
-                                          height: 130,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            color: Colors.white,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.15),
-                                                spreadRadius: 2,
-                                                blurRadius: 3,
-                                                offset: Offset(0,
-                                                    0), // changes position of shadow
-                                              ),
-                                            ],
-                                          ),
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                                top: 10, left: 10),
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  width: 40,
-                                                  height: 41,
-                                                  padding: EdgeInsets.all(1),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                      6,
-                                                    ),
-                                                    border: Border.all(
-                                                      color:
-                                                          ticket[index].color!,
-                                                    ),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      myText(
-                                                        text:
-                                                            ticket[index].range,
-                                                        style: TextStyle(
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                      myText(
-                                                        text:
-                                                            ticket[index].date,
-                                                        style: TextStyle(
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      '${ticket[index].name}',
-                                                      style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Image(
-                                                          image: AssetImage(
-                                                              '${ticket[index].img1}'),
-                                                          width: 27,
-                                                          height: 27,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 1,
-                                                        ),
-                                                        Image(
-                                                          image: AssetImage(
-                                                              '${ticket[index].img2}'),
-                                                          width: 27,
-                                                          height: 27,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 1,
-                                                        ),
-                                                        Image(
-                                                          image: AssetImage(
-                                                              '${ticket[index].img3}'),
-                                                          width: 27,
-                                                          height: 27,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 1,
-                                                        ),
-                                                        Image(
-                                                          image: AssetImage(
-                                                              '${ticket[index].img4}'),
-                                                          width: 27,
-                                                          height: 27,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 1,
-                                                        ),
-                                                        Image(
-                                                          image: AssetImage(
-                                                              '${ticket[index].img5}'),
-                                                          width: 27,
-                                                          height: 27,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 1,
-                                                        ),
-                                                        Image(
-                                                          image: AssetImage(
-                                                              '${ticket[index].img6}'),
-                                                          width: 27,
-                                                          height: 27,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Container(
-                                                          height: 30,
-                                                          child: Image.asset(
-                                                            ticket[index].heart,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 1,
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 10),
-                                                          child: Text(
-                                                            '${ticket[index].count}',
-                                                            style: TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 23,
-                                                        ),
-                                                        Image(
-                                                          image: AssetImage(
-                                                              '${ticket[index].message}'),
-                                                          width: 16,
-                                                          height: 16,
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 10),
-                                                          child: Text(
-                                                            '${ticket[index].rate}',
-                                                            style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 27,
-                                                        ),
-                                                        Container(
-                                                            child: Image(
-                                                          image: AssetImage(
-                                                              '${ticket[index].share}'),
-                                                          width: 15,
-                                                          height: 15,
-                                                        )),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                  Container(
-                                    child: Center(
-                                      child: Text('Tab 2',
-                                          style: TextStyle(
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  margin: EdgeInsets.only(top: 105, right: 35),
-                  child: InkWell(
-                    onTap: () {
-                      if (isNotEditable == false) {
-                        // FirebaseFirestore.instance
-                        //     .collection('users')
-                        //     .doc(FirebaseAuth.instance.currentUser!.uid)
-                        //     .set({
-                        //   'first': firstNameController.text,
-                        //   'last': lastNameController.text,
-                        //   'location': locationController.text,
-                        //   'desc': descriptionController.text
-                        // }, SetOptions(merge: true)).then((value) {
-                        //   Get.snackbar('Profile Updated',
-                        //       'Profile has been updated successfully.',
-                        //       colorText: Colors.white,
-                        //       backgroundColor: Colors.blue);
-                        // });
-                      }
-
-                      /*setState(() {
-                        isNotEditable = !isNotEditable;
-                      });*/
-                    },
-                    child: isNotEditable
-                        ? Image(
-                            image: AssetImage('assets/edit.png'),
-                            width: Get.width * 0.04,
-                          )
-                        : Icon(
-                            Icons.check,
-                            color: Colors.black,
-                          ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
@@ -683,7 +643,7 @@ width: 53,
 height: 53,
 decoration: BoxDecoration(
 borderRadius: BorderRadius.circular(36),
-color: Colors.white,
+color: AppColors.white,
 ),
 child: Image(
 image: AssetImage('assets/Ellipse 984.png')),
@@ -694,7 +654,7 @@ width: 53,
 height: 53,
 decoration: BoxDecoration(
 borderRadius: BorderRadius.circular(36),
-color: Colors.white,
+color: AppColors.white,
 ),
 child: Image(
 image: AssetImage('assets/Ellipse 985.png')),
@@ -705,7 +665,7 @@ width: 53,
 height: 53,
 decoration: BoxDecoration(
 borderRadius: BorderRadius.circular(36),
-color: Colors.white,
+color: AppColors.white,
 ),
 child: Image(
 image: AssetImage('assets/Ellipse 986.png')),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../utils/app_color.dart';
 import 'auth/login_signup.dart';
 
 class OnBoardingScreen extends StatelessWidget {
@@ -47,13 +48,13 @@ class OnBoardingScreen extends StatelessWidget {
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
+                decoration: BoxDecoration(
+                    color: AppColors.white,
+                    boxShadow: const [
                       BoxShadow(
                           color: Colors.black12, blurRadius: 5, spreadRadius: 2)
                     ],
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(16),
                         topLeft: Radius.circular(16))),
                 child: Column(
@@ -83,7 +84,7 @@ class OnBoardingScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 15, right: 15),
                       child: MaterialButton(
                         minWidth: double.infinity,
-                        color: Colors.white,
+                        color: AppColors.white,
                         elevation: 2,
                         onPressed: () {
                           Get.toNamed(LoginView.routeName);

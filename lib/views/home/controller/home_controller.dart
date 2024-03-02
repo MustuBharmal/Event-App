@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/model/user_model.dart';
+import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,10 +27,10 @@ class HomeController extends GetxController {
 
   List<Widget> facultyWidgetOption = [
     const HomeView(),
-    ProfileView(),
+    const ProfileView(),
     CreateEventView()
   ];
-  List<Widget> studentWidgetOption = [const HomeView(), ProfileView()];
+  List<Widget> studentWidgetOption = [const HomeView(), const ProfileView()];
 
   toCheckUserIsEnrolled(List<String> joined) {
     isJoinedUser.value =
@@ -99,15 +100,19 @@ class HomeController extends GetxController {
     isLoading(true);
     FirebaseFirestore.instance
         .collection('events')
+        .orderBy('date', descending: true)
         .snapshots()
         .listen((elements) {
       allEvents.clear();
       for (var element in elements.docs) {
         allEvents.add(EventModel.fromSnapshot(element));
-        filteredEvents.assign(EventModel.fromSnapshot(element));
+        filteredEvents.value = allEvents.where((e) {
+          List<String> savedEvents = e.saves;
+          return savedEvents.contains(AuthController.instance.user.value!.uid!);
+        }).toList();
         joinedEvents.value = allEvents.where((e) {
           List<String> joinedIds = e.joined;
-          return joinedIds.contains(FirebaseAuth.instance.currentUser!.uid);
+          return joinedIds.contains(AuthController.instance.user.value!.uid!);
         }).toList();
       }
     });

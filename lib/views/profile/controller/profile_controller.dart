@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../model/user_model.dart';
+import '../../../utils/app_color.dart';
 import '../../auth/controller/auth_controller.dart';
 import '../../home/bottom_bar_view.dart';
 
@@ -19,6 +20,52 @@ class ProfileController extends GetxController {
   File? profileImage;
   int selectedRadio = 0;
   RxBool isLoading = RxBool(false);
+  String image = '';
+  RxBool isNotEditable = RxBool(true);
+  UserModel? user;
+
+  @override
+  void onInit() {
+    if (AuthController.instance.user.value != null) {
+      fillProfileDetails();
+    }
+    super.onInit();
+  }
+
+  selectEventImage(List imgMedia) {
+    try {
+      List media = imgMedia;
+      Map mediaItem =
+          media.firstWhere((element) => element['isImage'] == true) as Map;
+      return mediaItem['url'];
+    } catch (e) {
+      return ('');
+    }
+  }
+
+  fillProfileDetails() {
+    firstNameController.text = AuthController.instance.user.value!.first!;
+    lastNameController.text = AuthController.instance.user.value!.last!;
+    image = AuthController.instance.user.value!.image!;
+  }
+
+  onSaveDetails() {
+    isLoading(true);
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(AuthController.instance.user.value!.uid!)
+        .update({
+      'first': firstNameController.text,
+      'last': lastNameController.text,
+    }).catchError(
+      (onError) => {
+        Get.snackbar('Error', 'Profile Update Failed',
+            colorText: AppColors.white, backgroundColor: AppColors.blue),
+      },
+    );
+    isLoading(false);
+  }
 
   void setSelectedRadio(int val) {
     selectedRadio = val;

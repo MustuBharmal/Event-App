@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../model/event_media_model.dart';
 import '../../../model/event_model.dart';
+import '../../../utils/app_color.dart';
 
 class CreateEventController extends GetxController {
   TextEditingController eventDateController = TextEditingController();
@@ -116,11 +117,11 @@ class CreateEventController extends GetxController {
       isCreatingEvent(false);
       resetControllers();
       Get.snackbar('Event Uploaded', 'Event is uploaded successfully.',
-          colorText: Colors.white, backgroundColor: Colors.blue);
+          colorText: AppColors.white, backgroundColor: AppColors.blue);
     }).catchError((e) {
       isCreatingEvent(false);
       Get.snackbar('Warning', 'Event upload failed',
-          colorText: Colors.white, backgroundColor: Colors.blue);
+          colorText: AppColors.white, backgroundColor: AppColors.blue);
     });
   }
 

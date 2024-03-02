@@ -1,9 +1,7 @@
 import 'package:ems/utils/routes.dart';
 import 'package:ems/views/auth/bindings/login_binding.dart';
-import 'package:ems/views/home/bottom_bar_view.dart';
-import 'package:ems/views/onboarding_screen.dart';
+
 import 'package:ems/views/splash_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -40,7 +38,6 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       getPages: AppRoutes.pages,
       initialBinding: LoginBinding(),
-      home: const SplashScreen(),
     );
   }
 }

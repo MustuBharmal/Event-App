@@ -1,4 +1,5 @@
 import 'package:ems/model/user_model.dart';
+import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:ems/views/event_page/event_participants_list_view.dart';
 import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/model/event_model.dart';
@@ -10,7 +11,7 @@ import '../invite_guest/invite_guest_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../registration/register_event_view.dart';
-import '../registration/view_end_event_details.dart';
+import '../registration/view_event_end_details.dart';
 
 class EventPageView extends StatelessWidget {
   static const String routeName = '/event-page-view';
@@ -282,7 +283,7 @@ class EventPageView extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         !regEndDate.isBefore(nowTime)
-                            ? Get.to(() => const Inviteguest())
+                            ? Get.to(() => InviteGuest())
                             : null;
                       },
                       child: Container(
@@ -290,7 +291,7 @@ class EventPageView extends StatelessWidget {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(13),
                             color: !regEndDate.isBefore(nowTime)
-                                ? Colors.blue.withOpacity(0.9)
+                                ? AppColors.blue.withOpacity(0.9)
                                 : Colors.grey.withOpacity(0.9)),
                         child: Center(
                           child: Text(
@@ -299,7 +300,7 @@ class EventPageView extends StatelessWidget {
                                 : "Reg. Closed",
                             style: TextStyle(
                               color: !regEndDate.isBefore(nowTime)
-                                  ? Colors.white
+                                  ? AppColors.white
                                   : Colors.black,
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
@@ -312,45 +313,46 @@ class EventPageView extends StatelessWidget {
                   const SizedBox(
                     width: 10,
                   ),
-                  Visibility(
-                    visible: eventEndDate.isBefore(nowTime),
-                    child: Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Get.toNamed(
-                            ViewEndEventDetails.routeName,
-                            arguments: event,
-                          );
-                        },
-                        child: Container(
-                          height: Get.height * 0.058,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.4),
-                                  spreadRadius: 0.1,
-                                  blurRadius: 60,
-                                  offset: const Offset(
-                                      0, 1), // changes position of shadow
+                  if (AuthController.instance.user.value!.uid == event.uid)
+                    Visibility(
+                      visible: eventEndDate.isBefore(nowTime),
+                      child: Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Get.toNamed(
+                              ViewEndEventDetails.routeName,
+                              arguments: event,
+                            );
+                          },
+                          child: Container(
+                            height: Get.height * 0.058,
+                            decoration: BoxDecoration(
+                                color: AppColors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.4),
+                                    spreadRadius: 0.1,
+                                    blurRadius: 60,
+                                    offset: const Offset(
+                                        0, 1), // changes position of shadow
+                                  ),
+                                ],
+                                borderRadius: BorderRadius.circular(13)),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            child: const Center(
+                              child: Text(
+                                'View Details',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              ],
-                              borderRadius: BorderRadius.circular(13)),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          child: const Center(
-                            child: Text(
-                              'View Details',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
                   Visibility(
                     visible: !HomeController.instance.isJoinedUser.value &&
                         !regEndDate.isBefore(nowTime),
@@ -365,7 +367,7 @@ class EventPageView extends StatelessWidget {
                         child: Container(
                           height: Get.height * 0.058,
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors.white,
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.4),
@@ -475,7 +477,7 @@ class EventPageView extends StatelessWidget {
                     height: Get.height * 0.029,
                     width: Get.width * 0.2,
                     child: Image.asset(
-                      'assets/boomMark.png',
+                      'assets/bookMark.png',
                       fit: BoxFit.contain,
                       color: event.saves
                               .contains(FirebaseAuth.instance.currentUser!.uid)

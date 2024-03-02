@@ -44,7 +44,7 @@ class CreateEventView extends GetView<CreateEventController> {
                               // decoration: BoxDecoration(
                               //   border: Border.all(
                               //     width: 0,
-                              //     color: Colors.white,
+                              //     color: AppColors.white,
                               //   ),
                               // ),
                               ),
@@ -87,7 +87,7 @@ class CreateEventView extends GetView<CreateEventController> {
                               // decoration: BoxDecoration(
                               //   border: Border.all(
                               //     width: 0,
-                              //     color: Colors.white,
+                              //     color: AppColors.white,
                               //   ),
                               // ),
                               ),
@@ -121,7 +121,7 @@ class CreateEventView extends GetView<CreateEventController> {
                 Obx(
                   () => Visibility(
                     visible: controller.eventType.value == 'Group',
-                    child: myTextField(
+                    child: textFormFieldForController(
                         obscure: false,
                         icon: 'assets/4DotIcon.png',
                         hintText: 'No of Participants',
@@ -129,8 +129,8 @@ class CreateEventView extends GetView<CreateEventController> {
                         validator: (String input) {
                           if (input.isEmpty) {
                             Get.snackbar('Opps', "No of Participants Required",
-                                colorText: Colors.white,
-                                backgroundColor: Colors.blue);
+                                colorText: AppColors.white,
+                                backgroundColor: AppColors.blue);
                             return '';
                           }
                           return null;
@@ -242,7 +242,7 @@ class CreateEventView extends GetView<CreateEventController> {
                 const SizedBox(
                   height: 20,
                 ),
-                myTextField(
+                textFormFieldForController(
                     obscure: false,
                     icon: 'assets/4DotIcon.png',
                     hintText: 'Event Name',
@@ -250,16 +250,16 @@ class CreateEventView extends GetView<CreateEventController> {
                     validator: (String input) {
                       if (input.isEmpty) {
                         Get.snackbar('Opps', "Event name is required.",
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
 
                       if (input.length < 3) {
                         Get.snackbar(
                             'Opps', "Event name is should be 3+ characters.",
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
                       return null;
@@ -267,7 +267,7 @@ class CreateEventView extends GetView<CreateEventController> {
                 const SizedBox(
                   height: 20,
                 ),
-                myTextField(
+                textFormFieldForController(
                     obscure: false,
                     icon: 'assets/location.png',
                     hintText: 'Location',
@@ -275,15 +275,15 @@ class CreateEventView extends GetView<CreateEventController> {
                     validator: (String input) {
                       if (input.isEmpty) {
                         Get.snackbar('Opps', "Location is required.",
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
 
                       if (input.length < 3) {
                         Get.snackbar('Opps', "Location is Invalid.",
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
                       return null;
@@ -302,8 +302,8 @@ class CreateEventView extends GetView<CreateEventController> {
                       validator: (input) {
                         if (controller.date == null) {
                           Get.snackbar('Opps', "Date is required.",
-                              colorText: Colors.white,
-                              backgroundColor: Colors.blue);
+                              colorText: AppColors.white,
+                              backgroundColor: AppColors.blue);
                           return '';
                         }
                         return null;
@@ -321,8 +321,8 @@ class CreateEventView extends GetView<CreateEventController> {
                       validator: (input) {
                         if (controller.date == null) {
                           Get.snackbar('Opps', "Date is required.",
-                              colorText: Colors.white,
-                              backgroundColor: Colors.blue);
+                              colorText: AppColors.white,
+                              backgroundColor: AppColors.blue);
                           return '';
                         }
                         return null;
@@ -348,8 +348,8 @@ class CreateEventView extends GetView<CreateEventController> {
                       validator: (input) {
                         if (controller.date == null) {
                           Get.snackbar('Opps', "Date is required.",
-                              colorText: Colors.white,
-                              backgroundColor: Colors.blue);
+                              colorText: AppColors.white,
+                              backgroundColor: AppColors.blue);
                           return '';
                         }
                         return null;
@@ -370,8 +370,8 @@ class CreateEventView extends GetView<CreateEventController> {
                         validator: (String input) {
                           if (input.isEmpty) {
                             Get.snackbar('Opps', "Entries is required.",
-                                colorText: Colors.white,
-                                backgroundColor: Colors.blue);
+                                colorText: AppColors.white,
+                                backgroundColor: AppColors.blue);
                             return '';
                           }
                           return null;
@@ -393,8 +393,8 @@ class CreateEventView extends GetView<CreateEventController> {
                     validator: (String input) {
                       if (input.isEmpty) {
                         Get.snackbar('Opps', "Tags is required.",
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
 
                         return;
                       }
@@ -417,9 +417,9 @@ class CreateEventView extends GetView<CreateEventController> {
                         return Container(
                           width: double.infinity,
                           height: Get.width * 0.6,
-                          decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
+                          decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(10),
                                   topLeft: Radius.circular(10))),
                           child: Column(
@@ -442,7 +442,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                           color: controller.selectedFrequency
                                                       .value ==
                                                   -1
-                                              ? Colors.blue
+                                              ? AppColors.blue
                                               : Colors.black.withOpacity(0.1),
                                           borderRadius:
                                               BorderRadius.circular(10),
@@ -456,7 +456,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                                             .value !=
                                                         -1
                                                     ? Colors.black
-                                                    : Colors.white),
+                                                    : AppColors.white),
                                           ),
                                         ),
                                       ),
@@ -475,7 +475,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                           color: controller.selectedFrequency
                                                       .value ==
                                                   0
-                                              ? Colors.blue
+                                              ? AppColors.blue
                                               : Colors.black.withOpacity(0.1),
                                           borderRadius:
                                               BorderRadius.circular(10),
@@ -489,7 +489,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                                             .value !=
                                                         0
                                                     ? Colors.black
-                                                    : Colors.white),
+                                                    : AppColors.white),
                                           ),
                                         ),
                                       ),
@@ -515,7 +515,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                           color: controller.selectedFrequency
                                                       .value ==
                                                   1
-                                              ? Colors.blue
+                                              ? AppColors.blue
                                               : Colors.black.withOpacity(0.1),
                                         ),
                                         child: Center(
@@ -527,7 +527,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                                             .value !=
                                                         1
                                                     ? Colors.black
-                                                    : Colors.white),
+                                                    : AppColors.white),
                                           ),
                                         ),
                                       ),
@@ -564,7 +564,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                           color: controller.selectedFrequency
                                                       .value ==
                                                   2
-                                              ? Colors.blue
+                                              ? AppColors.blue
                                               : Colors.black.withOpacity(0.1),
                                         ),
                                         child: Center(
@@ -576,7 +576,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                                             .value !=
                                                         2
                                                     ? Colors.black
-                                                    : Colors.white),
+                                                    : AppColors.white),
                                           ),
                                         ),
                                       ),
@@ -602,7 +602,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                           color: controller.selectedFrequency
                                                       .value ==
                                                   3
-                                              ? Colors.blue
+                                              ? AppColors.blue
                                               : Colors.black.withOpacity(0.1),
                                         ),
                                         child: Center(
@@ -614,7 +614,7 @@ class CreateEventView extends GetView<CreateEventController> {
                                                             .value !=
                                                         3
                                                     ? Colors.black
-                                                    : Colors.white),
+                                                    : AppColors.white),
                                           ),
                                         ),
                                       ),
@@ -649,11 +649,11 @@ class CreateEventView extends GetView<CreateEventController> {
                                                       : 'Yearly';
                                       Get.back();
                                     },
-                                    child: const Text(
+                                    child: Text(
                                       "Select",
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(color: AppColors.white),
                                     ),
-                                    color: Colors.blue,
+                                    color: AppColors.blue,
                                   )
                                 ],
                               ),
@@ -665,8 +665,8 @@ class CreateEventView extends GetView<CreateEventController> {
                     validator: (String? input) {
                       if (input!.isEmpty) {
                         Get.snackbar('Opps', "Frequency is required.",
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
                       return null;
@@ -744,8 +744,8 @@ class CreateEventView extends GetView<CreateEventController> {
                     validator: (input) {
                       if (input!.isEmpty) {
                         Get.snackbar('Opps', "Description is required.",
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
                       return null;
@@ -787,8 +787,8 @@ class CreateEventView extends GetView<CreateEventController> {
 
                                   if (controller.media.isEmpty) {
                                     Get.snackbar('Opps', "Media is required.",
-                                        colorText: Colors.white,
-                                        backgroundColor: Colors.blue);
+                                        colorText: AppColors.white,
+                                        backgroundColor: AppColors.blue);
 
                                     return;
                                   }

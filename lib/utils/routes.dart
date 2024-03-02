@@ -6,15 +6,17 @@ import 'package:ems/views/home/bindings/home_binding.dart';
 import 'package:ems/views/profile/add_profile.dart';
 import 'package:ems/views/profile/bindings/profile_binding.dart';
 import 'package:ems/views/registration/binding/registration_binding.dart';
-import 'package:ems/views/registration/view_end_event_details.dart';
+import 'package:ems/views/registration/view_event_end_details.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
 import '../views/auth/bindings/login_binding.dart';
 import '../views/auth/login_signup.dart';
 import '../views/registration/register_event_view.dart';
+import '../views/splash_screen.dart';
 
 class AppRoutes {
   static List<GetPage> pages = [
+    GetPage(name: SplashScreen.routeName, page: () => const SplashScreen()),
     GetPage(
         name: LoginView.routeName,
         page: () => LoginView(),

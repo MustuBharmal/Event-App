@@ -5,22 +5,8 @@ import 'package:ems/model/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../model/ticket_model.dart';
 import '../utils/app_color.dart';
 import '../views/event_page/event_page_view.dart';
-
-List<AustinYogaWork> austin = [
-  AustinYogaWork(rangeText: '7-8', title: 'CONCERN'),
-  AustinYogaWork(rangeText: '8-9', title: 'VINYASA'),
-  AustinYogaWork(rangeText: '9-10', title: 'MEDITATION'),
-];
-List<String> imageList = [
-  'assets/#1.png',
-  'assets/#2.png',
-  'assets/#3.png',
-  'assets/#1.png',
-];
 
 Widget eventsFeed() {
   return ListView.builder(
@@ -160,7 +146,7 @@ Widget buildCard(
                   width: Get.width * 0.13,
                   height: Get.height * 0.029,
                   child: Image.asset(
-                    'assets/boomMark.png',
+                    'assets/bookMark.png',
                     fit: BoxFit.contain,
                     color: eventSavedByUsers
                             .contains(FirebaseAuth.instance.currentUser!.uid)
@@ -359,14 +345,17 @@ eventsIJoined() {
               height: Get.height * 0.015,
             ),
             Container(
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
-                  spreadRadius: 1,
-                  blurRadius: 10,
-                  offset: const Offset(0, 1), // changes position of shadow
-                ),
-              ], color: Colors.white, borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 1,
+                      blurRadius: 10,
+                      offset: const Offset(0, 1), // changes position of shadow
+                    ),
+                  ],
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(8)),
               padding: const EdgeInsets.all(10),
               width: double.infinity,
               child: Column(

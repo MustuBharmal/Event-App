@@ -30,6 +30,7 @@ class AuthController extends GetxController {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     // TODO: implement dispose
     super.dispose();
   }
@@ -50,7 +51,6 @@ class AuthController extends GetxController {
     try {
       FirebaseAuth.instance.signOut();
       Get.offAllNamed(LoginView.routeName);
-      user.value = null;
     } catch (e) {
       Get.snackbar('Error', '$e');
     }
@@ -78,11 +78,19 @@ class AuthController extends GetxController {
       } else {
         Get.offNamed(AddProfileScreen.routeName);
       }
+
       isLoading(false);
+      clearControllers();
     } catch (e) {
       print('$e');
     }
     isLoading(false);
+  }
+
+  clearControllers() {
+    emailController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
   }
 
   void login() async {

@@ -131,22 +131,22 @@ class LoginView extends GetView<AuthController> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              myTextField(
+              textFormFieldForController(
                   obscure: false,
                   icon: 'assets/mail.png',
                   hintText: 'sarasmith12@gmail.com',
                   validator: (String input) {
                     if (input.isEmpty) {
                       Get.snackbar('Warning', 'Email is required.',
-                          colorText: Colors.white,
-                          backgroundColor: Colors.blue);
+                          colorText: AppColors.white,
+                          backgroundColor: AppColors.blue);
                       return '';
                     }
 
                     if (!input.contains('@')) {
                       Get.snackbar('Warning', 'Email is invalid.',
-                          colorText: Colors.white,
-                          backgroundColor: Colors.blue);
+                          colorText: AppColors.white,
+                          backgroundColor: AppColors.blue);
                       return '';
                     }
                   },
@@ -154,23 +154,23 @@ class LoginView extends GetView<AuthController> {
               SizedBox(
                 height: Get.height * 0.02,
               ),
-              myTextField(
+              textFormFieldForController(
                   obscure: true,
                   icon: 'assets/lock.png',
                   hintText: 'password',
                   validator: (String input) {
                     if (input.isEmpty) {
                       Get.snackbar('Warning', 'Password is required.',
-                          colorText: Colors.white,
-                          backgroundColor: Colors.blue);
+                          colorText: AppColors.white,
+                          backgroundColor: AppColors.blue);
                       return '';
                     }
 
                     if (input.length < 6) {
                       Get.snackbar(
                           'Warning', 'Password should be 6+ characters.',
-                          colorText: Colors.white,
-                          backgroundColor: Colors.blue);
+                          colorText: AppColors.white,
+                          backgroundColor: AppColors.blue);
                       return '';
                     }
                   },
@@ -183,7 +183,7 @@ class LoginView extends GetView<AuthController> {
                         width: Get.width,
                         child: Column(
                           children: [
-                            myTextField(
+                            textFormFieldForController(
                                 obscure: false,
                                 icon: 'assets/lock.png',
                                 hintText: 'enter your email...',
@@ -192,7 +192,7 @@ class LoginView extends GetView<AuthController> {
                               height: 10,
                             ),
                             MaterialButton(
-                              color: Colors.blue,
+                              color: AppColors.blue,
                               onPressed: () {
                                 controller.forgetPassword(controller
                                     .forgetEmailController.text
@@ -278,20 +278,20 @@ class LoginView extends GetView<AuthController> {
     return SingleChildScrollView(
         child: Column(
       children: [
-        myTextField(
+        textFormFieldForController(
             obscure: false,
             icon: 'assets/mail.png',
             hintText: 'Email',
             validator: (String input) {
               if (input.isEmpty) {
                 Get.snackbar('Warning', 'Email is required.',
-                    colorText: Colors.white, backgroundColor: Colors.blue);
+                    colorText: AppColors.white, backgroundColor: AppColors.blue);
                 return '';
               }
 
               if (!input.contains('@')) {
                 Get.snackbar('Warning', 'Email is invalid.',
-                    colorText: Colors.white, backgroundColor: Colors.blue);
+                    colorText: AppColors.white, backgroundColor: AppColors.blue);
                 return '';
               }
             },
@@ -299,20 +299,20 @@ class LoginView extends GetView<AuthController> {
         SizedBox(
           height: Get.height * 0.02,
         ),
-        myTextField(
+        textFormFieldForController(
             obscure: true,
             icon: 'assets/lock.png',
             hintText: 'password',
             validator: (String input) {
               if (input.isEmpty) {
                 Get.snackbar('Warning', 'Password is required.',
-                    colorText: Colors.white, backgroundColor: Colors.blue);
+                    colorText: AppColors.white, backgroundColor: AppColors.blue);
                 return '';
               }
 
               if (input.length < 6) {
                 Get.snackbar('Warning', 'Password should be 6+ characters.',
-                    colorText: Colors.white, backgroundColor: Colors.blue);
+                    colorText: AppColors.white, backgroundColor: AppColors.blue);
                 return '';
               }
             },
@@ -320,7 +320,7 @@ class LoginView extends GetView<AuthController> {
         SizedBox(
           height: Get.height * 0.02,
         ),
-        myTextField(
+        textFormFieldForController(
             obscure: false,
             icon: 'assets/lock.png',
             hintText: 'Re-enter password',
@@ -328,7 +328,7 @@ class LoginView extends GetView<AuthController> {
               if (input != controller.passwordController.text.trim()) {
                 Get.snackbar(
                     'Warning', 'Confirm Password is not same as password.',
-                    colorText: Colors.white, backgroundColor: Colors.blue);
+                    colorText: AppColors.white, backgroundColor: AppColors.blue);
                 return '';
               }
             },

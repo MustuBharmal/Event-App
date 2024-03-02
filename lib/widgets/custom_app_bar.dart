@@ -1,4 +1,3 @@
-import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -33,24 +32,6 @@ Widget customAppBar(context) {
             },
             child: Image.asset('assets/Frame.png'),
           ),
-        ),
-        SizedBox(
-          width: Get.width * 0.04,
-        ),
-        Obx(
-          () => AuthController.instance.isLogoutLoading.value
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : InkWell(
-                  onTap: () {
-                    AuthController.instance.logout();
-                  },
-                  child: SizedBox(
-                      width: Get.width * 0.06,
-                      height: Get.height * 0.02,
-                      child: const Icon(Icons.logout)),
-                ),
         ),
       ],
     ),

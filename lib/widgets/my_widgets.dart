@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -37,18 +36,23 @@ Widget textField(
   );
 }
 
-Widget myTextField(
+Widget textFormFieldForController(
     {hintText,
     String? icon,
     obscure = false,
+    readOnly = false,
+    int? maxLength,
+    inputType = TextInputType.text,
     TextEditingController? controller,
     Function? validator}) {
   return SizedBox(
-    height: 45,
     child: TextFormField(
       validator: (input) => validator!(input),
       obscureText: obscure,
+      readOnly: readOnly,
+      maxLength: maxLength,
       controller: controller,
+      keyboardType: inputType,
       decoration: InputDecoration(
           contentPadding: const EdgeInsets.only(top: 5),
           errorStyle: const TextStyle(fontSize: 0),
@@ -65,10 +69,11 @@ Widget myTextField(
   );
 }
 
-Widget textFormField({
+Widget textFormFieldForValue({
   hintText,
   String? icon,
   obscure = false,
+  readOnly = false,
   String? initialValue,
   int? maxLength,
   Function? validator,
@@ -79,10 +84,11 @@ Widget textFormField({
     child: TextFormField(
       maxLength: maxLength,
       keyboardType: inputType,
-      onChanged: (input)=>onChanged!(input),
+      onChanged: (input) => onChanged!(input),
       initialValue: initialValue,
       validator: (input) => validator!(input),
       obscureText: obscure,
+      readOnly: readOnly,
       decoration: InputDecoration(
           contentPadding: const EdgeInsets.only(top: 5),
           errorStyle: const TextStyle(fontSize: 0),
@@ -147,8 +153,8 @@ Widget elevatedButton({text, Function? onPress}) {
     },
     child: Text(
       text,
-      style: const TextStyle(
-        color: Colors.white,
+      style: TextStyle(
+        color: AppColors.white,
         fontSize: 18,
         fontWeight: FontWeight.w500,
       ),
@@ -218,7 +224,7 @@ Widget iconWithTitle({text, Function? func, bool? isShow = true}) {
                   // alignment: Alignment.center,
                   width: 30,
                   height: 30,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     // border: Border.all(width: 1),
                     // borderRadius: BorderRadius.circular(50),
                     image: DecorationImage(
@@ -238,14 +244,14 @@ Widget iconWithTitle({text, Function? func, bool? isShow = true}) {
           ),
           child: myText(
             text: text,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 23,
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
       ),
-      Expanded(
+      const Expanded(
         flex: 1,
         child: Text(''),
       )
@@ -283,13 +289,11 @@ Widget iconTitleContainer(
       //   color: AppColors.genderTextColor,
       // ),
       decoration: InputDecoration(
-        errorStyle: TextStyle(fontSize: 0),
-        contentPadding: EdgeInsets.only(top: 3),
-        prefixIcon: Container(
-          child: Image.asset(
-            path,
-            cacheHeight: 18,
-          ),
+        errorStyle: const TextStyle(fontSize: 0),
+        contentPadding: const EdgeInsets.only(top: 3),
+        prefixIcon: Image.asset(
+          path,
+          cacheHeight: 18,
         ),
         hintText: text,
         hintStyle: TextStyle(
@@ -299,41 +303,11 @@ Widget iconTitleContainer(
         ),
         border: isReadOnly
             ? OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xffA6A6A6)),
+                borderSide: const BorderSide(color: Color(0xffA6A6A6)),
                 borderRadius: BorderRadius.circular(8))
             : OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
-  );
-}
-
-Widget community1st({title, path, style}) {
-  return Row(
-    children: [
-      path.toString().isEmpty
-          ? Container(
-              width: 24,
-              height: 24,
-              decoration:
-                  BoxDecoration(shape: BoxShape.circle, color: Colors.blue),
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
-              ),
-            )
-          : Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                      image: AssetImage(path), fit: BoxFit.fill)),
-            ),
-      SizedBox(
-        width: 10,
-      ),
-      myText(text: title, style: style)
-    ],
   );
 }
 
@@ -344,11 +318,11 @@ Widget userProfile({title, path, style}) {
           ? Container(
               width: 24,
               height: 24,
-              decoration:
-                  BoxDecoration(shape: BoxShape.circle, color: Colors.blue),
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.blue),
               child: Icon(
                 Icons.person,
-                color: Colors.white,
+                color: AppColors.white,
               ),
             )
           : Container(
@@ -359,15 +333,14 @@ Widget userProfile({title, path, style}) {
                   image: DecorationImage(
                       image: NetworkImage(path), fit: BoxFit.fill)),
             ),
-      SizedBox(
+      const SizedBox(
         width: 10,
       ),
       myText(text: title, style: style)
     ],
   );
 }
-
-Widget completeCommunityWidget({
+/*Widget completeCommunityWidget({
   imagePath,
   imageTitle,
   imagePath1,
@@ -449,3 +422,34 @@ Widget completeCommunityWidget({
     ],
   );
 }
+?
+ */
+/*Widget community1st({title, path, style}) {
+  return Row(
+    children: [
+      path.toString().isEmpty
+          ? Container(
+              width: 24,
+              height: 24,
+              decoration:
+                  BoxDecoration(shape: BoxShape.circle, color: Colors.blue),
+              child: Icon(
+                Icons.person,
+                color: AppColors.white,
+              ),
+            )
+          : Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                      image: AssetImage(path), fit: BoxFit.fill)),
+            ),
+      SizedBox(
+        width: 10,
+      ),
+      myText(text: title, style: style)
+    ],
+  );
+}*/

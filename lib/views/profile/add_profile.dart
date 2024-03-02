@@ -51,22 +51,22 @@ class AddProfileScreen extends GetView<ProfileController> {
                         Container(
                           padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: AppColors.white,
                             borderRadius: BorderRadius.circular(70),
                           ),
                           child: controller.profileImage == null
-                              ? const CircleAvatar(
+                              ? CircleAvatar(
                                   radius: 56,
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: AppColors.white,
                                   child: Icon(
                                     Icons.camera_alt,
-                                    color: Colors.blue,
+                                    color: AppColors.blue,
                                     size: 50,
                                   ),
                                 )
                               : CircleAvatar(
                                   radius: 56,
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: AppColors.white,
                                   backgroundImage: FileImage(
                                     controller.profileImage!,
                                   ),
@@ -85,8 +85,8 @@ class AddProfileScreen extends GetView<ProfileController> {
                     validator: (String input) {
                       if (controller.firstNameController.text.isEmpty) {
                         Get.snackbar('Warning', 'First Name is required.',
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
                     }),
@@ -96,8 +96,8 @@ class AddProfileScreen extends GetView<ProfileController> {
                     validator: (String input) {
                       if (controller.lastNameController.text.isEmpty) {
                         Get.snackbar('Warning', 'Last Name is required.',
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
                     }),
@@ -108,15 +108,15 @@ class AddProfileScreen extends GetView<ProfileController> {
                     validator: (String input) {
                       if (controller.mobileNumberController.text.isEmpty) {
                         Get.snackbar('Warning', 'First Name is required.',
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
 
                       if (controller.mobileNumberController.text.length < 10) {
                         Get.snackbar('Warning', 'Enter valid phone number.',
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
                     }),
@@ -127,15 +127,15 @@ class AddProfileScreen extends GetView<ProfileController> {
                     validator: (String input) {
                       if (controller.emailController.text.isEmpty) {
                         Get.snackbar('Warning', 'Email is required.',
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
 
                       if (controller.emailController.text.length < 5) {
                         Get.snackbar('Warning', 'Enter valid email address.',
-                            colorText: Colors.white,
-                            backgroundColor: Colors.blue);
+                            colorText: AppColors.white,
+                            backgroundColor: AppColors.blue);
                         return '';
                       }
                     }),
@@ -213,8 +213,8 @@ class AddProfileScreen extends GetView<ProfileController> {
                               if (controller.dob.text.isEmpty) {
                                 Get.snackbar(
                                     'Warning', "Date of birth is required.",
-                                    colorText: Colors.white,
-                                    backgroundColor: Colors.blue);
+                                    colorText: AppColors.white,
+                                    backgroundColor: AppColors.blue);
                                 return '';
                               }
 
@@ -223,8 +223,8 @@ class AddProfileScreen extends GetView<ProfileController> {
                               }
                               if (controller.profileImage == null) {
                                 Get.snackbar('Warning', "Image is required.",
-                                    colorText: Colors.white,
-                                    backgroundColor: Colors.blue);
+                                    colorText: AppColors.white,
+                                    backgroundColor: AppColors.blue);
                                 return '';
                               }
                               controller.addProfile();

@@ -237,7 +237,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
-                                myTextField(
+                                textFormFieldForController(
                                     hintText: 'Team Name',
                                     icon: ('assets/Header.png'),
                                     controller: controller.teamNameController,
@@ -245,8 +245,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                       if (input.isEmpty) {
                                         Get.snackbar(
                                             'Opps', "Team name is required",
-                                            colorText: Colors.white,
-                                            backgroundColor: Colors.blue);
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
                                         return '';
                                       }
                                       return null;
@@ -254,21 +254,17 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
-                                textFormField(
-                                    onChanged: (String value) {
-                                      controller.leaderName.text = value;
-                                    },
-                                    hintText:
-                                    'Leader Name',
+                                textFormFieldForController(
+                                    hintText: 'Leader Name',
                                     icon: ('assets/Header.png'),
                                     obscure: false,
+                                    controller: controller.leaderName,
                                     validator: (String input) {
                                       if (input.isEmpty) {
-                                        Get.snackbar('Opps',
-                                            "Leader name Required",
-                                            colorText: Colors.white,
-                                            backgroundColor:
-                                            Colors.blue);
+                                        Get.snackbar(
+                                            'Opps', "Leader name Required",
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
                                         return '';
                                       }
                                       return null;
@@ -276,23 +272,19 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
-                                textFormField(
-                                    onChanged: (String value) {
-                                      controller.leaderNum.text = value;
-                                    },
+                                textFormFieldForController(
+                                    controller: controller.leaderNum,
                                     inputType: TextInputType.number,
-                                    hintText:
-                                    'Leader phone number',
+                                    hintText: 'Leader phone number',
                                     icon: ('assets/Header.png'),
                                     obscure: false,
                                     maxLength: 10,
                                     validator: (String input) {
                                       if (input.isEmpty) {
-                                        Get.snackbar('Opps',
-                                            "Leader number required",
-                                            colorText: Colors.white,
-                                            backgroundColor:
-                                            Colors.blue);
+                                        Get.snackbar(
+                                            'Opps', "Leader number required",
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
                                         return '';
                                       }
                                       return null;
@@ -300,23 +292,19 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
-                                textFormField(
-                                    onChanged: (String value) {
-                                      controller.leaderEmail.text = value;
-                                    },
-                                    inputType:
-                                    TextInputType.emailAddress,
-                                    hintText:
-                                    'Leader email',
+                                textFormFieldForController(
+                                    readOnly: true,
+                                    inputType: TextInputType.emailAddress,
+                                    controller: controller.leaderEmail,
+                                    hintText: 'Leader email',
                                     icon: ('assets/Header.png'),
                                     obscure: false,
                                     validator: (String input) {
                                       if (input.isEmpty) {
-                                        Get.snackbar('Opps',
-                                            "Leader email required",
-                                            colorText: Colors.white,
-                                            backgroundColor:
-                                            Colors.blue);
+                                        Get.snackbar(
+                                            'Opps', "Leader email required",
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
                                         return '';
                                       }
                                       return null;
@@ -324,21 +312,16 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
-                                textFormField(
-                                    onChanged: (String value) {
-                                      controller.leaderDept.text = value;
-                                      RxString(value.toLowerCase());
-                                    },
-                                    hintText:
-                                    'Leader Dept',
+                                textFormFieldForController(
+                                    controller: controller.leaderDept,
+                                    hintText: 'Leader Dept',
                                     icon: ('assets/Header.png'),
                                     validator: (input) {
                                       if (input.isEmpty) {
                                         Get.snackbar('Opps',
                                             "Leader department required",
-                                            colorText: Colors.white,
-                                            backgroundColor:
-                                            Colors.blue);
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
                                         return '';
                                       }
                                       return null;
@@ -346,23 +329,17 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
-                                textFormField(
-                                    onChanged: (String input) {
-                                      controller.leaderSem.text = input;
-                                    },
-                                    maxLength: 1,
+                                textFormFieldForController(
                                     inputType: TextInputType.number,
-                                    hintText:
-                                    'Leader Sem',
+                                    hintText: 'Leader Sem',
                                     icon: ('assets/Header.png'),
                                     obscure: false,
                                     validator: (String input) {
                                       if (input.isEmpty) {
-                                        Get.snackbar('Opps',
-                                            "Leader semester required",
-                                            colorText: Colors.white,
-                                            backgroundColor:
-                                            Colors.blue);
+                                        Get.snackbar(
+                                            'Opps', "Leader semester required",
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
                                         return '';
                                       }
                                       return null;
@@ -370,7 +347,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
-                                textFormField(
+                                textFormFieldForValue(
                                   inputType: TextInputType.number,
                                   icon: ('assets/Header.png'),
                                   hintText:
@@ -378,8 +355,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                   validator: (input) {
                                     if (input.isEmpty) {
                                       Get.snackbar('Opps', "Count is required",
-                                          colorText: Colors.white,
-                                          backgroundColor: Colors.blue);
+                                          colorText: AppColors.white,
+                                          backgroundColor: AppColors.blue);
                                       return '';
                                     }
                                     if (controller.event.noOfParticipant! <
@@ -387,8 +364,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                             1)) {
                                       Get.snackbar('Opps',
                                           "You have exceeds no of participants",
-                                          colorText: Colors.white,
-                                          backgroundColor: Colors.blue);
+                                          colorText: AppColors.white,
+                                          backgroundColor: AppColors.blue);
                                       return '';
                                     }
                                     return null;
@@ -398,8 +375,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                         (int.parse(num))) {
                                       Get.snackbar('Opps',
                                           "You have exceeds no of participants",
-                                          colorText: Colors.white,
-                                          backgroundColor: Colors.blue);
+                                          colorText: AppColors.white,
+                                          backgroundColor: AppColors.blue);
                                       return '';
                                     } else {
                                       controller.noOfParticipant.value =
@@ -423,7 +400,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                 (index) => GroupMemberModel()));
                                         return Column(
                                           children: [
-                                            textFormField(
+                                            textFormFieldForValue(
                                                 onChanged: (String value) {
                                                   controller.listOfEvent[index]
                                                       .membersName = value;
@@ -436,9 +413,10 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                   if (input.isEmpty) {
                                                     Get.snackbar('Opps',
                                                         "Member name Required",
-                                                        colorText: Colors.white,
+                                                        colorText:
+                                                            AppColors.white,
                                                         backgroundColor:
-                                                            Colors.blue);
+                                                            AppColors.blue);
                                                     return '';
                                                   }
                                                   return null;
@@ -446,7 +424,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                             SizedBox(
                                               height: Get.height * 0.02,
                                             ),
-                                            textFormField(
+                                            textFormFieldForValue(
                                                 onChanged: (String value) {
                                                   controller.listOfEvent[index]
                                                       .membersNum = value;
@@ -461,9 +439,10 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                   if (input.isEmpty) {
                                                     Get.snackbar('Opps',
                                                         "Member number required",
-                                                        colorText: Colors.white,
+                                                        colorText:
+                                                            AppColors.white,
                                                         backgroundColor:
-                                                            Colors.blue);
+                                                            AppColors.blue);
                                                     return '';
                                                   }
                                                   return null;
@@ -471,7 +450,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                             SizedBox(
                                               height: Get.height * 0.02,
                                             ),
-                                            textFormField(
+                                            textFormFieldForValue(
                                                 onChanged: (String value) {
                                                   controller.listOfEvent[index]
                                                       .membersEmail = value;
@@ -486,9 +465,10 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                   if (input.isEmpty) {
                                                     Get.snackbar('Opps',
                                                         "Member email required",
-                                                        colorText: Colors.white,
+                                                        colorText:
+                                                            AppColors.white,
                                                         backgroundColor:
-                                                            Colors.blue);
+                                                            AppColors.blue);
                                                     return '';
                                                   }
                                                   return null;
@@ -496,7 +476,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                             SizedBox(
                                               height: Get.height * 0.02,
                                             ),
-                                            textFormField(
+                                            textFormFieldForValue(
                                                 onChanged: (String value) {
                                                   controller.listOfEvent[index]
                                                           .membersDept =
@@ -509,9 +489,10 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                   if (input.isEmpty) {
                                                     Get.snackbar('Opps',
                                                         "Member department required",
-                                                        colorText: Colors.white,
+                                                        colorText:
+                                                            AppColors.white,
                                                         backgroundColor:
-                                                            Colors.blue);
+                                                            AppColors.blue);
                                                     return '';
                                                   }
                                                   return null;
@@ -519,7 +500,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                             SizedBox(
                                               height: Get.height * 0.02,
                                             ),
-                                            textFormField(
+                                            textFormFieldForValue(
                                                 onChanged: (String value) {
                                                   controller.listOfEvent[index]
                                                       .membersSem = value;
@@ -534,9 +515,10 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                   if (input.isEmpty) {
                                                     Get.snackbar('Opps',
                                                         "Member semester required",
-                                                        colorText: Colors.white,
+                                                        colorText:
+                                                            AppColors.white,
                                                         backgroundColor:
-                                                            Colors.blue);
+                                                            AppColors.blue);
                                                     return '';
                                                   }
                                                   return null;

@@ -39,6 +39,7 @@ class RegistrationController extends GetxController {
   void onInit() {
     selectEventImage();
     firebaseFun();
+    leaderEmail.text = AuthController.instance.user.value!.email!;
     super.onInit();
   }
 
@@ -68,7 +69,7 @@ class RegistrationController extends GetxController {
         Get.offAllNamed(BottomBarView.routeName);
         isLoading(false);
         Get.snackbar('Congratulations', 'You have joined success',
-            colorText: Colors.white, backgroundColor: Colors.blue);
+            colorText: AppColors.white, backgroundColor: AppColors.blue);
       });
     } catch (e) {
       log(e.toString());
@@ -177,12 +178,12 @@ class RegistrationController extends GetxController {
       Get.offAllNamed(BottomBarView.routeName);
       isLoading(false);
       Get.snackbar('Team registered', 'Team registered successfully.',
-          colorText: Colors.white, backgroundColor: Colors.blue);
+          colorText: AppColors.white, backgroundColor: AppColors.blue);
     }).catchError((e) {
       isLoading(false);
       print(e.toString());
       Get.snackbar('Warning', 'Team registered failed',
-          colorText: Colors.white, backgroundColor: Colors.blue);
+          colorText: AppColors.white, backgroundColor: AppColors.blue);
     });
   }
 
@@ -211,7 +212,6 @@ class RegistrationController extends GetxController {
       var deptCell = sheet.cell(CellIndex.indexByString('F${i + k + 2}'));
       var semCell = sheet.cell(CellIndex.indexByString('G${i + k + 2}'));
       teamNoCell.value = TextCellValue("${i + 1}");
-      print(listOfParticipatedTeam.length);
       teamNameCell.value = TextCellValue(listOfParticipatedTeam[i].teamName!);
       nameCell.value =
           TextCellValue(listOfParticipatedTeam[i].leaderDetail.membersName!);
