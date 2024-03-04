@@ -1,6 +1,5 @@
 import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:ems/views/event_page/event_page_view.dart';
-import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:ems/views/profile/controller/profile_controller.dart';
 
 import 'package:flutter/material.dart';
@@ -89,31 +88,38 @@ class ProfileView extends GetView<ProfileController> {
                           child: Column(
                             children: [
                               GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   controller.imagePickDialog();
+                                  if (controller.profileImage != null) {
+                                    controller.imageString.value =
+                                        await AuthController.instance
+                                            .uploadImageToFirebaseStorage(
+                                                controller.profileImage!);
+                                    controller.onSaveUserProfileDetails();
+                                    Get.snackbar(
+                                        'Updated', 'Profile image has updated!',
+                                        colorText: AppColors.white,
+                                        backgroundColor: AppColors.blue);
+                                  }
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.white,
-                                    borderRadius: BorderRadius.circular(70),
-                                  ),
-                                  child: controller.image.isEmpty
-                                      ? CircleAvatar(
-                                          radius: Get.width * 0.145,
-                                          backgroundColor: AppColors.white,
-                                          backgroundImage: const AssetImage(
-                                            'assets/profile.png',
-                                          ),
-                                        )
-                                      : CircleAvatar(
-                                          radius: Get.width * 0.145,
-                                          backgroundColor: AppColors.white,
-                                          backgroundImage: NetworkImage(
-                                            controller.image,
-                                          ),
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.white,
+                                      borderRadius: BorderRadius.circular(70),
+                                    ),
+                                    child: Obx(
+                                      () => CircleAvatar(
+                                        radius: Get.width * 0.145,
+                                        backgroundColor: AppColors.white,
+                                        backgroundImage: const AssetImage(
+                                          'assets/time.png',
                                         ),
-                                ),
+                                        foregroundImage: NetworkImage(
+                                          controller.imageString.value,
+                                        ),
+                                      ),
+                                    )),
                               ),
                             ],
                           ),
@@ -174,15 +180,16 @@ class ProfileView extends GetView<ProfileController> {
                             children: [
                               Column(
                                 children: [
-                                  Text(
-                                    HomeController
-                                        .instance.filteredEvents.length
-                                        .toString(),
-                                    style: TextStyle(
-                                      fontSize: 19,
-                                      color: AppColors.black,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: -0.3,
+                                  Obx(
+                                    () => Text(
+                                      controller.noOfSavedEvents.value
+                                          .toString(),
+                                      style: TextStyle(
+                                        fontSize: 19,
+                                        color: AppColors.black,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: -0.3,
+                                      ),
                                     ),
                                   ),
                                   Text(
@@ -201,31 +208,38 @@ class ProfileView extends GetView<ProfileController> {
                                 height: 60,
                                 color: const Color(0xff918F8F).withOpacity(0.5),
                               ),
-                              Column(
-                                children: [
-                                  Text(
-                                    HomeController.instance.joinedEvents.length
-                                        .toString(),
-                                    style: TextStyle(
-                                        fontSize: 19,
-                                        color: AppColors.black,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: -0.3),
-                                  ),
-                                  Text(
-                                    AuthController.instance.user.value!
-                                                .userType! ==
-                                            'student'
-                                        ? "Joined Events"
-                                        : "Created Events",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      letterSpacing: -0.3,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.grey,
+                              Obx(
+                                () => Column(
+                                  children: [
+                                    Text(
+                                      AuthController.instance.user.value!
+                                                  .userType! ==
+                                              'student'
+                                          ? controller.noOfJoinedEvents
+                                              .toString()
+                                          : controller.noOfOrganizedEvents
+                                              .toString(),
+                                      style: TextStyle(
+                                          fontSize: 19,
+                                          color: AppColors.black,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: -0.3),
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      AuthController.instance.user.value!
+                                                  .userType! ==
+                                              'student'
+                                          ? "Joined Events"
+                                          : "Created Events",
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        letterSpacing: -0.3,
+                                        fontWeight: FontWeight.w400,
+                                        color: AppColors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -288,27 +302,21 @@ class ProfileView extends GetView<ProfileController> {
                                     children: <Widget>[
                                       Obx(
                                         () => ListView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
                                             scrollDirection: Axis.vertical,
-                                            itemCount: HomeController
-                                                .instance.filteredEvents.length,
+                                            itemCount:
+                                                controller.savedEvents.length,
                                             itemBuilder: (context, index) {
                                               String image = '';
-                                              image =
-                                                  controller.selectEventImage(
-                                                      HomeController
-                                                          .instance
-                                                          .filteredEvents[index]
-                                                          .media);
-
+                                              image = controller
+                                                  .selectEventImage(controller
+                                                      .savedEvents[index]
+                                                      .media);
+          
                                               return GestureDetector(
                                                 onTap: () => Get.toNamed(
                                                     EventPageView.routeName,
-                                                    arguments: HomeController
-                                                        .instance
-                                                        .filteredEvents[index]),
+                                                    arguments: controller
+                                                        .savedEvents[index]),
                                                 child: Container(
                                                   margin: const EdgeInsets.only(
                                                       top: 20),
@@ -363,9 +371,8 @@ class ProfileView extends GetView<ProfileController> {
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Text(
-                                                                    HomeController
-                                                                        .instance
-                                                                        .filteredEvents[
+                                                                    controller
+                                                                        .savedEvents[
                                                                             index]
                                                                         .eventName
                                                                         .capitalize!,
@@ -384,9 +391,8 @@ class ProfileView extends GetView<ProfileController> {
                                                                         right:
                                                                             16.0),
                                                                     child: Text(
-                                                                      HomeController
-                                                                          .instance
-                                                                          .filteredEvents[
+                                                                      controller
+                                                                          .savedEvents[
                                                                               index]
                                                                           .eventDay,
                                                                       style: const TextStyle(
@@ -406,7 +412,7 @@ class ProfileView extends GetView<ProfileController> {
                                                                 height: 15,
                                                               ),
                                                               Text(
-                                                                '${HomeController.instance.filteredEvents[index].description}',
+                                                                '${controller.savedEvents[index].description}',
                                                                 maxLines: 2,
                                                                 style: const TextStyle(
                                                                     color: Colors
@@ -433,27 +439,22 @@ class ProfileView extends GetView<ProfileController> {
                                       ),
                                       Obx(
                                         () => ListView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
                                             scrollDirection: Axis.vertical,
-                                            itemCount: HomeController
-                                                .instance.joinedEvents.length,
+                                            itemCount: controller
+                                                .orgOrJoinedEvents.length,
                                             itemBuilder: (context, index) {
                                               String image = '';
-                                              image =
-                                                  controller.selectEventImage(
-                                                      HomeController
-                                                          .instance
-                                                          .joinedEvents[index]
-                                                          .media);
-
+                                              image = controller
+                                                  .selectEventImage(controller
+                                                      .orgOrJoinedEvents[index]
+                                                      .media);
+                                              // print(controller.orgOrJoinedEvents.length);
                                               return GestureDetector(
                                                 onTap: () => Get.toNamed(
                                                     EventPageView.routeName,
-                                                    arguments: HomeController
-                                                        .instance
-                                                        .joinedEvents[index]),
+                                                    arguments: controller
+                                                            .orgOrJoinedEvents[
+                                                        index]),
                                                 child: Container(
                                                   margin: const EdgeInsets.only(
                                                       top: 20),
@@ -508,9 +509,8 @@ class ProfileView extends GetView<ProfileController> {
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Text(
-                                                                    HomeController
-                                                                        .instance
-                                                                        .joinedEvents[
+                                                                    controller
+                                                                        .orgOrJoinedEvents[
                                                                             index]
                                                                         .eventName
                                                                         .capitalize!,
@@ -529,9 +529,8 @@ class ProfileView extends GetView<ProfileController> {
                                                                         right:
                                                                             16.0),
                                                                     child: Text(
-                                                                      HomeController
-                                                                          .instance
-                                                                          .joinedEvents[
+                                                                      controller
+                                                                          .orgOrJoinedEvents[
                                                                               index]
                                                                           .eventDay,
                                                                       style: const TextStyle(
@@ -551,7 +550,7 @@ class ProfileView extends GetView<ProfileController> {
                                                                 height: 15,
                                                               ),
                                                               Text(
-                                                                '${HomeController.instance.joinedEvents[index].description}',
+                                                                '${controller.orgOrJoinedEvents[index].description}',
                                                                 maxLines: 2,
                                                                 style: const TextStyle(
                                                                     color: Colors

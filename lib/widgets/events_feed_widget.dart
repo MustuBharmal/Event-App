@@ -364,9 +364,8 @@ eventsIJoined() {
                     children: [
                       CircleAvatar(
                         foregroundImage: NetworkImage(
-                            AuthController.instance.user.value?.image ??
-                                'assets/account.png'),
-                        backgroundImage: const AssetImage('assets/account.png'),
+                            AuthController.instance.user.value!.image!),
+                        backgroundImage: const AssetImage('assets/time.png'),
                         radius: 20,
                       ),
                       const SizedBox(

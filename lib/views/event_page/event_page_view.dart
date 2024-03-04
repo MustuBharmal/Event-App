@@ -99,7 +99,7 @@ class EventPageView extends StatelessWidget {
                   const Spacer(),
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                     decoration: BoxDecoration(
                         color: const Color(0xffEEEEEE),
                         borderRadius: BorderRadius.circular(8)),
@@ -112,7 +112,6 @@ class EventPageView extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const Icon(Icons.arrow_drop_down),
                       ],
                     ),
                   ),
@@ -149,18 +148,6 @@ class EventPageView extends StatelessWidget {
                         color: AppColors.black,
                         fontWeight: FontWeight.w600),
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    event.eventDay,
-                    // formattedDate,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(
@@ -179,6 +166,16 @@ class EventPageView extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColors.black,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    event.eventDay,
+                    // formattedDate,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.black,
                       fontWeight: FontWeight.w300,
                     ),
                   ),
@@ -203,29 +200,31 @@ class EventPageView extends StatelessWidget {
               ),
               Row(
                 children: [
-                  SizedBox(
-                    width: Get.width * 0.6,
-                    height: Get.height * 0.058,
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.toNamed(EventParticipantListView.routeName,
-                            arguments: event.joined);
-                      },
-                      child: ListView.builder(
-                        itemBuilder: (ctx, index) {
-                          UserModel user = HomeController.instance.listOfUser
-                              .firstWhere((e) => e.uid == event.joined[index]);
-
-                          return Container(
-                            margin: const EdgeInsets.only(left: 10),
-                            child: CircleAvatar(
-                              minRadius: 13,
-                              backgroundImage: NetworkImage(user.image!),
-                            ),
-                          );
+                  Expanded(
+                    child: SizedBox(
+                      height: Get.height * 0.058,
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.toNamed(EventParticipantListView.routeName,
+                              arguments: event.joined);
                         },
-                        itemCount: event.joined.length,
-                        scrollDirection: Axis.horizontal,
+                        child: ListView.builder(
+                          itemBuilder: (ctx, index) {
+                            UserModel user = HomeController.instance.listOfUser
+                                .firstWhere(
+                                    (e) => e.uid == event.joined[index]);
+
+                            return Container(
+                              margin: const EdgeInsets.only(left: 10),
+                              child: CircleAvatar(
+                                minRadius: 13,
+                                backgroundImage: NetworkImage(user.image!),
+                              ),
+                            );
+                          },
+                          itemCount: event.joined.length,
+                          scrollDirection: Axis.horizontal,
+                        ),
                       ),
                     ),
                   ),
@@ -283,7 +282,13 @@ class EventPageView extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         !regEndDate.isBefore(nowTime)
-                            ? Get.to(() => InviteGuest())
+                            ? {
+                                Get.to(() => InviteGuest()),
+                                Get.snackbar(
+                                    'Exciting news', 'Upcoming feature',
+                                    colorText: AppColors.white,
+                                    backgroundColor: AppColors.blue)
+                              }
                             : null;
                       },
                       child: Container(
@@ -353,49 +358,52 @@ class EventPageView extends StatelessWidget {
                         ),
                       ),
                     ),
-                  Visibility(
-                    visible: !HomeController.instance.isJoinedUser.value &&
-                        !regEndDate.isBefore(nowTime),
-                    child: Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Get.toNamed(
-                            RegisterEventView.routeName,
-                            arguments: event,
-                          );
-                        },
-                        child: Container(
-                          height: Get.height * 0.058,
-                          decoration: BoxDecoration(
-                              color: AppColors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.4),
-                                  spreadRadius: 0.1,
-                                  blurRadius: 60,
-                                  offset: const Offset(
-                                      0, 1), // changes position of shadow
+                  if (AuthController.instance.user.value!.userType == 'student')
+                    Visibility(
+                      visible: !HomeController.instance.isJoinedUser.value &&
+                          !regEndDate.isBefore(nowTime),
+                      child: Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Get.toNamed(
+                              RegisterEventView.routeName,
+                              arguments: event,
+                            );
+                          },
+                          child: Container(
+                            height: Get.height * 0.058,
+                            decoration: BoxDecoration(
+                                color: AppColors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.4),
+                                    spreadRadius: 0.1,
+                                    blurRadius: 60,
+                                    offset: const Offset(
+                                        0, 1), // changes position of shadow
+                                  ),
+                                ],
+                                borderRadius: BorderRadius.circular(13)),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            child: const Center(
+                              child: Text(
+                                'Join',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              ],
-                              borderRadius: BorderRadius.circular(13)),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          child: const Center(
-                            child: Text(
-                              'Join',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
                   Visibility(
                     visible: HomeController.instance.isJoinedUser.value &&
-                        !regEndDate.isBefore(nowTime),
+                        !regEndDate.isBefore(nowTime) &&
+                        AuthController.instance.user.value!.userType ==
+                            'student',
                     child: Expanded(
                       child: Container(
                         height: Get.height * 0.058,

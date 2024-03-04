@@ -22,6 +22,7 @@ class EventModel {
   final List<String> likes;
   final List<String> saves;
   final int? noOfParticipant;
+  final String? createdAt;
 
   EventModel({
     this.id,
@@ -45,6 +46,7 @@ class EventModel {
     required this.inviter,
     required this.likes,
     required this.saves,
+    required this.createdAt,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
@@ -68,27 +70,30 @@ class EventModel {
     final List<String> inviter = json['inviter'].cast<String>();
     final List<String> likes = json['likes'].cast<String>();
     final List<String> saves = json['saves'].cast<String>();
+    final String? createdAt = json['created_at'];
     return EventModel(
-        participantType: participantType,
-        eventType: eventType,
-        noOfParticipant: noOfParticipant,
-        eventName: eventName,
-        location: location,
-        eventDay: eventDay,
-        rgStDate: rgStDate,
-        rgEdDate: rgEdDate,
-        startTime: startTime,
-        endTime: endTime,
-        maxEntries: maxEntries,
-        frequencyOfEvent: frequencyOfEvent,
-        description: description,
-        joined: joined,
-        media: media,
-        uid: uid,
-        tags: tags,
-        inviter: inviter,
-        likes: likes,
-        saves: saves);
+      participantType: participantType,
+      eventType: eventType,
+      noOfParticipant: noOfParticipant,
+      eventName: eventName,
+      location: location,
+      eventDay: eventDay,
+      rgStDate: rgStDate,
+      rgEdDate: rgEdDate,
+      startTime: startTime,
+      endTime: endTime,
+      maxEntries: maxEntries,
+      frequencyOfEvent: frequencyOfEvent,
+      description: description,
+      joined: joined,
+      media: media,
+      uid: uid,
+      tags: tags,
+      inviter: inviter,
+      likes: likes,
+      saves: saves,
+      createdAt: createdAt,
+    );
   }
 
   factory EventModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> json) {
@@ -115,6 +120,7 @@ class EventModel {
       inviter: data['inviter'].cast<String>(),
       likes: data['likes'].cast<String>(),
       saves: data['saves'].cast<String>(),
+      createdAt: data['created_at'],
     );
   }
 
@@ -140,6 +146,7 @@ class EventModel {
     data['inviter'] = inviter;
     data['likes'] = likes;
     data['saves'] = saves;
+    data['created_at'] = createdAt;
     return data;
   }
 }

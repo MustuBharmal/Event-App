@@ -1,16 +1,19 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path/path.dart' as path;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../../../model/event_media_model.dart';
 import '../../../model/event_model.dart';
 import '../../../utils/app_color.dart';
+import '../../auth/controller/auth_controller.dart';
 
 class CreateEventController extends GetxController {
   TextEditingController eventDateController = TextEditingController();
@@ -71,7 +74,7 @@ class CreateEventController extends GetxController {
           /// just upload image
 
           String imageUrl = await uploadImageToFirebase(media[i].image!);
-          uploadImageToFirebase(media[i].image!);
+          // uploadImageToFirebase(media[i].image!);
           mediaUrls.add({'url': imageUrl, 'isImage': true});
         }
       }
@@ -89,7 +92,7 @@ class CreateEventController extends GetxController {
       location: locationController.text,
       rgStDate: rgStDateController.text,
       rgEdDate: rgEdDateController.text,
-      eventDay: '${date!.day}/${date!.month}/${date!.year}',
+      eventDay: eventDateController.text,
       maxEntries: int.parse(maxEntries.text),
       tags: tags,
       frequencyOfEvent: frequencyEventController.text,
@@ -103,18 +106,28 @@ class CreateEventController extends GetxController {
       inviter: [FirebaseAuth.instance.currentUser!.uid],
       likes: [],
       saves: [],
+      createdAt: DateTime.now().toString(),
     );
 
     /*await createEvent(currEvent.toJson()).then((value) {
       isCreatingEvent(false);
       resetControllers();
     });*/
-    print(currEvent.toJson());
     await FirebaseFirestore.instance
         .collection('events')
         .add(currEvent.toJson())
-        .then((value) {
+        .then((value) async {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(AuthController.instance.user.value!.uid)
+          .set({
+        'organizedEvents': FieldValue.arrayUnion([value.id]),
+      }, SetOptions(merge: true));
       isCreatingEvent(false);
+      HomeController.instance.allEvents
+          .add(EventModel.fromSnapshot(await value.get()));
+      HomeController.instance.getEvents();
+      AuthController.instance.user.value!.organizedEvents?.add(value.id);
       resetControllers();
       Get.snackbar('Event Uploaded', 'Event is uploaded successfully.',
           colorText: AppColors.white, backgroundColor: AppColors.blue);
@@ -128,7 +141,8 @@ class CreateEventController extends GetxController {
   Future<String> uploadImageToFirebase(File file) async {
     String fileUrl = '';
     String fileName = path.basename(file.path);
-    var reference = FirebaseStorage.instance.ref().child('myfiles/$fileName');
+    var reference =
+        FirebaseStorage.instance.ref().child('eventImages/$fileName');
     UploadTask uploadTask = reference.putFile(file);
     TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
     await taskSnapshot.ref.getDownloadURL().then((value) {
@@ -156,9 +170,9 @@ class CreateEventController extends GetxController {
     endTime = const TimeOfDay(hour: 0, minute: 0);
   }
 
-  selectDate(BuildContext context, dateController) async {
+  selectDate(dateController) async {
     final DateTime? picked = await showDatePicker(
-        context: context,
+        context: Get.context!,
         initialDate: DateTime.now(),
         initialDatePickerMode: DatePickerMode.day,
         firstDate: DateTime.now(),
@@ -167,8 +181,11 @@ class CreateEventController extends GetxController {
     if (picked != null) {
       date = DateTime(picked.year, picked.month, picked.day, date!.hour,
           date!.minute, date!.second);
-      dateController.text = '${date!.day}/${date!.month}/${date!.year}';
+      DateFormat dFormat = DateFormat("dd/MM/yyyy");
+      String format = dFormat.format(date!);
+      dateController.text = format;
     }
+    return dateController;
   }
 
   Future<String> uploadThumbnailToFirebase(Uint8List file) async {
@@ -213,6 +230,7 @@ class CreateEventController extends GetxController {
     final ImagePicker _picker = ImagePicker();
     // Pick an image
     final XFile? image = await _picker.pickImage(
+      imageQuality: 20,
       source: source,
     );
 
@@ -224,8 +242,7 @@ class CreateEventController extends GetxController {
     Get.back();
   }
 
-
-  void imageDialog(BuildContext context) {
+  void imageDialog() {
     showDialog(
         builder: (BuildContext context) {
           return AlertDialog(
@@ -247,6 +264,6 @@ class CreateEventController extends GetxController {
             ),
           );
         },
-        context: context);
+        context: Get.context!);
   }
 }

@@ -212,7 +212,7 @@ class ViewEndEventDetails extends GetView<RegistrationController> {
                       text: "Download excel",
                       onPress: () {
                         controller.event.eventType == 'Individual'
-                            ? controller.createIndividualExcelSheet()
+                            ? controller.individualExcelSheet()
                             : controller.groupEventExcelSheet();
                         controller.writeCounter(controller.excel);
                       }),

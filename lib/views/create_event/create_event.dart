@@ -123,7 +123,7 @@ class CreateEventView extends GetView<CreateEventController> {
                     visible: controller.eventType.value == 'Group',
                     child: textFormFieldForController(
                         obscure: false,
-                        icon: 'assets/4DotIcon.png',
+                        icon: 'assets/four_dot_icon.png',
                         hintText: 'No of Participants',
                         controller: controller.noOfParticipantController,
                         validator: (String input) {
@@ -165,7 +165,7 @@ class CreateEventView extends GetView<CreateEventController> {
                             child: Image.asset('assets/uploadIcon.png'),
                           ),
                           myText(
-                            text: 'Click and upload image/video',
+                            text: 'Click and upload image',
                             style: TextStyle(
                               color: AppColors.blue,
                               fontSize: 19,
@@ -177,7 +177,7 @@ class CreateEventView extends GetView<CreateEventController> {
                           ),
                           elevatedButton(
                               onPress: () async {
-                                controller.imageDialog(context);
+                                controller.imageDialog();
                               },
                               text: 'Upload')
                         ],
@@ -244,7 +244,7 @@ class CreateEventView extends GetView<CreateEventController> {
                 ),
                 textFormFieldForController(
                     obscure: false,
-                    icon: 'assets/4DotIcon.png',
+                    icon: 'assets/four_dot_icon.png',
                     hintText: 'Event Name',
                     controller: controller.eventNameController,
                     validator: (String input) {
@@ -309,8 +309,8 @@ class CreateEventView extends GetView<CreateEventController> {
                         return null;
                       },
                       onPress: () {
-                        controller.selectDate(
-                            context, controller.rgStDateController);
+                        controller.rgStDateController = controller
+                            .selectDate(controller.rgStDateController);
                       },
                     ),
                     iconTitleContainer(
@@ -328,8 +328,8 @@ class CreateEventView extends GetView<CreateEventController> {
                         return null;
                       },
                       onPress: () {
-                        controller.selectDate(
-                            context, controller.rgEdDateController);
+                        controller.rgEdDateController = controller
+                            .selectDate(controller.rgEdDateController);
                       },
                     ),
                   ],
@@ -355,8 +355,8 @@ class CreateEventView extends GetView<CreateEventController> {
                         return null;
                       },
                       onPress: () {
-                        controller.selectDate(
-                            context, controller.eventDateController);
+                        controller.eventDateController = controller
+                            .selectDate(controller.eventDateController);
                       },
                     ),
                     iconTitleContainer(

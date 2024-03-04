@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/model/user_model.dart';
 import 'package:ems/views/auth/controller/auth_controller.dart';
+import 'package:ems/views/profile/controller/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,7 @@ class HomeController extends GetxController {
   static HomeController get instance => Get.find<HomeController>();
 
   RxList<EventModel> allEvents = <EventModel>[].obs;
+  RxList<EventModel> organizedEvents = <EventModel>[].obs;
   var filteredUsers = <DocumentSnapshot>[].obs;
   RxList<EventModel> filteredEvents = <EventModel>[].obs;
   RxList<EventModel> joinedEvents = <EventModel>[].obs;
@@ -98,6 +100,7 @@ class HomeController extends GetxController {
 
   getEvents() async {
     isLoading(true);
+    print('events');
     FirebaseFirestore.instance
         .collection('events')
         .orderBy('date', descending: true)
@@ -114,7 +117,15 @@ class HomeController extends GetxController {
           List<String> joinedIds = e.joined;
           return joinedIds.contains(AuthController.instance.user.value!.uid!);
         }).toList();
+        organizedEvents.value = allEvents.where((event) {
+          List orgIds = AuthController.instance.user.value!.organizedEvents!;
+          return orgIds.contains(event.id);
+        }).toList();
       }
+      ProfileController.instance.noOfSavedEvents.value = filteredEvents.length;
+      ProfileController.instance.noOfJoinedEvents.value = joinedEvents.length;
+      ProfileController.instance.noOfOrganizedEvents.value =
+          organizedEvents.length;
     });
     isLoading(false);
   }

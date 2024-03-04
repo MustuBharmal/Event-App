@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems/model/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import '../../../model/user_model.dart';
 import '../../../utils/app_color.dart';
 import '../../auth/controller/auth_controller.dart';
 import '../../home/bottom_bar_view.dart';
+import '../../home/controller/home_controller.dart';
 
 class ProfileController extends GetxController {
   TextEditingController firstNameController = TextEditingController();
@@ -17,12 +19,19 @@ class ProfileController extends GetxController {
   TextEditingController mobileNumberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController dob = TextEditingController();
+  RxInt noOfSavedEvents = RxInt(0);
+  RxInt noOfJoinedEvents = RxInt(0);
+  RxInt noOfOrganizedEvents = RxInt(0);
   File? profileImage;
   int selectedRadio = 0;
   RxBool isLoading = RxBool(false);
-  String image = '';
+  RxString imageString = RxString('');
   RxBool isNotEditable = RxBool(true);
+  List<EventModel> savedEvents = [];
+  List<EventModel> orgOrJoinedEvents = [];
   UserModel? user;
+
+  static ProfileController get instance => Get.find<ProfileController>();
 
   @override
   void onInit() {
@@ -44,9 +53,17 @@ class ProfileController extends GetxController {
   }
 
   fillProfileDetails() {
+    savedEvents.clear();
+    orgOrJoinedEvents.clear();
     firstNameController.text = AuthController.instance.user.value!.first!;
     lastNameController.text = AuthController.instance.user.value!.last!;
-    image = AuthController.instance.user.value!.image!;
+    imageString.value = AuthController.instance.user.value!.image!;
+    savedEvents = HomeController.instance.filteredEvents;
+    if (AuthController.instance.user.value!.userType == 'student') {
+      orgOrJoinedEvents = HomeController.instance.joinedEvents;
+    } else {
+      orgOrJoinedEvents = HomeController.instance.organizedEvents;
+    }
   }
 
   onSaveDetails() {
@@ -58,6 +75,23 @@ class ProfileController extends GetxController {
         .update({
       'first': firstNameController.text,
       'last': lastNameController.text,
+    }).catchError(
+      (onError) => {
+        Get.snackbar('Error', 'Profile Update Failed',
+            colorText: AppColors.white, backgroundColor: AppColors.blue),
+      },
+    );
+    isLoading(false);
+  }
+
+  onSaveUserProfileDetails() {
+    isLoading(true);
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(AuthController.instance.user.value!.uid!)
+        .update({
+      'image': imageString.value,
     }).catchError(
       (onError) => {
         Get.snackbar('Error', 'Profile Update Failed',
@@ -102,7 +136,6 @@ class ProfileController extends GetxController {
         organizedEvents: [],
         email: emailController.text,
       );
-      print(userModel.toJson());
       String uid = FirebaseAuth.instance.currentUser!.uid;
 
       FirebaseFirestore.instance

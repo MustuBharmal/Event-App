@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/model/group_event_model.dart';
-import 'package:ems/model/group_member_model.dart';
+import 'package:ems/model/event_participant_model.dart';
 import 'package:ems/utils/app_color.dart';
 import 'package:ems/views/home/bottom_bar_view.dart';
 import 'package:excel/excel.dart';
@@ -13,9 +13,7 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../model/event_model.dart';
-import '../../../model/user_model.dart';
 import '../../auth/controller/auth_controller.dart';
-import '../../home/controller/home_controller.dart';
 
 String fileName = '';
 
@@ -29,8 +27,9 @@ class RegistrationController extends GetxController {
   final leaderName = TextEditingController();
   TextEditingController teamNameController = TextEditingController();
   List<GroupEventModel> listOfParticipatedTeam = [];
+  List<EventParticipantModel> listOfParticipants = [];
   RxInt noOfParticipant = RxInt(0);
-  List<GroupMemberModel> listOfEvent = [];
+  List<EventParticipantModel> listOfEvent = [];
   GroupEventModel? groupEventModel;
   RxBool isLoading = RxBool(false);
   RxString eventImage = RxString('');
@@ -38,12 +37,21 @@ class RegistrationController extends GetxController {
   @override
   void onInit() {
     selectEventImage();
-    firebaseFun();
     leaderEmail.text = AuthController.instance.user.value!.email!;
     super.onInit();
   }
 
-  firebaseFun() {
+  void resetControllers() {
+    leaderSem.clear();
+    leaderName.clear();
+    leaderNum.clear();
+    leaderDept.clear();
+    leaderEmail.clear();
+    teamNameController.clear();
+    groupEventModel = null;
+  }
+
+  firebaseFunGroup() {
     List<GroupEventModel> temp = [];
     FirebaseFirestore.instance
         .collection('group_participants')
@@ -59,16 +67,99 @@ class RegistrationController extends GetxController {
     });
   }
 
-  Future<void> joinedEvent({String? eventId}) async {
+  firebaseFunIndividual() {
+    List<EventParticipantModel> temp = [];
+    FirebaseFirestore.instance
+        .collection('individual_participants')
+        .where('event_id', isEqualTo: event.id)
+        .snapshots()
+        .listen((doc) {
+      for (var data in doc.docs) {
+        if (data.exists) {
+          temp.add(EventParticipantModel.fromSnapshot(data));
+        }
+      }
+      listOfParticipants = temp;
+    });
+  }
+
+  Future<void> groupEventSubmit() async {
+    isLoading(true);
+    EventParticipantModel leaderModel;
+    leaderModel = EventParticipantModel(
+      membersName: leaderName.text,
+      membersNum: leaderNum.text,
+      membersDept: leaderDept.text,
+      membersSem: leaderSem.text,
+      membersEmail: leaderEmail.text,
+    );
+    groupEventModel = GroupEventModel(
+      eventId: event.id,
+      teamName: teamNameController.value.text.capitalizeFirst,
+      teamLeaderUid: AuthController.instance.user.value!.uid,
+      leaderDetail: leaderModel,
+      groupOfMembers: listOfEvent,
+      createdAt: DateTime.now().toString(),
+    );
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(AuthController.instance.user.value!.uid)
+        .set({
+      'joinedEvents': FieldValue.arrayUnion([event.id]),
+    }, SetOptions(merge: true));
+    FirebaseFirestore.instance.collection('events').doc(event.id).set({
+      'joined':
+          FieldValue.arrayUnion([AuthController.instance.user.value!.uid]),
+      'max_entries': FieldValue.increment(-1),
+    }, SetOptions(merge: true));
+    FirebaseFirestore.instance
+        .collection('group_participants')
+        .add(groupEventModel!.toJson())
+        .then((value) {
+      resetControllers();
+      Get.offAllNamed(BottomBarView.routeName);
+      isLoading(false);
+      Get.snackbar('Team registered', 'Team registered successfully.',
+          colorText: AppColors.white, backgroundColor: AppColors.blue);
+    }).catchError((e) {
+      isLoading(false);
+      print(e.toString());
+      Get.snackbar('Warning', 'Team registered failed',
+          colorText: AppColors.white, backgroundColor: AppColors.blue);
+    });
+  }
+
+  Future<void> individualEventSubmit() async {
+    isLoading(true);
     try {
-      FirebaseFirestore.instance.collection('events').doc(eventId).set({
+      EventParticipantModel participant;
+      participant = EventParticipantModel(
+        eventId: event.id,
+        membersName: leaderName.text,
+        membersNum: leaderNum.text,
+        membersDept: leaderDept.text,
+        membersSem: leaderSem.text,
+        membersEmail: leaderEmail.text,
+        createdAt: DateTime.now().toString(),
+      );
+      FirebaseFirestore.instance
+          .collection('individual_participants')
+          .add(participant.toJson());
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(AuthController.instance.user.value!.uid)
+          .set({
+        'joinedEvents': FieldValue.arrayUnion([event.id]),
+      }, SetOptions(merge: true));
+      FirebaseFirestore.instance.collection('events').doc(event.id).set({
         'joined':
             FieldValue.arrayUnion([AuthController.instance.user.value!.uid]),
         'max_entries': FieldValue.increment(-1),
       }, SetOptions(merge: true)).then((value) {
+        resetControllers();
         Get.offAllNamed(BottomBarView.routeName);
         isLoading(false);
-        Get.snackbar('Congratulations', 'You have joined success',
+        Get.snackbar('Congratulations', 'You have joined successfully',
             colorText: AppColors.white, backgroundColor: AppColors.blue);
       });
     } catch (e) {
@@ -89,38 +180,32 @@ class RegistrationController extends GetxController {
     }
   }
 
-  createIndividualExcelSheet() {
+  individualExcelSheet() {
     isLoading(true);
+    firebaseFunIndividual();
     fileName = event.eventName.toUpperCase();
     Sheet sheet = excel[event.eventName];
-    List<UserModel> listOfParticipatedUser = [];
-
-    for (var user in HomeController.instance.listOfUser) {
-      var isCheck = event.joined.contains(user.uid);
-      if (isCheck) {
-        listOfParticipatedUser.add(user);
-      }
-    }
-
     sheet.appendRow([
       const TextCellValue('Serial No'),
       const TextCellValue('Name'),
       const TextCellValue('Number'),
       const TextCellValue('Email'),
-      const TextCellValue('Gender')
+      const TextCellValue('Dept'),
+      const TextCellValue('Sem'),
     ]);
     for (int i = 0; i < event.joined.length; i++) {
       var index = sheet.cell(CellIndex.indexByString('A${i + 2}'));
       var nameCell = sheet.cell(CellIndex.indexByString('B${i + 2}'));
       var number = sheet.cell(CellIndex.indexByString('C${i + 2}'));
       var email = sheet.cell(CellIndex.indexByString('D${i + 2}'));
-      var gender = sheet.cell(CellIndex.indexByString('E${i + 2}'));
+      var dept = sheet.cell(CellIndex.indexByString('E${i + 2}'));
+      var sem = sheet.cell(CellIndex.indexByString('F${i + 2}'));
       index.value = TextCellValue("${i + 1}");
-      nameCell.value = TextCellValue(
-          '${listOfParticipatedUser[i].first!} ${listOfParticipatedUser[i].last!}');
-      number.value = TextCellValue('${listOfParticipatedUser[i].mobileNumber}');
-      email.value = TextCellValue('${listOfParticipatedUser[i].email}');
-      gender.value = TextCellValue('${listOfParticipatedUser[i].gender}');
+      nameCell.value = TextCellValue('${listOfParticipants[i].membersName}');
+      number.value = TextCellValue('${listOfParticipants[i].membersNum}');
+      email.value = TextCellValue('${listOfParticipants[i].membersEmail}');
+      dept.value = TextCellValue('${listOfParticipants[i].membersDept}');
+      sem.value = TextCellValue('${listOfParticipants[i].membersSem}');
     }
     Get.offAllNamed(BottomBarView.routeName);
     Get.snackbar('Complete', 'Excel sheet is downloaded',
@@ -148,47 +233,9 @@ class RegistrationController extends GetxController {
     return directory.path;
   }
 
-  Future<void> groupEventSubmit({String? eventId}) async {
-    isLoading(true);
-    GroupMemberModel leaderModel;
-    leaderModel = GroupMemberModel(
-      membersName: leaderName.text,
-      membersNum: leaderNum.text,
-      membersDept: leaderDept.text,
-      membersSem: leaderSem.text,
-      membersEmail: leaderEmail.text,
-    );
-    groupEventModel = GroupEventModel(
-      eventId: event.id,
-      teamName: teamNameController.value.text.capitalizeFirst,
-      teamLeaderUid: AuthController.instance.user.value!.uid,
-      leaderDetail: leaderModel,
-      groupOfMembers: listOfEvent,
-    );
-    FirebaseFirestore.instance.collection('events').doc(eventId).set({
-      'joined':
-          FieldValue.arrayUnion([AuthController.instance.user.value!.uid]),
-      'max_entries': FieldValue.increment(-1),
-    }, SetOptions(merge: true));
-    FirebaseFirestore.instance
-        .collection('group_participants')
-        .add(groupEventModel!.toJson())
-        .then((value) {
-      // resetControllers();
-      Get.offAllNamed(BottomBarView.routeName);
-      isLoading(false);
-      Get.snackbar('Team registered', 'Team registered successfully.',
-          colorText: AppColors.white, backgroundColor: AppColors.blue);
-    }).catchError((e) {
-      isLoading(false);
-      print(e.toString());
-      Get.snackbar('Warning', 'Team registered failed',
-          colorText: AppColors.white, backgroundColor: AppColors.blue);
-    });
-  }
-
   Future<void> groupEventExcelSheet() async {
     isLoading(true);
+    firebaseFunGroup();
     fileName = event.eventName.toUpperCase();
     Sheet sheet = excel[event.eventName];
 

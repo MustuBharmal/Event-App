@@ -1,5 +1,4 @@
 import 'package:ems/views/auth/controller/auth_controller.dart';
-import 'package:ems/views/profile/add_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,23 +21,15 @@ class LoginView extends GetView<AuthController> {
             child: Column(
               children: [
                 SizedBox(
-                  height: Get.height * 0.08,
+                  height: Get.height * 0.1,
                 ),
-                controller.isSignUp.value
-                    ? myText(
-                        text: 'Sign Up',
-                        style: const TextStyle(
-                          fontSize: 23,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )
-                    : myText(
-                        text: 'Login',
-                        style: GoogleFonts.poppins(
-                          fontSize: 23,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  child: Image.asset(
+                    'assets/atmiya_logo.jpg',
+                    cacheHeight: 160,
+                  ),
+                ),
                 SizedBox(
                   height: Get.height * 0.03,
                 ),
@@ -134,7 +125,7 @@ class LoginView extends GetView<AuthController> {
               textFormFieldForController(
                   obscure: false,
                   icon: 'assets/mail.png',
-                  hintText: 'sarasmith12@gmail.com',
+                  hintText: 'johndoe@gmail.com',
                   validator: (String input) {
                     if (input.isEmpty) {
                       Get.snackbar('Warning', 'Email is required.',
@@ -194,9 +185,7 @@ class LoginView extends GetView<AuthController> {
                             MaterialButton(
                               color: AppColors.blue,
                               onPressed: () {
-                                controller.forgetPassword(controller
-                                    .forgetEmailController.text
-                                    .trim());
+                                controller.forgetPassword();
                               },
                               child: const Text("Sent"),
                               minWidth: double.infinity,
@@ -240,7 +229,7 @@ class LoginView extends GetView<AuthController> {
                     ),
             ),
           ),
-          SizedBox(
+          /*SizedBox(
             height: Get.height * 0.02,
           ),
           myText(
@@ -253,22 +242,18 @@ class LoginView extends GetView<AuthController> {
           ),
           SizedBox(
             height: Get.height * 0.01,
-          ),
-          Row(
+          ),*/
+          /*Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              socialAppsIcons(
-                  text: 'assets/fb.png',
-                  onPressed: () {
-                    Get.to(() => AddProfileScreen());
-                  }),
+              socialAppsIcons(text: 'assets/fb.png', onPressed: () {}),
               socialAppsIcons(
                   text: 'assets/google.png',
                   onPressed: () {
                     controller.signInWithGoogle();
                   }),
             ],
-          )
+          )*/
         ],
       ),
     );
@@ -276,124 +261,96 @@ class LoginView extends GetView<AuthController> {
 
   Widget signUpWidget() {
     return SingleChildScrollView(
-        child: Column(
-      children: [
-        textFormFieldForController(
-            obscure: false,
-            icon: 'assets/mail.png',
-            hintText: 'Email',
-            validator: (String input) {
-              if (input.isEmpty) {
-                Get.snackbar('Warning', 'Email is required.',
-                    colorText: AppColors.white, backgroundColor: AppColors.blue);
-                return '';
-              }
+      child: Column(
+        children: [
+          textFormFieldForController(
+              obscure: false,
+              icon: 'assets/mail.png',
+              hintText: 'Email',
+              validator: (String input) {
+                if (input.isEmpty) {
+                  Get.snackbar('Warning', 'Email is required.',
+                      colorText: AppColors.white,
+                      backgroundColor: AppColors.blue);
+                  return '';
+                }
 
-              if (!input.contains('@')) {
-                Get.snackbar('Warning', 'Email is invalid.',
-                    colorText: AppColors.white, backgroundColor: AppColors.blue);
-                return '';
-              }
-            },
-            controller: controller.emailController),
-        SizedBox(
-          height: Get.height * 0.02,
-        ),
-        textFormFieldForController(
-            obscure: true,
-            icon: 'assets/lock.png',
-            hintText: 'password',
-            validator: (String input) {
-              if (input.isEmpty) {
-                Get.snackbar('Warning', 'Password is required.',
-                    colorText: AppColors.white, backgroundColor: AppColors.blue);
-                return '';
-              }
-
-              if (input.length < 6) {
-                Get.snackbar('Warning', 'Password should be 6+ characters.',
-                    colorText: AppColors.white, backgroundColor: AppColors.blue);
-                return '';
-              }
-            },
-            controller: controller.passwordController),
-        SizedBox(
-          height: Get.height * 0.02,
-        ),
-        textFormFieldForController(
-            obscure: false,
-            icon: 'assets/lock.png',
-            hintText: 'Re-enter password',
-            validator: (input) {
-              if (input != controller.passwordController.text.trim()) {
-                Get.snackbar(
-                    'Warning', 'Confirm Password is not same as password.',
-                    colorText: AppColors.white, backgroundColor: AppColors.blue);
-                return '';
-              }
-            },
-            controller: controller.confirmPasswordController),
-        Obx(() => controller.isLoading.value
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Container(
-                height: 50,
-                margin: EdgeInsets.symmetric(
-                  vertical: Get.height * 0.04,
-                ),
-                width: Get.width,
-                child: elevatedButton(
-                  text: 'Sign Up',
-                  onPress: () {
-                    if (!formKey.currentState!.validate()) {
-                      return;
-                    }
-
-                    controller.signUp(
-                        email: controller.emailController.text.trim(),
-                        password: controller.passwordController.text.trim());
-                  },
-                ),
-              )),
-        myText(
-          text: 'Or Connect With',
-          style: TextStyle(
-            fontSize: Get.height * 0.025,
+                if (!input.contains('@')) {
+                  Get.snackbar('Warning', 'Email is invalid.',
+                      colorText: AppColors.white,
+                      backgroundColor: AppColors.blue);
+                  return '';
+                }
+              },
+              controller: controller.emailController),
+          SizedBox(
+            height: Get.height * 0.02,
           ),
-        ),
-        SizedBox(
-          height: Get.height * 0.01,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            socialAppsIcons(text: 'assets/fb.png', onPressed: () {}),
-            socialAppsIcons(text: 'assets/google.png', onPressed: () {}),
-          ],
-        ),
-        SizedBox(
-          height: Get.height * 0.02,
-        ),
-        SizedBox(
-            width: Get.width * 0.8,
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: const TextSpan(children: [
-                TextSpan(
-                    text: 'By signing up, you agree our ',
-                    style: TextStyle(color: Color(0xff262628), fontSize: 12)),
-                TextSpan(
-                  text: 'terms, Data policy and cookies policy',
-                  style: TextStyle(
-                    color: Color(0xff262628),
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+          textFormFieldForController(
+              obscure: true,
+              icon: 'assets/lock.png',
+              hintText: 'password',
+              validator: (String input) {
+                if (input.isEmpty) {
+                  Get.snackbar('Warning', 'Password is required.',
+                      colorText: AppColors.white,
+                      backgroundColor: AppColors.blue);
+                  return '';
+                }
+
+                if (input.length < 6) {
+                  Get.snackbar('Warning', 'Password should be 6+ characters.',
+                      colorText: AppColors.white,
+                      backgroundColor: AppColors.blue);
+                  return '';
+                }
+              },
+              controller: controller.passwordController),
+          SizedBox(
+            height: Get.height * 0.02,
+          ),
+          textFormFieldForController(
+              obscure: false,
+              icon: 'assets/lock.png',
+              hintText: 'Re-enter password',
+              validator: (input) {
+                if (input != controller.passwordController.text.trim()) {
+                  Get.snackbar(
+                      'Warning', 'Confirm Password is not same as password.',
+                      colorText: AppColors.white,
+                      backgroundColor: AppColors.blue);
+                  return '';
+                }
+              },
+              controller: controller.confirmPasswordController),
+          Obx(
+            () => controller.isLoading.value
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Container(
+                    height: 50,
+                    margin: EdgeInsets.symmetric(
+                      vertical: Get.height * 0.04,
+                    ),
+                    width: Get.width,
+                    child: elevatedButton(
+                      text: 'Sign Up',
+                      onPress: () {
+                        if (!formKey.currentState!.validate()) {
+                          return;
+                        }
+
+                        controller.signUp(
+                            email: controller.emailController.text.trim(),
+                            password:
+                                controller.passwordController.text.trim());
+                      },
+                    ),
                   ),
-                ),
-              ]),
-            )),
-      ],
-    ));
+          ),
+        ],
+      ),
+    );
   }
 }

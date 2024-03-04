@@ -30,7 +30,7 @@ Widget customAppBar(context) {
             onTap: () {
               Get.to(() => const UserNotificationScreen());
             },
-            child: Image.asset('assets/Frame.png'),
+            child: Image.asset('assets/bell_icon.png'),
           ),
         ),
       ],

@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../model/user_model.dart';
+import '../../../utils/app_color.dart';
 import '../../home/bottom_bar_view.dart';
 import '../../profile/add_profile.dart';
 import 'package:path/path.dart' as path;
@@ -31,7 +32,7 @@ class AuthController extends GetxController {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
-    // TODO: implement dispose
+    forgetEmailController.dispose();
     super.dispose();
   }
 
@@ -61,6 +62,7 @@ class AuthController extends GetxController {
     await Future.delayed(const Duration(seconds: 2));
     if (FirebaseAuth.instance.currentUser == null) {
       Get.offNamed(LoginView.routeName);
+      // Get.to(() => const OnBoardingScreen());
     } else {
       getCurrUsr();
     }
@@ -91,6 +93,7 @@ class AuthController extends GetxController {
     emailController.clear();
     passwordController.clear();
     confirmPasswordController.clear();
+    forgetEmailController.clear();
   }
 
   void login() async {
@@ -125,8 +128,10 @@ class AuthController extends GetxController {
     });
   }
 
-  void forgetPassword(String email) {
-    auth.sendPasswordResetEmail(email: email).then((value) {
+  void forgetPassword() {
+    auth
+        .sendPasswordResetEmail(email: forgetEmailController.text.trim())
+        .then((value) {
       Get.back();
       Get.snackbar('Email Sent', 'We have sent password reset email');
     }).catchError((e) {
@@ -134,32 +139,30 @@ class AuthController extends GetxController {
     });
   }
 
-  signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     isLoading(true);
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      // Obtain the auth details from the request
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
 
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    FirebaseAuth.instance.signInWithCredential(credential).then((value) {
+      // Create a new credential
+      AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      UserCredential user =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      // Once signed in, return the UserCredential
+    } catch (e) {
+      Get.snackbar('error', 'Something went wrong, (Check Internet)');
       isLoading(false);
-
-      ///SuccessFull logged in
-      Get.to(() => const BottomBarView());
-    }).catchError((e) {
-      /// Error in getting Login
-      isLoading(false);
-      log("Error is $e");
-    });
+      throw ('\n signInFromGoogle $e');
+    }
+    isLoading(false);
   }
 
   var isProfileInformationLoading = false.obs;
@@ -175,6 +178,10 @@ class AuthController extends GetxController {
     await taskSnapshot.ref.getDownloadURL().then((value) {
       imageUrl = value;
     }).catchError((e) {
+      Get.snackbar(
+          'Failed', 'Profile image upload failed!',
+          colorText: AppColors.white,
+          backgroundColor: AppColors.blue);
       log("Error happen $e");
     });
 

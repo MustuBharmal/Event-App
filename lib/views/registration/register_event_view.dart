@@ -1,11 +1,10 @@
-import 'package:ems/model/group_member_model.dart';
+import 'package:ems/model/event_participant_model.dart';
 import 'package:ems/views/registration/controller/registration_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../utils/app_color.dart';
 import '../../widgets/my_widgets.dart';
-import '../home/bottom_bar_view.dart';
 
 class RegisterEventView extends GetView<RegistrationController> {
   static const String routeName = '/register-event-view';
@@ -180,46 +179,137 @@ class RegisterEventView extends GetView<RegistrationController> {
                       height: Get.height * 0.04,
                     ),
                     controller.event.eventType == 'Individual'
-                        ? Column(
-                            children: [
-                              Center(
-                                child: myText(
-                                  text: 'Do you want to join the event?',
-                                  style: TextStyle(
-                                    fontSize: Get.width * 0.06,
-                                    fontWeight: FontWeight.w500,
+                        ? Form(
+                            key: formKey,
+                            child: Column(
+                              children: [
+                                Center(
+                                  child: myText(
+                                    text: 'Do you want to join the event?',
+                                    style: TextStyle(
+                                      fontSize: Get.width * 0.06,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.02,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  SizedBox(
-                                    width: Get.width * 0.3,
-                                    child: elevatedButton(
-                                      onPress: () {
-                                        controller.joinedEvent(
-                                            eventId: controller.event.id);
-                                      },
-                                      text: 'YES',
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: Get.width * 0.3,
-                                    child: elevatedButton(
-                                      onPress: () {
-                                        Get.offAll(const BottomBarView());
-                                      },
-                                      text: 'NO',
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                textFormFieldForController(
+                                    hintText: 'Participant Name',
+                                    icon: ('assets/account.png'),
+                                    obscure: false,
+                                    controller: controller.leaderName,
+                                    validator: (String input) {
+                                      if (input.isEmpty) {
+                                        Get.snackbar(
+                                            'Opps', "Participant name Required",
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    }),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                textFormFieldForController(
+                                    controller: controller.leaderNum,
+                                    inputType: TextInputType.number,
+                                    hintText: 'Participant phone number',
+                                    icon: ('assets/Header.png'),
+                                    obscure: false,
+                                    maxLength: 10,
+                                    validator: (String input) {
+                                      if (input.isEmpty) {
+                                        Get.snackbar('Opps',
+                                            "Participant number required",
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    }),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                textFormFieldForController(
+                                    readOnly: true,
+                                    inputType: TextInputType.emailAddress,
+                                    controller: controller.leaderEmail,
+                                    hintText: 'Participant email',
+                                    icon: ('assets/mail.png'),
+                                    obscure: false,
+                                    validator: (String input) {
+                                      if (input.isEmpty) {
+                                        Get.snackbar('Opps',
+                                            "Participant email required",
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    }),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                textFormFieldForController(
+                                    controller: controller.leaderDept,
+                                    hintText: 'Participant Department',
+                                    icon: ('assets/Header.png'),
+                                    validator: (input) {
+                                      if (input.isEmpty) {
+                                        Get.snackbar('Opps',
+                                            "Participant department required",
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    }),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                textFormFieldForController(
+                                    inputType: TextInputType.number,
+                                    hintText: 'Participant Semester',
+                                    controller: controller.leaderSem,
+                                    icon: ('assets/about1.png'),
+                                    obscure: false,
+                                    validator: (String input) {
+                                      if (input.isEmpty) {
+                                        Get.snackbar('Opps',
+                                            "Participant semester required",
+                                            colorText: AppColors.white,
+                                            backgroundColor: AppColors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    }),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                Obx(
+                                  () => controller.isLoading.value
+                                      ? const Center(
+                                          child: CircularProgressIndicator(),
+                                        )
+                                      : elevatedButton(
+                                          onPress: () async {
+                                            if (!formKey.currentState!
+                                                .validate()) {
+                                              return;
+                                            }
+                                            controller.individualEventSubmit();
+                                          },
+                                          text: 'Submit',
+                                        ),
+                                )
+                              ],
+                            ),
                           )
                         : Form(
                             key: formKey,
@@ -239,7 +329,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 ),
                                 textFormFieldForController(
                                     hintText: 'Team Name',
-                                    icon: ('assets/Header.png'),
+                                    icon: ('assets/four_dot_icon.png'),
                                     controller: controller.teamNameController,
                                     validator: (input) {
                                       if (input.isEmpty) {
@@ -256,7 +346,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 ),
                                 textFormFieldForController(
                                     hintText: 'Leader Name',
-                                    icon: ('assets/Header.png'),
+                                    icon: ('assets/account.png'),
                                     obscure: false,
                                     controller: controller.leaderName,
                                     validator: (String input) {
@@ -297,7 +387,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                     inputType: TextInputType.emailAddress,
                                     controller: controller.leaderEmail,
                                     hintText: 'Leader email',
-                                    icon: ('assets/Header.png'),
+                                    icon: ('assets/mail.png'),
                                     obscure: false,
                                     validator: (String input) {
                                       if (input.isEmpty) {
@@ -314,7 +404,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 ),
                                 textFormFieldForController(
                                     controller: controller.leaderDept,
-                                    hintText: 'Leader Dept',
+                                    hintText: 'Leader Department',
                                     icon: ('assets/Header.png'),
                                     validator: (input) {
                                       if (input.isEmpty) {
@@ -330,11 +420,11 @@ class RegisterEventView extends GetView<RegistrationController> {
                                   height: Get.height * 0.02,
                                 ),
                                 textFormFieldForController(
-                                    inputType: TextInputType.number,
-                                    hintText: 'Leader Sem',
-                                    icon: ('assets/Header.png'),
-                                    obscure: false,
-                                    validator: (String input) {
+                                    maxLength: 1,
+                                    controller: controller.leaderSem,
+                                    hintText: 'Leader Semester',
+                                    icon: ('assets/about1.png'),
+                                    validator: (input) {
                                       if (input.isEmpty) {
                                         Get.snackbar(
                                             'Opps', "Leader semester required",
@@ -349,7 +439,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 ),
                                 textFormFieldForValue(
                                   inputType: TextInputType.number,
-                                  icon: ('assets/Header.png'),
+                                  icon: ('assets/people_group_icon.png'),
                                   hintText:
                                       'No. of members (excluding team leader)',
                                   validator: (input) {
@@ -397,7 +487,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                             List.generate(
                                                 controller
                                                     .noOfParticipant.value,
-                                                (index) => GroupMemberModel()));
+                                                (index) =>
+                                                    EventParticipantModel()));
                                         return Column(
                                           children: [
                                             textFormFieldForValue(
@@ -407,7 +498,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                 },
                                                 hintText:
                                                     'Member ${index + 1} Name',
-                                                icon: ('assets/Header.png'),
+                                                icon: ('assets/account.png'),
                                                 obscure: false,
                                                 validator: (String input) {
                                                   if (input.isEmpty) {
@@ -459,7 +550,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                     TextInputType.emailAddress,
                                                 hintText:
                                                     'Member ${index + 1} email',
-                                                icon: ('assets/Header.png'),
+                                                icon: ('assets/mail.png'),
                                                 obscure: false,
                                                 validator: (String input) {
                                                   if (input.isEmpty) {
@@ -509,7 +600,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                 inputType: TextInputType.number,
                                                 hintText:
                                                     'Member ${index + 1} Sem',
-                                                icon: ('assets/Header.png'),
+                                                icon: ('assets/about1.png'),
                                                 obscure: false,
                                                 validator: (String input) {
                                                   if (input.isEmpty) {
@@ -541,8 +632,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                 .validate()) {
                                               return;
                                             }
-                                            controller.groupEventSubmit(
-                                                eventId: controller.event.id);
+                                            controller.groupEventSubmit();
                                           },
                                           text: 'Submit',
                                         ),

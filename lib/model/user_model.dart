@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
 class UserModel {
   String? uid;
@@ -83,8 +84,8 @@ class UserModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['uid'] = uid;
     data['image'] = image;
-    data['first'] = first;
-    data['last'] = last;
+    data['first'] = first!.capitalizeFirst;
+    data['last'] = last!.capitalizeFirst;
     data['dob'] = dob;
     data['gender'] = gender;
     data['user_type'] = userType;
