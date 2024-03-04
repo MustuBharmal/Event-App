@@ -19,12 +19,13 @@ Widget textField(
     {text,
     TextEditingController? controller,
     Function? validator,
+      int? maxLength,
     TextInputType inputType = TextInputType.text}) {
   return Container(
-    height: 48,
     margin: EdgeInsets.only(bottom: Get.height * 0.02),
     child: TextFormField(
       keyboardType: inputType,
+      maxLength: maxLength,
       controller: controller,
       validator: (input) => validator!(input),
       decoration: InputDecoration(

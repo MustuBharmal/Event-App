@@ -23,7 +23,7 @@ class ProfileController extends GetxController {
   RxInt noOfJoinedEvents = RxInt(0);
   RxInt noOfOrganizedEvents = RxInt(0);
   File? profileImage;
-  int selectedRadio = 0;
+  RxInt selectedRadio = RxInt(0);
   RxBool isLoading = RxBool(false);
   RxString imageString = RxString('');
   RxBool isNotEditable = RxBool(true);
@@ -102,7 +102,7 @@ class ProfileController extends GetxController {
   }
 
   void setSelectedRadio(int val) {
-    selectedRadio = val;
+    selectedRadio.value = val;
   }
 
   Future<void> selectDate(BuildContext context) async {
@@ -121,8 +121,11 @@ class ProfileController extends GetxController {
   Future<void> addProfile() async {
     isLoading(true);
     try {
-      String imageUrl = await AuthController.instance
-          .uploadImageToFirebaseStorage(profileImage!);
+      String imageUrl = '';
+      if (profileImage != null) {
+        imageUrl = await AuthController.instance
+            .uploadImageToFirebaseStorage(profileImage!);
+      }
       UserModel userModel = UserModel(
         uid: FirebaseAuth.instance.currentUser!.uid,
         image: imageUrl,
@@ -143,6 +146,7 @@ class ProfileController extends GetxController {
           .doc(uid)
           .set(userModel.toJson())
           .then((value) {
+        AuthController.instance.user.value = userModel;
         Get.offAllNamed(BottomBarView.routeName);
       });
     } catch (e) {

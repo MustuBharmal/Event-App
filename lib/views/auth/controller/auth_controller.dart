@@ -52,6 +52,7 @@ class AuthController extends GetxController {
     try {
       FirebaseAuth.instance.signOut();
       Get.offAllNamed(LoginView.routeName);
+      // user.value = null;
     } catch (e) {
       Get.snackbar('Error', '$e');
     }
@@ -113,7 +114,7 @@ class AuthController extends GetxController {
 
   void signUp({String? email, String? password}) {
     isLoading(true);
-
+    AuthController.instance.user.value = null;
     auth
         .createUserWithEmailAndPassword(email: email!, password: password!)
         .then((value) {
@@ -178,10 +179,8 @@ class AuthController extends GetxController {
     await taskSnapshot.ref.getDownloadURL().then((value) {
       imageUrl = value;
     }).catchError((e) {
-      Get.snackbar(
-          'Failed', 'Profile image upload failed!',
-          colorText: AppColors.white,
-          backgroundColor: AppColors.blue);
+      Get.snackbar('Failed', 'Profile image upload failed!',
+          colorText: AppColors.white, backgroundColor: AppColors.blue);
       log("Error happen $e");
     });
 

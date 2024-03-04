@@ -363,8 +363,11 @@ eventsIJoined() {
                   Row(
                     children: [
                       CircleAvatar(
-                        foregroundImage: NetworkImage(
-                            AuthController.instance.user.value!.image!),
+                        foregroundImage:
+                            AuthController.instance.user.value?.image != ''
+                                ? NetworkImage(
+                                    AuthController.instance.user.value!.image!)
+                                : null,
                         backgroundImage: const AssetImage('assets/time.png'),
                         radius: 20,
                       ),

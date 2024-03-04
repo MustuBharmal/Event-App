@@ -44,7 +44,7 @@ class EventPageView extends StatelessWidget {
     DateFormat dFormat = DateFormat("dd/MM/yyyy");
     DateTime now = DateTime.now();
     DateTime regEndDate = dFormat.parse(event.rgEdDate);
-    DateTime eventEndDate = dFormat.parse(event.eventDay);
+    // DateTime eventEndDate = dFormat.parse(event.eventDay);
     String dFormat2 = dFormat.format(now);
     DateTime nowTime = dFormat.parse(dFormat2);
     // DateTime? d = DateTime.tryParse(widget.eventData.get('date'));
@@ -230,7 +230,7 @@ class EventPageView extends StatelessWidget {
                   ),
                   const Spacer(),
                   Visibility(
-                    visible: !eventEndDate.isBefore(nowTime),
+                    visible: !regEndDate.isBefore(nowTime),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -320,7 +320,7 @@ class EventPageView extends StatelessWidget {
                   ),
                   if (AuthController.instance.user.value!.uid == event.uid)
                     Visibility(
-                      visible: eventEndDate.isBefore(nowTime),
+                      visible: !(regEndDate.isBefore(nowTime)),
                       child: Expanded(
                         child: InkWell(
                           onTap: () {

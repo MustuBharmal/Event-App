@@ -103,6 +103,7 @@ class AddProfileScreen extends GetView<ProfileController> {
                     }),
                 textField(
                     text: 'Mobile Number',
+                    maxLength: 10,
                     inputType: TextInputType.phone,
                     controller: controller.mobileNumberController,
                     validator: (String input) {
@@ -115,25 +116,6 @@ class AddProfileScreen extends GetView<ProfileController> {
 
                       if (controller.mobileNumberController.text.length < 10) {
                         Get.snackbar('Warning', 'Enter valid phone number.',
-                            colorText: AppColors.white,
-                            backgroundColor: AppColors.blue);
-                        return '';
-                      }
-                    }),
-                textField(
-                    text: 'Email',
-                    inputType: TextInputType.emailAddress,
-                    controller: controller.emailController,
-                    validator: (String input) {
-                      if (controller.emailController.text.isEmpty) {
-                        Get.snackbar('Warning', 'Email is required.',
-                            colorText: AppColors.white,
-                            backgroundColor: AppColors.blue);
-                        return '';
-                      }
-
-                      if (controller.emailController.text.length < 5) {
-                        Get.snackbar('Warning', 'Enter valid email address.',
                             colorText: AppColors.white,
                             backgroundColor: AppColors.blue);
                         return '';
@@ -162,74 +144,71 @@ class AddProfileScreen extends GetView<ProfileController> {
                     ),
                   ),
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                        child: RadioListTile(
-                      title: Text(
-                        'Male',
-                        style: TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.genderTextColor,
-                        ),
-                      ),
-                      value: 0,
-                      groupValue: controller.selectedRadio,
-                      onChanged: (int? val) {
-                        controller.setSelectedRadio(val!);
-                      },
-                    )),
-                    Expanded(
-                      child: RadioListTile(
+                Obx(
+                  () => Row(
+                    children: [
+                      Expanded(
+                          child: RadioListTile(
                         title: Text(
-                          'Female',
+                          'Male',
                           style: TextStyle(
                             fontSize: 19,
                             fontWeight: FontWeight.w400,
                             color: AppColors.genderTextColor,
                           ),
                         ),
-                        value: 1,
-                        groupValue: controller.selectedRadio,
+                        value: 0,
+                        groupValue: controller.selectedRadio.value,
                         onChanged: (int? val) {
                           controller.setSelectedRadio(val!);
                         },
-                      ),
-                    ),
-                  ],
-                ),
-                Obx(() => controller.isLoading.value
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Container(
-                        height: 50,
-                        margin: EdgeInsets.only(top: Get.height * 0.02),
-                        width: Get.width,
-                        child: elevatedButton(
-                            text: 'Save',
-                            onPress: () async {
-                              if (controller.dob.text.isEmpty) {
-                                Get.snackbar(
-                                    'Warning', "Date of birth is required.",
-                                    colorText: AppColors.white,
-                                    backgroundColor: AppColors.blue);
-                                return '';
-                              }
-
-                              if (!formKey.currentState!.validate()) {
-                                return null;
-                              }
-                              if (controller.profileImage == null) {
-                                Get.snackbar('Warning', "Image is required.",
-                                    colorText: AppColors.white,
-                                    backgroundColor: AppColors.blue);
-                                return '';
-                              }
-                              controller.addProfile();
-                            }),
                       )),
+                      Expanded(
+                        child: RadioListTile(
+                          title: Text(
+                            'Female',
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.genderTextColor,
+                            ),
+                          ),
+                          value: 1,
+                          groupValue: controller.selectedRadio.value,
+                          onChanged: (int? val) {
+                            controller.setSelectedRadio(val!);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                    height: 50,
+                    margin: EdgeInsets.only(top: Get.height * 0.02),
+                    width: Get.width,
+                    child: Obx(
+                      () => controller.isLoading.value
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : elevatedButton(
+                              text: 'Save',
+                              onPress: () async {
+                                if (controller.dob.text.isEmpty) {
+                                  Get.snackbar(
+                                      'Warning', "Date of birth is required.",
+                                      colorText: AppColors.white,
+                                      backgroundColor: AppColors.blue);
+                                  return '';
+                                }
+
+                                if (!formKey.currentState!.validate()) {
+                                  return null;
+                                }
+                                controller.addProfile();
+                              }),
+                    )),
                 SizedBox(
                   height: Get.height * 0.03,
                 ),

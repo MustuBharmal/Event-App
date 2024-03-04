@@ -323,18 +323,18 @@ class LoginView extends GetView<AuthController> {
                 }
               },
               controller: controller.confirmPasswordController),
-          Obx(
-            () => controller.isLoading.value
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Container(
-                    height: 50,
-                    margin: EdgeInsets.symmetric(
-                      vertical: Get.height * 0.04,
-                    ),
-                    width: Get.width,
-                    child: elevatedButton(
+          Container(
+            height: 50,
+            margin: EdgeInsets.symmetric(
+              vertical: Get.height * 0.04,
+            ),
+            width: Get.width,
+            child: Obx(
+              () => controller.isLoading.value
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : elevatedButton(
                       text: 'Sign Up',
                       onPress: () {
                         if (!formKey.currentState!.validate()) {
@@ -347,7 +347,7 @@ class LoginView extends GetView<AuthController> {
                                 controller.passwordController.text.trim());
                       },
                     ),
-                  ),
+            ),
           ),
         ],
       ),
