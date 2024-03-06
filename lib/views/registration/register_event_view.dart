@@ -329,6 +329,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 ),
                                 textFormFieldForController(
                                     hintText: 'Team Name',
+                                    labelText: 'Team Name',
                                     icon: ('assets/four_dot_icon.png'),
                                     controller: controller.teamNameController,
                                     validator: (input) {
@@ -345,7 +346,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                   height: Get.height * 0.02,
                                 ),
                                 textFormFieldForController(
-                                    hintText: 'Leader Name',
+                                    hintText: 'Joe Doe',
+                                    labelText: 'Leader Name',
                                     icon: ('assets/account.png'),
                                     obscure: false,
                                     controller: controller.leaderName,
@@ -365,7 +367,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 textFormFieldForController(
                                     controller: controller.leaderNum,
                                     inputType: TextInputType.number,
-                                    hintText: 'Leader phone number',
+                                    hintText: '63XXXXXX52',
+                                    labelText: 'Leader phone number',
                                     icon: ('assets/Header.png'),
                                     obscure: false,
                                     maxLength: 10,
@@ -386,7 +389,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                     readOnly: true,
                                     inputType: TextInputType.emailAddress,
                                     controller: controller.leaderEmail,
-                                    hintText: 'Leader email',
+                                    hintText: 'joedoe@gmail.com',
+                                    labelText: 'Leader email',
                                     icon: ('assets/mail.png'),
                                     obscure: false,
                                     validator: (String input) {
@@ -404,7 +408,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 ),
                                 textFormFieldForController(
                                     controller: controller.leaderDept,
-                                    hintText: 'Leader Department',
+                                    hintText: 'Diploma IT',
+                                    labelText: 'Leader Department',
                                     icon: ('assets/Header.png'),
                                     validator: (input) {
                                       if (input.isEmpty) {
@@ -422,7 +427,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 textFormFieldForController(
                                     maxLength: 1,
                                     controller: controller.leaderSem,
-                                    hintText: 'Leader Semester',
+                                    hintText: '6',
+                                    labelText:'Leader Semester',
                                     icon: ('assets/about1.png'),
                                     validator: (input) {
                                       if (input.isEmpty) {
@@ -497,7 +503,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                       .membersName = value;
                                                 },
                                                 hintText:
-                                                    'Member ${index + 1} Name',
+                                                    'Joe Doe',
+                                                labelText:'Member ${index + 1} name',
                                                 icon: ('assets/account.png'),
                                                 obscure: false,
                                                 validator: (String input) {
@@ -522,7 +529,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                 },
                                                 inputType: TextInputType.number,
                                                 hintText:
-                                                    'Member ${index + 1} phone number',
+                                                    '63XXXXXX52',
+                                                labelText:'Member ${index + 1} phone number',
                                                 icon: ('assets/Header.png'),
                                                 obscure: false,
                                                 maxLength: 10,
@@ -549,7 +557,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                 inputType:
                                                     TextInputType.emailAddress,
                                                 hintText:
-                                                    'Member ${index + 1} email',
+                                                    'joedoe@gmail.com',
+                                                labelText: 'Member ${index + 1} email',
                                                 icon: ('assets/mail.png'),
                                                 obscure: false,
                                                 validator: (String input) {
@@ -574,7 +583,8 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                       value.toLowerCase();
                                                 },
                                                 hintText:
-                                                    'Member ${index + 1} Dept',
+                                                    'B.tech CE',
+                                                labelText: 'Member ${index + 1} dept',
                                                 icon: ('assets/Header.png'),
                                                 validator: (input) {
                                                   if (input.isEmpty) {
@@ -598,8 +608,9 @@ class RegisterEventView extends GetView<RegistrationController> {
                                                 },
                                                 maxLength: 1,
                                                 inputType: TextInputType.number,
-                                                hintText:
-                                                    'Member ${index + 1} Sem',
+                                                hintText: '1',
+                                                labelText:
+                                                    'Member ${index + 1} Semester',
                                                 icon: ('assets/about1.png'),
                                                 obscure: false,
                                                 validator: (String input) {

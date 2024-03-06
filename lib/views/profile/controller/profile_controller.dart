@@ -132,12 +132,12 @@ class ProfileController extends GetxController {
         first: firstNameController.text.trim(),
         last: lastNameController.text.trim(),
         dob: dob.text.trim(),
-        gender: selectedRadio == 0 ? "Male" : "Female",
+        gender: selectedRadio.value == 0 ? "Male" : "Female",
         userType: 'student',
         mobileNumber: mobileNumberController.text.trim(),
         joinedEvents: [],
         organizedEvents: [],
-        email: emailController.text,
+        email: FirebaseAuth.instance.currentUser!.email,
       );
       String uid = FirebaseAuth.instance.currentUser!.uid;
 

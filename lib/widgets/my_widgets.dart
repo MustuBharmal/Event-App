@@ -19,7 +19,7 @@ Widget textField(
     {text,
     TextEditingController? controller,
     Function? validator,
-      int? maxLength,
+    int? maxLength,
     TextInputType inputType = TextInputType.text}) {
   return Container(
     margin: EdgeInsets.only(bottom: Get.height * 0.02),
@@ -43,6 +43,7 @@ Widget textFormFieldForController(
     obscure = false,
     readOnly = false,
     int? maxLength,
+    String? labelText,
     inputType = TextInputType.text,
     TextEditingController? controller,
     Function? validator}) {
@@ -61,6 +62,7 @@ Widget textFormFieldForController(
             color: AppColors.genderTextColor,
           ),
           hintText: hintText,
+          labelText: labelText,
           prefixIcon: Image.asset(
             icon!,
             cacheHeight: 20,
@@ -77,6 +79,7 @@ Widget textFormFieldForValue({
   readOnly = false,
   String? initialValue,
   int? maxLength,
+  String? labelText,
   Function? validator,
   TextInputType inputType = TextInputType.text,
   Function? onChanged,
@@ -96,6 +99,7 @@ Widget textFormFieldForValue({
           hintStyle: TextStyle(
             color: AppColors.genderTextColor,
           ),
+          labelText: labelText,
           hintText: hintText,
           prefixIcon: Image.asset(
             icon!,

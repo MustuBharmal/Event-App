@@ -38,6 +38,7 @@ class RegistrationController extends GetxController {
   void onInit() {
     selectEventImage();
     leaderEmail.text = AuthController.instance.user.value!.email!;
+    event.eventType == 'Individual' ? firebaseFunIndividual() : firebaseFunGroup();
     super.onInit();
   }
 
@@ -80,6 +81,7 @@ class RegistrationController extends GetxController {
         }
       }
       listOfParticipants = temp;
+      print(listOfParticipants[0].membersSem);
     });
   }
 
@@ -182,7 +184,6 @@ class RegistrationController extends GetxController {
 
   individualExcelSheet() {
     isLoading(true);
-    firebaseFunIndividual();
     fileName = event.eventName.toUpperCase();
     Sheet sheet = excel[event.eventName];
     sheet.appendRow([
@@ -193,7 +194,7 @@ class RegistrationController extends GetxController {
       const TextCellValue('Dept'),
       const TextCellValue('Sem'),
     ]);
-    for (int i = 0; i < event.joined.length; i++) {
+    for (int i = 0; i < listOfParticipants.length; i++) {
       var index = sheet.cell(CellIndex.indexByString('A${i + 2}'));
       var nameCell = sheet.cell(CellIndex.indexByString('B${i + 2}'));
       var number = sheet.cell(CellIndex.indexByString('C${i + 2}'));
@@ -201,6 +202,8 @@ class RegistrationController extends GetxController {
       var dept = sheet.cell(CellIndex.indexByString('E${i + 2}'));
       var sem = sheet.cell(CellIndex.indexByString('F${i + 2}'));
       index.value = TextCellValue("${i + 1}");
+      print(listOfParticipants[0].membersName);
+      print(i);
       nameCell.value = TextCellValue('${listOfParticipants[i].membersName}');
       number.value = TextCellValue('${listOfParticipants[i].membersNum}');
       email.value = TextCellValue('${listOfParticipants[i].membersEmail}');
@@ -235,7 +238,6 @@ class RegistrationController extends GetxController {
 
   Future<void> groupEventExcelSheet() async {
     isLoading(true);
-    firebaseFunGroup();
     fileName = event.eventName.toUpperCase();
     Sheet sheet = excel[event.eventName];
 
@@ -249,7 +251,7 @@ class RegistrationController extends GetxController {
       const TextCellValue('Sem'),
     ]);
     int k = 0;
-    for (int i = 0; i < event.joined.length; i++) {
+    for (int i = 0; i < listOfParticipatedTeam.length; i++) {
       int j;
       var teamNoCell = sheet.cell(CellIndex.indexByString('A${i + k + 2}'));
       var teamNameCell = sheet.cell(CellIndex.indexByString('B${i + k + 2}'));
