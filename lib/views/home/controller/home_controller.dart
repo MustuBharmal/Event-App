@@ -100,7 +100,6 @@ class HomeController extends GetxController {
 
   getEvents() async {
     isLoading(true);
-    print('events');
     FirebaseFirestore.instance
         .collection('events')
         .orderBy('date', descending: true)

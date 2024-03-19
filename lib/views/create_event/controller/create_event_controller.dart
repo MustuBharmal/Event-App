@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems/model/group_community_model.dart';
 import 'package:ems/views/home/controller/home_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path/path.dart' as path;
@@ -44,8 +45,10 @@ class CreateEventController extends GetxController {
   List<String> eventTypeList = ['Individual', 'Group'];
   List<String> closeList = ['Closed', 'Open'];
   DateTime? date = DateTime.now();
-
+  RxList<GroupCommunityModel> listOfCommunity = RxList.empty();
   RxBool isCreatingEvent = RxBool(false);
+  RxInt noOfCommunity = RxInt(0);
+  RxList<int> noOfMembers = RxList.empty();
 
   @override
   void onInit() {
@@ -99,9 +102,7 @@ class CreateEventController extends GetxController {
       startTime: startTimeController.text,
       endTime: endTimeController.text,
       description: descriptionController.text,
-      joined: [
-        FirebaseAuth.instance.currentUser!.uid,
-      ],
+      joined: [],
       uid: FirebaseAuth.instance.currentUser!.uid,
       inviter: [FirebaseAuth.instance.currentUser!.uid],
       likes: [],
@@ -166,6 +167,8 @@ class CreateEventController extends GetxController {
     endTimeController.clear();
     startTimeController.clear();
     frequencyEventController.clear();
+    noOfMembers.value = List.empty();
+    noOfCommunity.value = 0;
     startTime = const TimeOfDay(hour: 0, minute: 0);
     endTime = const TimeOfDay(hour: 0, minute: 0);
   }

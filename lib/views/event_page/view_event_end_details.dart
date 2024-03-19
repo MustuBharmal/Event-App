@@ -1,4 +1,4 @@
-import 'package:ems/views/registration/controller/registration_controller.dart';
+import 'package:ems/views/event_page/controller/event_page_controller.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../../utils/app_color.dart';
 import '../../widgets/my_widgets.dart';
 
-class ViewEndEventDetails extends GetView<RegistrationController> {
+class ViewEndEventDetails extends GetView<EventPageController> {
   static const String routeName = '/view-end-event-details';
 
   const ViewEndEventDetails({super.key});
@@ -100,7 +100,7 @@ class ViewEndEventDetails extends GetView<RegistrationController> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               myText(
-                                text: controller.event.eventName.toUpperCase(),
+                                text: controller.event?.eventName.toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w600,
@@ -121,7 +121,7 @@ class ViewEndEventDetails extends GetView<RegistrationController> {
                                     width: 5,
                                   ),
                                   myText(
-                                    text: controller.event.location!
+                                    text: controller.event?.location!
                                         .toUpperCase(),
                                     style: const TextStyle(
                                       fontSize: 12,
@@ -136,7 +136,7 @@ class ViewEndEventDetails extends GetView<RegistrationController> {
                               SizedBox(
                                 width: Get.width * 0.45,
                                 child: myText(
-                                    text: '${controller.event.description}',
+                                    text: '${controller.event?.description}',
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
@@ -149,7 +149,7 @@ class ViewEndEventDetails extends GetView<RegistrationController> {
                               ),
                               myText(
                                 text:
-                                    'Event Date:- ${controller.event.eventDay}',
+                                    'Event Date:- ${controller.event?.eventDay}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -161,7 +161,7 @@ class ViewEndEventDetails extends GetView<RegistrationController> {
                               ),
                               myText(
                                 text:
-                                    'Total seats available:-  ${controller.event.maxEntries! + controller.event.joined.length}',
+                                    'Total seats available:-  ${controller.event!.maxEntries! + controller.event!.joined.length}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -173,7 +173,7 @@ class ViewEndEventDetails extends GetView<RegistrationController> {
                               ),
                               myText(
                                 text:
-                                    'No. of Entries:-  ${controller.event.joined.length}',
+                                    'No. of Entries:-  ${controller.event?.joined.length}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -184,7 +184,7 @@ class ViewEndEventDetails extends GetView<RegistrationController> {
                                 height: 3,
                               ),
                               myText(
-                                text: 'Venue:-  ${controller.event.location}',
+                                text: 'Venue:-  ${controller.event?.location}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -211,7 +211,7 @@ class ViewEndEventDetails extends GetView<RegistrationController> {
                   : elevatedButton(
                       text: "Download excel",
                       onPress: () {
-                        controller.event.eventType == 'Individual'
+                        controller.event?.eventType == 'Individual'
                             ? controller.individualExcelSheet()
                             : controller.groupEventExcelSheet();
                         controller.writeCounter(controller.excel);

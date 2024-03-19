@@ -115,9 +115,13 @@ class ProfileView extends GetView<ProfileController> {
                                         backgroundImage: const AssetImage(
                                           'assets/time.png',
                                         ),
-                                        foregroundImage: NetworkImage(
-                                          controller.imageString.value,
-                                        ),
+                                        foregroundImage:
+                                            controller.imageString.value != ''
+                                                ? NetworkImage(
+                                                    controller
+                                                        .imageString.value,
+                                                  )
+                                                : null,
                                       ),
                                     )),
                               ),
@@ -311,7 +315,7 @@ class ProfileView extends GetView<ProfileController> {
                                                   .selectEventImage(controller
                                                       .savedEvents[index]
                                                       .media);
-          
+
                                               return GestureDetector(
                                                 onTap: () => Get.toNamed(
                                                     EventPageView.routeName,

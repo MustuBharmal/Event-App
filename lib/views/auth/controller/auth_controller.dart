@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems/utils/log_util.dart';
 import 'package:ems/views/auth/login_signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -85,7 +86,7 @@ class AuthController extends GetxController {
       isLoading(false);
       clearControllers();
     } catch (e) {
-      print('$e');
+      LogUtil.debug(e.toString());
     }
     isLoading(false);
   }

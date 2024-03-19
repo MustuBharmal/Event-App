@@ -21,34 +21,11 @@ Widget eventsFeed() {
 
 Widget buildCard(
     {String? image, Function? func, required EventModel eventData}) {
-  List joinedUsers = [];
-
-  try {
-    joinedUsers = eventData.joined;
-  } catch (e) {
-    joinedUsers = [];
-  }
-
   List dateInformation = [];
   try {
     dateInformation = eventData.eventDay.toString().split('/');
   } catch (e) {
     dateInformation = [];
-  }
-
-  List userLikes = [];
-
-  try {
-    userLikes = eventData.likes;
-  } catch (e) {
-    userLikes = [];
-  }
-
-  List eventSavedByUsers = [];
-  try {
-    eventSavedByUsers = eventData.saves;
-  } catch (e) {
-    eventSavedByUsers = [];
   }
   return Container(
     padding: const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 10),
@@ -119,7 +96,7 @@ Widget buildCard(
               const Spacer(),
               InkWell(
                 onTap: () {
-                  if (eventSavedByUsers
+                  if (eventData.saves
                       .contains(FirebaseAuth.instance.currentUser!.uid)) {
                     FirebaseFirestore.instance
                         .collection('events')
@@ -128,7 +105,7 @@ Widget buildCard(
                       'saves': FieldValue.arrayRemove(
                           [FirebaseAuth.instance.currentUser!.uid])
                     }, SetOptions(merge: true));
-                    eventSavedByUsers
+                    eventData.saves
                         .remove(FirebaseAuth.instance.currentUser!.uid);
                   } else {
                     FirebaseFirestore.instance
@@ -138,7 +115,7 @@ Widget buildCard(
                       'saves': FieldValue.arrayUnion(
                           [FirebaseAuth.instance.currentUser!.uid])
                     }, SetOptions(merge: true));
-                    eventSavedByUsers
+                    eventData.saves
                         .add(FirebaseAuth.instance.currentUser!.uid);
                   }
                 },
@@ -148,7 +125,7 @@ Widget buildCard(
                   child: Image.asset(
                     'assets/bookMark.png',
                     fit: BoxFit.contain,
-                    color: eventSavedByUsers
+                    color: eventData.saves
                             .contains(FirebaseAuth.instance.currentUser!.uid)
                         ? Colors.red
                         : Colors.black,
@@ -165,18 +142,19 @@ Widget buildCard(
                 height: 50,
                 child: ListView.builder(
                   itemBuilder: (ctx, index) {
-                    final user = HomeController.instance.listOfUser
-                        .firstWhere((user) => user.uid == joinedUsers[index]);
+                    final user = HomeController.instance.listOfUser.firstWhere(
+                        (user) => user.uid == eventData.joined[index]);
 
                     return Container(
                       margin: const EdgeInsets.only(left: 10),
                       child: CircleAvatar(
                         minRadius: 13,
-                        backgroundImage: NetworkImage(user.image!),
+                        foregroundImage: user.image != '' ? NetworkImage(user.image!) : null,
+                        backgroundImage: const AssetImage('assets/Group 18341 (1).png'),
                       ),
                     );
                   },
-                  itemCount: joinedUsers.length,
+                  itemCount: eventData.joined.length,
                   scrollDirection: Axis.horizontal,
                 )),
           ],
@@ -191,7 +169,7 @@ Widget buildCard(
             ),
             InkWell(
               onTap: () {
-                if (userLikes
+                if (eventData.likes
                     .contains(FirebaseAuth.instance.currentUser!.uid)) {
                   FirebaseFirestore.instance
                       .collection('events')
@@ -225,7 +203,7 @@ Widget buildCard(
                   Icons.favorite,
                   size: Get.width * 0.07,
                   color:
-                      userLikes.contains(FirebaseAuth.instance.currentUser!.uid)
+                  eventData.likes.contains(FirebaseAuth.instance.currentUser!.uid)
                           ? Colors.red
                           : Colors.black,
                 ),
@@ -235,7 +213,7 @@ Widget buildCard(
               width: 3,
             ),
             Text(
-              '${userLikes.length}',
+              '${eventData.likes.length}',
               style: TextStyle(
                 color: AppColors.black,
                 fontSize: Get.width * 0.05,
@@ -364,7 +342,7 @@ eventsIJoined() {
                     children: [
                       CircleAvatar(
                         foregroundImage:
-                            AuthController.instance.user.value?.image != ''
+                            AuthController.instance.user.value?.image != null
                                 ? NetworkImage(
                                     AuthController.instance.user.value!.image!)
                                 : null,
@@ -453,9 +431,9 @@ eventsIJoined() {
                                   return Container(
                                     margin: const EdgeInsets.only(left: 10),
                                     child: CircleAvatar(
-                                      minRadius: 13,
-                                      backgroundImage:
+                                      minRadius: 13, foregroundImage:
                                           NetworkImage(user.image!),
+                                      backgroundImage: const AssetImage('assets/Group 18341 (1).png'),
                                     ),
                                   );
                                 },

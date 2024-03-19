@@ -1,0 +1,20 @@
+{
+  "faculties": [
+    {
+      "faculty": "FoET",
+      "dept": [
+        "CE",
+        "IT",
+        "EE",
+        "ME"
+      ]
+    },
+    {
+      "faculty": "FoC",
+      "dept": [
+        "B.COM",
+        "B.CA"
+      ]
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import 'package:ems/model/user_model.dart';
+import 'package:ems/utils/date_formatter.dart';
 import 'package:ems/views/auth/controller/auth_controller.dart';
 import 'package:ems/views/event_page/event_participants_list_view.dart';
 import 'package:ems/views/home/controller/home_controller.dart';
@@ -8,10 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../utils/app_color.dart';
 import '../invite_guest/invite_guest_screen.dart';
-import 'package:intl/intl.dart';
 
 import '../registration/register_event_view.dart';
-import '../registration/view_event_end_details.dart';
+import 'view_event_end_details.dart';
 
 class EventPageView extends StatelessWidget {
   static const String routeName = '/event-page-view';
@@ -40,18 +40,8 @@ class EventPageView extends StatelessWidget {
     for (var e in event.tags) {
       tagsCollectively += '#$e ';
     }
-
-    DateFormat dFormat = DateFormat("dd/MM/yyyy");
-    DateTime now = DateTime.now();
-    DateTime regEndDate = dFormat.parse(event.rgEdDate);
-    // DateTime eventEndDate = dFormat.parse(event.eventDay);
-    String dFormat2 = dFormat.format(now);
-    DateTime nowTime = dFormat.parse(dFormat2);
-    // DateTime? d = DateTime.tryParse(widget.eventData.get('date'));
-
-    // String formattedDate = formatDate(widget.eventData.get('date'));
-    // log(formattedDate);
-    // DateFormat("dd-MMM").format(formattedDate);
+    DateTime nowTime = currentTime();
+    DateTime regEndDate = formatDate(event.rgEdDate);
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -205,8 +195,7 @@ class EventPageView extends StatelessWidget {
                       height: Get.height * 0.058,
                       child: GestureDetector(
                         onTap: () {
-                          Get.toNamed(EventParticipantListView.routeName,
-                              arguments: event.joined);
+                          Get.toNamed(EventParticipantListView.routeName);
                         },
                         child: ListView.builder(
                           itemBuilder: (ctx, index) {
@@ -218,7 +207,11 @@ class EventPageView extends StatelessWidget {
                               margin: const EdgeInsets.only(left: 10),
                               child: CircleAvatar(
                                 minRadius: 13,
-                                backgroundImage: NetworkImage(user.image!),
+                                foregroundImage: user.image != ''
+                                    ? NetworkImage(user.image!)
+                                    : null,
+                                backgroundImage: const AssetImage(
+                                    'assets/Group 18341 (1).png'),
                               ),
                             );
                           },
@@ -320,14 +313,11 @@ class EventPageView extends StatelessWidget {
                   ),
                   if (AuthController.instance.user.value!.uid == event.uid)
                     Visibility(
-                      visible: !(regEndDate.isBefore(nowTime)),
+                      visible: (regEndDate.isBefore(nowTime)),
                       child: Expanded(
                         child: InkWell(
                           onTap: () {
-                            Get.toNamed(
-                              ViewEndEventDetails.routeName,
-                              arguments: event,
-                            );
+                            Get.toNamed(ViewEndEventDetails.routeName, arguments: event);
                           },
                           child: Container(
                             height: Get.height * 0.058,
@@ -344,7 +334,7 @@ class EventPageView extends StatelessWidget {
                                 ],
                                 borderRadius: BorderRadius.circular(13)),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
+                                horizontal: 5, vertical: 10),
                             child: const Center(
                               child: Text(
                                 'View Details',
@@ -358,6 +348,40 @@ class EventPageView extends StatelessWidget {
                         ),
                       ),
                     ),
+                  /*if (AuthController.instance.user.value!.uid == event.uid)
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          Get.toNamed(AddParticipatingCommunity.routeName);
+                        },
+                        child: Container(
+                          height: Get.height * 0.058,
+                          decoration: BoxDecoration(
+                              color: AppColors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.4),
+                                  spreadRadius: 0.1,
+                                  blurRadius: 60,
+                                  offset: const Offset(
+                                      0, 1), // changes position of shadow
+                                ),
+                              ],
+                              borderRadius: BorderRadius.circular(13)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          child: const Center(
+                            child: Text(
+                              'Add Other Details',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),*/
                   if (AuthController.instance.user.value!.userType == 'student')
                     Visibility(
                       visible: !HomeController.instance.isJoinedUser.value &&
@@ -399,11 +423,13 @@ class EventPageView extends StatelessWidget {
                         ),
                       ),
                     ),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   Visibility(
                     visible: HomeController.instance.isJoinedUser.value &&
                         !regEndDate.isBefore(nowTime) &&
-                        AuthController.instance.user.value!.userType ==
-                            'student',
+                        AuthController.instance.user.value!.uid != event.uid,
                     child: Expanded(
                       child: Container(
                         height: Get.height * 0.058,

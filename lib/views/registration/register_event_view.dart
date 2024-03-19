@@ -1,4 +1,6 @@
 import 'package:ems/model/event_participant_model.dart';
+import 'package:ems/model/ticket_model.dart';
+
 import 'package:ems/views/registration/controller/registration_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -256,20 +258,112 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
-                                textFormFieldForController(
-                                    controller: controller.leaderDept,
-                                    hintText: 'Participant Department',
-                                    icon: ('assets/Header.png'),
-                                    validator: (input) {
-                                      if (input.isEmpty) {
-                                        Get.snackbar('Opps',
-                                            "Participant department required",
-                                            colorText: AppColors.white,
-                                            backgroundColor: AppColors.blue);
+                                Obx(
+                                  () => DropdownButtonFormField<FacultyDept>(
+                                    isExpanded: true,
+                                    menuMaxHeight: 500,
+                                    elevation: 16,
+                                    validator: (FacultyDept? input) {
+                                      if (input == null) {
+                                        Get.snackbar(
+                                            'Warning', 'Select faculty.',
+                                            colorText: Colors.white,
+                                            backgroundColor: Colors.blue);
                                         return '';
                                       }
                                       return null;
-                                    }),
+                                    },
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.black,
+                                    ),
+                                    decoration: InputDecoration(
+                                      contentPadding: const EdgeInsets.only(
+                                          top: 5, left: 20),
+                                      errorStyle: const TextStyle(fontSize: 0),
+                                      hintStyle: TextStyle(
+                                        color: AppColors.genderTextColor,
+                                      ),
+                                      hintText: ' -select- ',
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    value: controller.facultyModifier.value,
+                                    onChanged: controller.setFaculty,
+                                    items: controller.listOfFaculty
+                                        .map<DropdownMenuItem<FacultyDept>>(
+                                            (FacultyDept value) {
+                                      return DropdownMenuItem<FacultyDept>(
+                                        value: value,
+                                        child: Text(
+                                          value.faculty,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xffA6A6A6),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                Obx(
+                                  () => DropdownButtonFormField<String>(
+                                    isExpanded: true,
+                                    menuMaxHeight: 500,
+                                    elevation: 16,
+                                    validator: (String? input) {
+                                      if (input == null) {
+                                        Get.snackbar(
+                                            'Warning', 'Select Department.',
+                                            colorText: Colors.white,
+                                            backgroundColor: Colors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    },
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.black,
+                                    ),
+                                    decoration: InputDecoration(
+                                      contentPadding: const EdgeInsets.only(
+                                          top: 5, left: 20),
+                                      errorStyle: const TextStyle(fontSize: 0),
+                                      hintStyle: TextStyle(
+                                        color: AppColors.genderTextColor,
+                                      ),
+                                      hintText: ' -select- ',
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    value: controller.departmentModifier.value,
+                                    onChanged: controller.setDepartment,
+                                    items: controller
+                                        .facultyModifier.value?.dept
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xffA6A6A6),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
@@ -406,21 +500,112 @@ class RegisterEventView extends GetView<RegistrationController> {
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
-                                textFormFieldForController(
-                                    controller: controller.leaderDept,
-                                    hintText: 'Diploma IT',
-                                    labelText: 'Leader Department',
-                                    icon: ('assets/Header.png'),
-                                    validator: (input) {
-                                      if (input.isEmpty) {
-                                        Get.snackbar('Opps',
-                                            "Leader department required",
-                                            colorText: AppColors.white,
-                                            backgroundColor: AppColors.blue);
+                                Obx(
+                                  () => DropdownButtonFormField<FacultyDept>(
+                                    isExpanded: true,
+                                    menuMaxHeight: 500,
+                                    elevation: 16,
+                                    validator: (FacultyDept? input) {
+                                      if (input == null) {
+                                        Get.snackbar(
+                                            'Warning', 'Select faculty.',
+                                            colorText: Colors.white,
+                                            backgroundColor: Colors.blue);
                                         return '';
                                       }
                                       return null;
-                                    }),
+                                    },
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.black,
+                                    ),
+                                    decoration: InputDecoration(
+                                      contentPadding: const EdgeInsets.only(
+                                          top: 5, left: 20),
+                                      errorStyle: const TextStyle(fontSize: 0),
+                                      hintStyle: TextStyle(
+                                        color: AppColors.genderTextColor,
+                                      ),
+                                      hintText: ' -select- ',
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    value: controller.facultyModifier.value,
+                                    onChanged: controller.setFaculty,
+                                    items: controller.listOfFaculty
+                                        .map<DropdownMenuItem<FacultyDept>>(
+                                            (FacultyDept value) {
+                                      return DropdownMenuItem<FacultyDept>(
+                                        value: value,
+                                        child: Text(
+                                          value.faculty,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xffA6A6A6),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                Obx(
+                                  () => DropdownButtonFormField<String>(
+                                    isExpanded: true,
+                                    menuMaxHeight: 500,
+                                    elevation: 16,
+                                    validator: (String? input) {
+                                      if (input == null) {
+                                        Get.snackbar(
+                                            'Warning', 'Select Department.',
+                                            colorText: Colors.white,
+                                            backgroundColor: Colors.blue);
+                                        return '';
+                                      }
+                                      return null;
+                                    },
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.black,
+                                    ),
+                                    decoration: InputDecoration(
+                                      contentPadding: const EdgeInsets.only(
+                                          top: 5, left: 20),
+                                      errorStyle: const TextStyle(fontSize: 0),
+                                      hintStyle: TextStyle(
+                                        color: AppColors.genderTextColor,
+                                      ),
+                                      hintText: ' -select- ',
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    value: controller.departmentModifier.value,
+                                    onChanged: controller.setDepartment,
+                                    items: controller
+                                        .facultyModifier.value?.dept
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xffA6A6A6),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
                                 SizedBox(
                                   height: Get.height * 0.02,
                                 ),
@@ -428,7 +613,7 @@ class RegisterEventView extends GetView<RegistrationController> {
                                     maxLength: 1,
                                     controller: controller.leaderSem,
                                     hintText: '6',
-                                    labelText:'Leader Semester',
+                                    labelText: 'Leader Semester',
                                     icon: ('assets/about1.png'),
                                     validator: (input) {
                                       if (input.isEmpty) {
@@ -488,23 +673,26 @@ class RegisterEventView extends GetView<RegistrationController> {
                                       itemCount:
                                           controller.noOfParticipant.value,
                                       itemBuilder: (context, index) {
-                                        controller.listOfEvent.clear();
-                                        controller.listOfEvent.addAll(
+                                        Rx<String?> faculty = Rx<String?>(null);
+                                        Rx<String?> dept = Rx<String?>(null);
+                                        controller.listOfGroupMembers.clear();
+                                        controller.listOfGroupMembers.addAll(
                                             List.generate(
                                                 controller
                                                     .noOfParticipant.value,
                                                 (index) =>
-                                                    EventParticipantModel()));
+                                                    IndividualParticipantModel()));
                                         return Column(
                                           children: [
                                             textFormFieldForValue(
                                                 onChanged: (String value) {
-                                                  controller.listOfEvent[index]
+                                                  controller
+                                                      .listOfGroupMembers[index]
                                                       .membersName = value;
                                                 },
-                                                hintText:
-                                                    'Joe Doe',
-                                                labelText:'Member ${index + 1} name',
+                                                hintText: 'Joe Doe',
+                                                labelText:
+                                                    'Member ${index + 1} name',
                                                 icon: ('assets/account.png'),
                                                 obscure: false,
                                                 validator: (String input) {
@@ -524,13 +712,14 @@ class RegisterEventView extends GetView<RegistrationController> {
                                             ),
                                             textFormFieldForValue(
                                                 onChanged: (String value) {
-                                                  controller.listOfEvent[index]
+                                                  controller
+                                                      .listOfGroupMembers[index]
                                                       .membersNum = value;
                                                 },
                                                 inputType: TextInputType.number,
-                                                hintText:
-                                                    '63XXXXXX52',
-                                                labelText:'Member ${index + 1} phone number',
+                                                hintText: '63XXXXXX52',
+                                                labelText:
+                                                    'Member ${index + 1} phone number',
                                                 icon: ('assets/Header.png'),
                                                 obscure: false,
                                                 maxLength: 10,
@@ -551,14 +740,15 @@ class RegisterEventView extends GetView<RegistrationController> {
                                             ),
                                             textFormFieldForValue(
                                                 onChanged: (String value) {
-                                                  controller.listOfEvent[index]
+                                                  controller
+                                                      .listOfGroupMembers[index]
                                                       .membersEmail = value;
                                                 },
                                                 inputType:
                                                     TextInputType.emailAddress,
-                                                hintText:
-                                                    'joedoe@gmail.com',
-                                                labelText: 'Member ${index + 1} email',
+                                                hintText: 'joedoe@gmail.com',
+                                                labelText:
+                                                    'Member ${index + 1} email',
                                                 icon: ('assets/mail.png'),
                                                 obscure: false,
                                                 validator: (String input) {
@@ -576,34 +766,167 @@ class RegisterEventView extends GetView<RegistrationController> {
                                             SizedBox(
                                               height: Get.height * 0.02,
                                             ),
-                                            textFormFieldForValue(
-                                                onChanged: (String value) {
-                                                  controller.listOfEvent[index]
-                                                          .membersDept =
-                                                      value.toLowerCase();
-                                                },
-                                                hintText:
-                                                    'B.tech CE',
-                                                labelText: 'Member ${index + 1} dept',
-                                                icon: ('assets/Header.png'),
-                                                validator: (input) {
-                                                  if (input.isEmpty) {
-                                                    Get.snackbar('Opps',
-                                                        "Member department required",
-                                                        colorText:
-                                                            AppColors.white,
+                                            Obx(
+                                              () => DropdownButtonFormField<
+                                                  FacultyDept>(
+                                                isExpanded: true,
+                                                menuMaxHeight: 500,
+                                                elevation: 16,
+                                                validator:
+                                                    (FacultyDept? input) {
+                                                  if (input == null) {
+                                                    Get.snackbar('Warning',
+                                                        'Select faculty.',
+                                                        colorText: Colors.white,
                                                         backgroundColor:
-                                                            AppColors.blue);
+                                                            Colors.blue);
                                                     return '';
                                                   }
                                                   return null;
-                                                }),
+                                                },
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  color: AppColors.black,
+                                                ),
+                                                decoration: InputDecoration(
+                                                  contentPadding:
+                                                      const EdgeInsets.only(
+                                                          top: 5, left: 20),
+                                                  errorStyle: const TextStyle(
+                                                      fontSize: 0),
+                                                  hintStyle: TextStyle(
+                                                    color: AppColors
+                                                        .genderTextColor,
+                                                  ),
+                                                  hintText: ' -select- ',
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                  ),
+                                                ),
+                                                onChanged:
+                                                    (FacultyDept? value) {
+                                                  faculty.value = null;
+                                                  dept.value = null;
+                                                  controller
+                                                          .listOfGroupMembers[index]
+                                                          .membersFaculty =
+                                                      value?.faculty;
+                                                  faculty.value =
+                                                      value?.faculty;
+                                                  dept.value =null;
+
+                                                  controller.setFunction();
+                                                },
+                                                items: controller.listOfFaculty
+                                                    .map<
+                                                            DropdownMenuItem<
+                                                                FacultyDept>>(
+                                                        (FacultyDept value) {
+                                                  return DropdownMenuItem<
+                                                      FacultyDept>(
+                                                    value: value,
+                                                    child: Text(
+                                                      value.faculty,
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color:
+                                                            Color(0xffA6A6A6),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: Get.height * 0.02,
+                                            ),
+                                            Obx(
+                                              () => DropdownButtonFormField<
+                                                  String>(
+                                                isExpanded: true,
+                                                menuMaxHeight: 500,
+                                                elevation: 16,
+                                                validator: (String? input) {
+                                                  if (input == null) {
+                                                    Get.snackbar('Warning',
+                                                        'Select Department.',
+                                                        colorText: Colors.white,
+                                                        backgroundColor:
+                                                            Colors.blue);
+                                                    return '';
+                                                  }
+                                                  return null;
+                                                },
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  color: AppColors.black,
+                                                ),
+                                                decoration: InputDecoration(
+                                                  contentPadding:
+                                                      const EdgeInsets.only(
+                                                          top: 5, left: 20),
+                                                  errorStyle: const TextStyle(
+                                                      fontSize: 0),
+                                                  hintStyle: TextStyle(
+                                                    color: AppColors
+                                                        .genderTextColor,
+                                                  ),
+                                                  hintText: ' -select- ',
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                  ),
+                                                ),
+                                                value: dept.value,
+                                                onChanged: (String? value) {
+                                                  dept.value = value;
+                                                  controller
+                                                      .listOfGroupMembers[index]
+                                                      .membersDept = value;
+
+                                                },
+                                                items: faculty.value == null
+                                                    ? []
+                                                    : controller.listOfFaculty
+                                                        .firstWhere((element) =>
+                                                            element.faculty ==
+                                                            faculty.value)
+                                                        .dept
+                                                        .map<
+                                                            DropdownMenuItem<
+                                                                String>>((String
+                                                            value) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: value,
+                                                          child: Text(
+                                                            value,
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color: Color(
+                                                                  0xffA6A6A6),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                              ),
+                                            ),
                                             SizedBox(
                                               height: Get.height * 0.02,
                                             ),
                                             textFormFieldForValue(
                                                 onChanged: (String value) {
-                                                  controller.listOfEvent[index]
+                                                  controller
+                                                      .listOfGroupMembers[index]
                                                       .membersSem = value;
                                                 },
                                                 maxLength: 1,

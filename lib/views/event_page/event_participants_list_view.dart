@@ -1,16 +1,19 @@
+import 'package:ems/views/event_page/controller/event_page_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../widgets/check_box.dart';
+import '../../model/event_participant_model.dart';
+import '../../model/group_event_model.dart';
+import '../../utils/date_formatter.dart';
 import '../../widgets/my_widgets.dart';
+import '../auth/controller/auth_controller.dart';
 import '../home/controller/home_controller.dart';
 
-class EventParticipantListView extends StatelessWidget {
+class EventParticipantListView extends GetView<EventPageController> {
   const EventParticipantListView({Key? key}) : super(key: key);
   static const String routeName = '/event-participant-list-view';
 
   @override
   Widget build(BuildContext context) {
-    List<String> invite = Get.arguments;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -28,10 +31,27 @@ class EventParticipantListView extends StatelessWidget {
                 child: ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
-                  itemCount: invite.length,
+                  itemCount: controller.joined.length,
                   itemBuilder: (context, index) {
+                    Rx<IndividualParticipantModel?> single =
+                        Rx<IndividualParticipantModel?>(null);
+                    Rx<GroupEventModel?> group = Rx<GroupEventModel?>(null);
+                    if (controller.joined.isEmpty) {
+                      return const Center(
+                        child: Text('There is no participants yet.'),
+                      );
+                    }
                     final user = HomeController.instance.listOfUser
-                        .firstWhere((e) => e.uid == invite[index]);
+                        .firstWhere((e) => e.uid == controller.joined[index]);
+                    if (controller.event!.eventType == 'Group') {
+                      group.value = controller.listOfGroupParticipants
+                          .firstWhere((part) => part.teamLeaderUid == user.uid);
+                    } else {
+                      single.value = controller.listOfIndividualParticipants
+                          .firstWhere((part) {
+                        return part.membersUid == user.uid;
+                      });
+                    }
                     return Column(
                       children: [
                         Container(
@@ -45,7 +65,11 @@ class EventParticipantListView extends StatelessWidget {
                                 margin: const EdgeInsets.only(left: 10),
                                 child: CircleAvatar(
                                   minRadius: 26,
-                                  backgroundImage: NetworkImage(user.image!),
+                                  foregroundImage: user.image != ''
+                                      ? NetworkImage(user.image!)
+                                      : null,
+                                  backgroundImage: const AssetImage(
+                                      'assets/Group 18341 (1).png'),
                                 ),
                               ),
                               const SizedBox(
@@ -59,7 +83,21 @@ class EventParticipantListView extends StatelessWidget {
                                 ),
                               ),
                               const Spacer(),
-                              const ChecksBox(),
+                              Obx(
+                                () => Checkbox(
+                                  value: controller.event!.eventType == 'Group'
+                                      ? group.value!.attendance!.value
+                                      : single.value!.attendance!.value,
+                                  onChanged: (value) {
+                                    if (controller.event!.eventType ==
+                                        'Group') {
+                                      group.value!.attendance!.value = value!;
+                                    } else {
+                                      single.value!.attendance!.value = value!;
+                                    }
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -70,6 +108,33 @@ class EventParticipantListView extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Visibility(
+        visible: AuthController.instance.user.value!.uid ==
+                controller.event!.uid &&
+            !formatDate(controller.event!.rgEdDate).isAfter(currentTime()) &&
+            !formatDate(controller.event!.eventDay).isAfter(currentTime()),
+        child: Obx(
+          () => SizedBox(
+            width: Get.width * 0.45,
+            height: Get.height * 0.06,
+            child: controller.isLoading.value
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : elevatedButton(
+                    text: 'Attendance',
+                    onPress: () {
+                      if (controller.event!.eventType == 'Group') {
+                        controller.fireBaseGroupFunUpdateAttendance();
+                      } else {
+                        controller.fireBaseIndividualFunUpdateAttendance();
+                      }
+                    },
+                  ),
           ),
         ),
       ),

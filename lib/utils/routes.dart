@@ -1,4 +1,6 @@
+import 'package:ems/views/create_event/add_participating_community.dart';
 import 'package:ems/views/create_event/bindings/create_event_binding.dart';
+import 'package:ems/views/event_page/binding/event_page_binding.dart';
 import 'package:ems/views/event_page/event_page_view.dart';
 import 'package:ems/views/event_page/event_participants_list_view.dart';
 import 'package:ems/views/home/bottom_bar_view.dart';
@@ -6,7 +8,7 @@ import 'package:ems/views/home/bindings/home_binding.dart';
 import 'package:ems/views/profile/add_profile.dart';
 import 'package:ems/views/profile/bindings/profile_binding.dart';
 import 'package:ems/views/registration/binding/registration_binding.dart';
-import 'package:ems/views/registration/view_event_end_details.dart';
+import 'package:ems/views/event_page/view_event_end_details.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
 import '../views/auth/bindings/login_binding.dart';
@@ -30,7 +32,10 @@ class AppRoutes {
       page: () => AddProfileScreen(),
       binding: ProfileBinding(),
     ),
-    GetPage(name: EventPageView.routeName, page: () => const EventPageView()),
+    GetPage(
+        name: EventPageView.routeName,
+        page: () => const EventPageView(),
+        binding: EventPageBinding()),
     GetPage(
         name: EventParticipantListView.routeName,
         page: () => const EventParticipantListView()),
@@ -38,6 +43,10 @@ class AppRoutes {
         name: ViewEndEventDetails.routeName,
         page: () => const ViewEndEventDetails(),
         binding: RegistrationBinding()),
+    GetPage(
+        name: AddParticipatingCommunity.routeName,
+        page: () =>  AddParticipatingCommunity(),
+        binding: CreateEventBinding()),
     GetPage(
       name: RegisterEventView.routeName,
       page: () => RegisterEventView(),

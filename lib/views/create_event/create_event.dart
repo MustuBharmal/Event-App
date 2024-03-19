@@ -1,4 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:ems/utils/log_util.dart';
 import 'package:ems/views/create_event/controller/create_event_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -365,7 +366,7 @@ class CreateEventView extends GetView<CreateEventController> {
                         controller: controller.maxEntries,
                         type: TextInputType.number,
                         onPress: () {
-                          print('max entries');
+                          LogUtil.debug('max entries');
                         },
                         validator: (String input) {
                           if (input.isEmpty) {
@@ -387,7 +388,7 @@ class CreateEventView extends GetView<CreateEventController> {
                     width: double.infinity,
                     controller: controller.tagsController,
                     onPress: () {
-                      print('tags');
+                      LogUtil.debug('tags');
                     },
                     type: TextInputType.text,
                     validator: (String input) {

@@ -1,45 +1,76 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/model/group_event_model.dart';
 import 'package:ems/model/event_participant_model.dart';
 import 'package:ems/utils/app_color.dart';
+import 'package:ems/utils/log_util.dart';
 import 'package:ems/views/home/bottom_bar_view.dart';
-import 'package:excel/excel.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../model/event_model.dart';
+import '../../../model/ticket_model.dart';
 import '../../auth/controller/auth_controller.dart';
 
-String fileName = '';
-
 class RegistrationController extends GetxController {
-  var excel = Excel.createExcel();
   EventModel event = Get.arguments;
   final leaderSem = TextEditingController();
-  final leaderDept = TextEditingController();
+  TextEditingController leaderDept = TextEditingController();
   final leaderEmail = TextEditingController();
   final leaderNum = TextEditingController();
   final leaderName = TextEditingController();
   TextEditingController teamNameController = TextEditingController();
-  List<GroupEventModel> listOfParticipatedTeam = [];
-  List<EventParticipantModel> listOfParticipants = [];
+
   RxInt noOfParticipant = RxInt(0);
-  List<EventParticipantModel> listOfEvent = [];
+  List<IndividualParticipantModel> listOfGroupMembers = [];
   GroupEventModel? groupEventModel;
   RxBool isLoading = RxBool(false);
-  RxString eventImage = RxString('');
+
+  RxList<FacultyDept> listOfFaculty = RxList.empty();
+  Rx<FacultyDept?> facultyModifier = Rx<FacultyDept?>(null);
+  Rx<String?> departmentModifier = Rx<String?>(null);
 
   @override
   void onInit() {
-    selectEventImage();
     leaderEmail.text = AuthController.instance.user.value!.email!;
-    event.eventType == 'Individual' ? firebaseFunIndividual() : firebaseFunGroup();
+    leaderName.text = AuthController.instance.user.value!.first!;
+    leaderNum.text = AuthController.instance.user.value!.mobileNumber!;
+    fetchData();
     super.onInit();
+  }
+
+  setFaculty(FacultyDept? singleFaculty) {
+    facultyModifier.value = singleFaculty;
+    departmentModifier.value = null;
+  }
+
+  setDepartment(String? singleDept) {
+    departmentModifier.value = singleDept;
+    // LogUtil.debug(departmentModifier.value);
+  }
+
+  setFunction() {}
+
+  Future<void> fetchData() async {
+    try {
+      final jsonText = await rootBundle.loadString('assets/faculty-dept.json');
+      final jsonData = json.decode(jsonText);
+      List<FacultyDept> stateList = [];
+
+      for (var facultyData in jsonData['faculties']) {
+        final stateName = facultyData['faculty'];
+        final districts = List<String>.from(facultyData['dept']);
+        stateList.add(FacultyDept(stateName, districts));
+      }
+      listOfFaculty.value = stateList;
+      // LogUtil.debug(listOfFaculty.length);
+    } catch (e) {
+      throw Exception('Failed to load data; $e');
+    }
   }
 
   void resetControllers() {
@@ -52,56 +83,26 @@ class RegistrationController extends GetxController {
     groupEventModel = null;
   }
 
-  firebaseFunGroup() {
-    List<GroupEventModel> temp = [];
-    FirebaseFirestore.instance
-        .collection('group_participants')
-        .where('event_id', isEqualTo: event.id)
-        .snapshots()
-        .listen((doc) {
-      for (var data in doc.docs) {
-        if (data.exists) {
-          temp.add(GroupEventModel.fromSnapshot(data));
-        }
-      }
-      listOfParticipatedTeam = temp;
-    });
-  }
-
-  firebaseFunIndividual() {
-    List<EventParticipantModel> temp = [];
-    FirebaseFirestore.instance
-        .collection('individual_participants')
-        .where('event_id', isEqualTo: event.id)
-        .snapshots()
-        .listen((doc) {
-      for (var data in doc.docs) {
-        if (data.exists) {
-          temp.add(EventParticipantModel.fromSnapshot(data));
-        }
-      }
-      listOfParticipants = temp;
-      print(listOfParticipants[0].membersSem);
-    });
-  }
-
   Future<void> groupEventSubmit() async {
     isLoading(true);
-    EventParticipantModel leaderModel;
-    leaderModel = EventParticipantModel(
+    IndividualParticipantModel leaderModel;
+    leaderModel = IndividualParticipantModel(
       membersName: leaderName.text,
       membersNum: leaderNum.text,
-      membersDept: leaderDept.text,
+      membersDept: departmentModifier.value,
       membersSem: leaderSem.text,
       membersEmail: leaderEmail.text,
+      membersFaculty: facultyModifier.value?.faculty,
+
     );
     groupEventModel = GroupEventModel(
       eventId: event.id,
       teamName: teamNameController.value.text.capitalizeFirst,
       teamLeaderUid: AuthController.instance.user.value!.uid,
       leaderDetail: leaderModel,
-      groupOfMembers: listOfEvent,
+      groupOfMembers: listOfGroupMembers,
       createdAt: DateTime.now().toString(),
+      attendance: RxBool(false),
     );
     FirebaseFirestore.instance
         .collection('users')
@@ -125,7 +126,7 @@ class RegistrationController extends GetxController {
           colorText: AppColors.white, backgroundColor: AppColors.blue);
     }).catchError((e) {
       isLoading(false);
-      print(e.toString());
+      LogUtil.warning(e.toString());
       Get.snackbar('Warning', 'Team registered failed',
           colorText: AppColors.white, backgroundColor: AppColors.blue);
     });
@@ -134,16 +135,20 @@ class RegistrationController extends GetxController {
   Future<void> individualEventSubmit() async {
     isLoading(true);
     try {
-      EventParticipantModel participant;
-      participant = EventParticipantModel(
+      IndividualParticipantModel participant;
+      participant = IndividualParticipantModel(
         eventId: event.id,
+        membersUid: AuthController.instance.user.value!.uid,
         membersName: leaderName.text,
         membersNum: leaderNum.text,
-        membersDept: leaderDept.text,
+        membersDept: departmentModifier.value,
         membersSem: leaderSem.text,
         membersEmail: leaderEmail.text,
+        membersFaculty: facultyModifier.value!.faculty,
         createdAt: DateTime.now().toString(),
+        attendance: RxBool(false),
       );
+      LogUtil.debug(participant.toJson());
       FirebaseFirestore.instance
           .collection('individual_participants')
           .add(participant.toJson());
@@ -165,135 +170,9 @@ class RegistrationController extends GetxController {
             colorText: AppColors.white, backgroundColor: AppColors.blue);
       });
     } catch (e) {
-      log(e.toString());
+      LogUtil.debug(e.toString());
       ScaffoldMessenger.of(Get.context!)
           .showSnackBar(SnackBar(content: Text(e.toString())));
     }
-  }
-
-  selectEventImage() {
-    try {
-      List media = event.media;
-      Map mediaItem =
-          media.firstWhere((element) => element['isImage'] == true) as Map;
-      eventImage.value = mediaItem['url'];
-    } catch (e) {
-      eventImage = RxString('');
-    }
-  }
-
-  individualExcelSheet() {
-    isLoading(true);
-    fileName = event.eventName.toUpperCase();
-    Sheet sheet = excel[event.eventName];
-    sheet.appendRow([
-      const TextCellValue('Serial No'),
-      const TextCellValue('Name'),
-      const TextCellValue('Number'),
-      const TextCellValue('Email'),
-      const TextCellValue('Dept'),
-      const TextCellValue('Sem'),
-    ]);
-    for (int i = 0; i < listOfParticipants.length; i++) {
-      var index = sheet.cell(CellIndex.indexByString('A${i + 2}'));
-      var nameCell = sheet.cell(CellIndex.indexByString('B${i + 2}'));
-      var number = sheet.cell(CellIndex.indexByString('C${i + 2}'));
-      var email = sheet.cell(CellIndex.indexByString('D${i + 2}'));
-      var dept = sheet.cell(CellIndex.indexByString('E${i + 2}'));
-      var sem = sheet.cell(CellIndex.indexByString('F${i + 2}'));
-      index.value = TextCellValue("${i + 1}");
-      print(listOfParticipants[0].membersName);
-      print(i);
-      nameCell.value = TextCellValue('${listOfParticipants[i].membersName}');
-      number.value = TextCellValue('${listOfParticipants[i].membersNum}');
-      email.value = TextCellValue('${listOfParticipants[i].membersEmail}');
-      dept.value = TextCellValue('${listOfParticipants[i].membersDept}');
-      sem.value = TextCellValue('${listOfParticipants[i].membersSem}');
-    }
-    Get.offAllNamed(BottomBarView.routeName);
-    Get.snackbar('Complete', 'Excel sheet is downloaded',
-        colorText: AppColors.white, backgroundColor: AppColors.blue);
-    isLoading(false);
-  }
-
-  Future<File> writeCounter(Excel excel) async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      // If not we will ask for permission first
-      await Permission.storage.request();
-    }
-    final file = await _localFile;
-    return file.writeAsBytes(excel.encode()!);
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/$fileName.xlsx');
-  }
-
-  Future<String> get _localPath async {
-    final directory = Directory("/storage/emulated/0/Download");
-    return directory.path;
-  }
-
-  Future<void> groupEventExcelSheet() async {
-    isLoading(true);
-    fileName = event.eventName.toUpperCase();
-    Sheet sheet = excel[event.eventName];
-
-    sheet.appendRow([
-      const TextCellValue('Team No'),
-      const TextCellValue('Team Name'),
-      const TextCellValue('Name'),
-      const TextCellValue('Number'),
-      const TextCellValue('Email'),
-      const TextCellValue('Dept'),
-      const TextCellValue('Sem'),
-    ]);
-    int k = 0;
-    for (int i = 0; i < listOfParticipatedTeam.length; i++) {
-      int j;
-      var teamNoCell = sheet.cell(CellIndex.indexByString('A${i + k + 2}'));
-      var teamNameCell = sheet.cell(CellIndex.indexByString('B${i + k + 2}'));
-      var nameCell = sheet.cell(CellIndex.indexByString('C${i + k + 2}'));
-      var numberCell = sheet.cell(CellIndex.indexByString('D${i + k + 2}'));
-      var emailCell = sheet.cell(CellIndex.indexByString('E${i + k + 2}'));
-      var deptCell = sheet.cell(CellIndex.indexByString('F${i + k + 2}'));
-      var semCell = sheet.cell(CellIndex.indexByString('G${i + k + 2}'));
-      teamNoCell.value = TextCellValue("${i + 1}");
-      teamNameCell.value = TextCellValue(listOfParticipatedTeam[i].teamName!);
-      nameCell.value =
-          TextCellValue(listOfParticipatedTeam[i].leaderDetail.membersName!);
-      numberCell.value =
-          TextCellValue('${listOfParticipatedTeam[i].leaderDetail.membersNum}');
-      emailCell.value = TextCellValue(
-          '${listOfParticipatedTeam[i].leaderDetail.membersEmail}');
-      deptCell.value = TextCellValue(
-          '${listOfParticipatedTeam[i].leaderDetail.membersDept}');
-      semCell.value =
-          TextCellValue('${listOfParticipatedTeam[i].leaderDetail.membersSem}');
-      for (j = 0; j < listOfParticipatedTeam[i].groupOfMembers.length; j++) {
-        var nameCell = sheet.cell(CellIndex.indexByString('C${i + k + 3}'));
-        var numberCell = sheet.cell(CellIndex.indexByString('D${i + k + 3}'));
-        var emailCell = sheet.cell(CellIndex.indexByString('E${i + k + 3}'));
-        var deptCell = sheet.cell(CellIndex.indexByString('F${i + k + 3}'));
-        var semCell = sheet.cell(CellIndex.indexByString('G${i + k + 3}'));
-        nameCell.value = TextCellValue(
-            listOfParticipatedTeam[i].groupOfMembers[j].membersName!);
-        numberCell.value = TextCellValue(
-            '${listOfParticipatedTeam[i].groupOfMembers[j].membersNum}');
-        emailCell.value = TextCellValue(
-            '${listOfParticipatedTeam[i].groupOfMembers[j].membersEmail}');
-        deptCell.value = TextCellValue(
-            '${listOfParticipatedTeam[i].groupOfMembers[j].membersDept}');
-        semCell.value = TextCellValue(
-            '${listOfParticipatedTeam[i].groupOfMembers[j].membersSem}');
-        k++;
-      }
-    }
-    Get.offAllNamed(BottomBarView.routeName);
-    Get.snackbar('Complete', 'Excel sheet is downloaded',
-        colorText: AppColors.white, backgroundColor: AppColors.blue);
-    isLoading(false);
   }
 }

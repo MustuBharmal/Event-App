@@ -1,13 +1,17 @@
-
-import 'dart:developer';
-
 import 'package:intl/intl.dart';
 
-formatDate(String date){
-   
-  final DateFormat formatter = DateFormat('dd-MM-yyyy');
-  log('$formatter');
-  final String formatted = formatter.format(DateTime.parse(date));
-log(formatted);
-  return formatted;
+final DateFormat formatter = DateFormat('dd/MM/yyyy');
+
+DateTime formatDate(String date) {
+  DateTime temp = formatter.parse(date);
+
+  return temp;
+}
+
+DateTime currentTime() {
+  DateTime now = DateTime.now();
+  String dFormat2 = formatter.format(now);
+  DateTime temp = formatter.parse(dFormat2);
+
+  return temp;
 }

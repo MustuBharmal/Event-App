@@ -3,44 +3,51 @@ import 'package:ems/model/event_participant_model.dart';
 import 'package:get/get.dart';
 
 class GroupEventModel {
+  String? docId;
   String? eventId;
   String? teamName;
   String? teamLeaderUid;
-  EventParticipantModel leaderDetail;
-  List<EventParticipantModel> groupOfMembers;
+  IndividualParticipantModel leaderDetail;
+  List<IndividualParticipantModel> groupOfMembers;
   String? createdAt;
+  RxBool? attendance;
 
   GroupEventModel({
+    this.docId,
     required this.leaderDetail,
     required this.eventId,
     required this.teamName,
     required this.teamLeaderUid,
     required this.groupOfMembers,
     required this.createdAt,
+    required this.attendance,
   });
 
   factory GroupEventModel.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final json = snapshot.data()!;
-    List<EventParticipantModel> temp = [];
-    for (int i = 0; i < int.parse(json['num_of_member']); i++) {
-      temp.add(EventParticipantModel.fromJson(json['member${i + 1}']));
+    List<IndividualParticipantModel> temp = [];
+    for (int i = 0; i < (json['num_of_member']); i++) {
+      temp.add(IndividualParticipantModel.fromJson(json['member${i + 1}']));
     }
+    String? docId = snapshot.id;
     String? eventId = json['event_id'];
     String? teamName = json['team_name'];
     String? teamLeaderUid = json['team_leader_uid'];
-    EventParticipantModel leader =
-        EventParticipantModel.fromJson(json['leader_details']);
-    List<EventParticipantModel> groupOfMembers = temp;
+    IndividualParticipantModel leader =
+        IndividualParticipantModel.fromJson(json['leader_details']);
+    List<IndividualParticipantModel> groupOfMembers = temp;
     String? createdAt = json['created_at'];
-
+    RxBool? attendance = RxBool(json['attendance'] ?? false);
     return GroupEventModel(
+      docId: docId,
       eventId: eventId,
       teamName: teamName,
       teamLeaderUid: teamLeaderUid,
       leaderDetail: leader,
       groupOfMembers: groupOfMembers,
       createdAt: createdAt,
+      attendance: attendance,
     );
   }
 
@@ -55,6 +62,7 @@ class GroupEventModel {
     json['leader_details'] = leaderDetail.toJson();
     json['num_of_member'] = groupOfMembers.length;
     json['created_at'] = createdAt;
+    json['attendance'] = attendance!.value;
     return json;
   }
 }
