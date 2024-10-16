@@ -20,7 +20,7 @@ Widget eventsFeed() {
 }
 
 Widget buildCard(
-    {String? image, Function? func, required EventModel eventData}) {
+    {String? image, Function? func, required EventModel   eventData}) {
   List dateInformation = [];
   try {
     dateInformation = eventData.eventDay.toString().split('/');

@@ -82,7 +82,7 @@ class CreateEventController extends GetxController {
         }
       }
     }
-
+    print('images uploaded');
     List<String> tags = tagsController.text.split(',');
     EventModel currEvent = EventModel(
       participantType: participantType.value,
@@ -145,10 +145,15 @@ class CreateEventController extends GetxController {
     var reference =
         FirebaseStorage.instance.ref().child('eventImages/$fileName');
     UploadTask uploadTask = reference.putFile(file);
-    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
-    await taskSnapshot.ref.getDownloadURL().then((value) {
-      fileUrl = value;
-    });
+    try{
+      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+      await taskSnapshot.ref.getDownloadURL().then((value) {
+        fileUrl = value;
+      });
+    }
+    on FirebaseException catch(e){
+      print("Error: ${e.code} - ${e.message}");
+    }
     return fileUrl;
   }
 

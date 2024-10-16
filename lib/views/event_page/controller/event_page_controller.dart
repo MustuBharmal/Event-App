@@ -159,14 +159,14 @@ class EventPageController extends GetxController {
     fileName = event!.eventName.toUpperCase();
     Sheet sheet = excel[event!.eventName];
     sheet.appendRow([
-      const TextCellValue('Serial No'),
-      const TextCellValue('Name'),
-      const TextCellValue('Number'),
-      const TextCellValue('Email'),
-      const TextCellValue('Faculty'),
-      const TextCellValue('Dept'),
-      const TextCellValue('Sem'),
-      const TextCellValue('Attendance'),
+      TextCellValue('Serial No'),
+      TextCellValue('Name'),
+      TextCellValue('Number'),
+      TextCellValue('Email'),
+      TextCellValue('Faculty'),
+      TextCellValue('Dept'),
+      TextCellValue('Sem'),
+      TextCellValue('Attendance'),
     ]);
     for (int i = 0; i < listOfParticipants.length; i++) {
       var index = sheet.cell(CellIndex.indexByString('A${i + 2}'));
@@ -218,15 +218,15 @@ class EventPageController extends GetxController {
     Sheet sheet = excel[event!.eventName];
 
     sheet.appendRow([
-      const TextCellValue('Team No'),
-      const TextCellValue('Team Name'),
-      const TextCellValue('Name'),
-      const TextCellValue('Number'),
-      const TextCellValue('Email'),
-      const TextCellValue('Faculty'),
-      const TextCellValue('Dept'),
-      const TextCellValue('Sem'),
-      const TextCellValue('Attendance'),
+      TextCellValue('Team No'),
+      TextCellValue('Team Name'),
+      TextCellValue('Name'),
+      TextCellValue('Number'),
+      TextCellValue('Email'),
+      TextCellValue('Faculty'),
+      TextCellValue('Dept'),
+      TextCellValue('Sem'),
+      TextCellValue('Attendance'),
     ]);
     int k = 0;
     for (int i = 0; i < listOfParticipatedTeam.length; i++) {
